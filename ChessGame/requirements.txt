@@ -1,0 +1,10 @@
+asgiref
+Babel
+Django
+django-environ
+django-phonenumber-field
+phonenumbers
+psycopg
+psycopg2-binary
+sqlparse
+typing_extensions

@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #bf6d6d;
+    margin: 0;
+    padding: 0;
+}
+/*input and special are same*/
+.special{
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+.container {
+    background-color: #ffffff;
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.login_container {
+    background-color: #ffffff;
+    max-width: 800px;
+    margin: 80px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    text-align: center;
+    color: #333333;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 8px;
+    color: #333333;
+}
+
+input {
+    padding: 8px;
+    margin-bottom: 16px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+}
+
+button {
+    background-color: #007bff;
+    color: #ffffff;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: medium;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+.error-message {
+    color: #cc0033;
+    display: inline-block;
+    font-size: 14px;
+    line-height: 15px;
+    margin: 5px 0 0;
+  }
+
+  .input-group {
+    color: #333;
+    float: left;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif,Helvetica, Arial;
+    font-size: 15px;
+    line-height: 20px;
+    margin: 0 30px 10px;
+    width: 200px;
+  }
+
+  
