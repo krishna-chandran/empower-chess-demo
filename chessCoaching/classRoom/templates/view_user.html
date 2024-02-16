@@ -19,7 +19,7 @@
                     <p class="card-text">{{ user_data.username }}</p>
                     <p class="card-text">{{ user_data.email }}</p>
                     <div class="my-2"></div>
-                    <a href="#" class="btn btn-success btn-icon-split">
+                    <a href="/user/add/" class="btn btn-success btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>
                         </span>
@@ -31,20 +31,19 @@
                         </span>
                         <span class="text">Edit</span>
                     </a>
-                    
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-warning btn-icon-split">
+                    <a href="/user/{{ user_data.id }}/delete/" class="btn btn-danger btn-icon-split">
                         <span class="icon text-white-50">
-                            <i class="fas fa-exclamation-triangle"></i>
+                            <i class="fas fa-flag"></i>
                         </span>
-                        <span class="text">Save</span>
+                        <span class="text">Delete</span>
                     </a>
+                    <div class="my-2"></div>
                 <div class="my-2"></div>
-                    <a href="#" class="btn btn-danger btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-trash"></i>
-                        </span>
-                        <span class="text">Cancel</span>
+                    <a href="/users/" class="btn btn-warning btn-icon-split">
+                        <!-- <span class="icon text-white-50">
+                            <i class="fas"></i>
+                        </span> -->
+                        <span class="text">Back</span>
                     </a>
                     <!-- 
                     <div class="my-2"></div>

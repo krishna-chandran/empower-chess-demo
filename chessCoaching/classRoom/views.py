@@ -30,6 +30,10 @@ def edit_user(request, user_id):
     user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
     return render(request, 'edit_user.html', {'user_data': user_data})
 
+def add_user(request):
+    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+    return render(request, 'add_user.html')
+
 
 def view_subscriptions(request):
 	return render(request,"view_subscriptions.html")
