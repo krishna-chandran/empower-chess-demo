@@ -42,7 +42,7 @@ def view_assignments(request):
 def view_userassignments(request):
 	return render(request,"view_userassignments.html")
 
-def forgot_password(request):
+def forgot_password(request): 
 	return render(request,"forgot-password.html")
 
 def error_404(request):
