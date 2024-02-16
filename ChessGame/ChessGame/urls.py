@@ -32,4 +32,11 @@ urlpatterns = [
     path('error_404/',views.error_404,name="error_404"),
     path('charts/',views.charts,name="charts"),
     path('tables/',views.tables,name="tables"),
+    path('user/', views.user, name="user"),
+    path('user_detail/<int:user_id>/', views.user_detail, name='user_detail'),
+    path('subscription/',views.subscription,name="subscription"),
+    path('course/',views.course,name="course"),
+    path('enrollment/',views.enrollment,name="enrollment"),
+    path('assignment/',views.assignment,name="assignment"),
+    path('userassignment/',views.userassignment,name="userassignment"),
 ]

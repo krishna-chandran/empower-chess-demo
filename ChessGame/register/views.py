@@ -15,6 +15,34 @@ from .models import Student
 def index(request):
 	return render(request,"index.html")
 
+def user(request):
+    user_data = [
+        {'id': 1, 'username': 'example_username_1', 'email': 'example1@email.com', 'first_name': 'John', 'last_name': 'Doe'}, 
+        {'id': 2, 'username': 'example_username_2', 'email': 'example2@email.com', 'first_name': 'Jane', 'last_name': 'Smith'}
+    ]
+    return render(request, 'user.html', {'user_data': user_data})
+
+def user_detail(request, user_id):
+    # Fetch user details based on user_id
+    user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+    return render(request, 'usercard.html', {'user_data': user_data})
+
+
+def subscription(request):
+	return render(request,"subscription.html")
+
+def course(request):
+	return render(request,"course.html")
+
+def enrollment(request):
+	return render(request,"enrollment.html")
+
+def assignment(request):
+	return render(request,"assignment.html")
+
+def userassignment(request):
+	return render(request,"userassignment.html")
+
 def forgot_password(request):
 	return render(request,"forgot-password.html")
 
