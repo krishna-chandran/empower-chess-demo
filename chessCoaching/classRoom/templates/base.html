@@ -16,6 +16,29 @@
     <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/sb-admin-2.min.css' %}">
+    <script>
+        window.onload=function(){
+            pageName = document.location.href.split("/")[3]
+            pagesCount = document.getElementsByClassName('nav-item').length
+            for(var i = 0; i < pagesCount; i++){
+                console.log(pageName)
+                navItem=document.getElementsByClassName('nav-item')[i].innerText.trim().toLowerCase()+'s'
+                if(navItem == pageName){
+                    document.getElementsByClassName('nav-item')[i].classList.add("active")
+                }
+                else{
+                    if(pageName == '')
+                    {
+                        document.getElementsByClassName('nav-item')[0].classList.add("active")
+                    }
+                    else{
+                        document.getElementsByClassName('nav-item')[i].classList.remove("active")
+                    }
+                    
+                }
+            }
+        }
+    </script>
 
 
 </head>
@@ -26,15 +49,15 @@
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
                 <div class="sidebar-brand-icon rotate-n-15">
-                    <i class="fas fa-laugh-wink"></i>
+                    <i class="fas fa-chess-knight"></i>
                 </div>
-                <div class="sidebar-brand-text mx-3">Empower Chess Game</div>
+                <div class="sidebar-brand-text mx-3">Empower</div>
             </a>
             <!-- Divider -->
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="{% url 'index' %}">
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
@@ -49,35 +72,17 @@
             </div>
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUser"
-                    aria-expanded="true" aria-controls="collapseUser">
+                <a class="nav-link" href="{% url 'view_users' %}" >
                     <i class="fas fa-user-shield"></i>
                     <span>User</span>
                 </a>
-                <div id="collapseUser" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_users' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_users' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_users' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_users' %}">Delete</a>
-                    </div>
-                </div>
-
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSubscription"
-                    aria-expanded="true" aria-controls="collapseSubscription">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_subscriptions' %}" >
                     <i class="fas fa-user-shield"></i>
                     <span>Subscription</span>
                 </a>
-                <div id="collapseSubscription" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_subscriptions' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_subscriptions' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_subscriptions' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_subscriptions' %}">Delete</a>
-                    </div>
-                </div>
+             
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -87,65 +92,29 @@
             </div>
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCourse"
-                    aria-expanded="true" aria-controls="collapseCourse">
+                <a class="nav-link" href="{% url 'view_courses' %}" >
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Course</span>
                 </a>
-                <div id="collapseCourse" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_courses' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Delete</a>
-                    </div>
-                </div>
-
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseEnrollment"
-                    aria-expanded="true" aria-controls="collapseEnrollment">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_enrollments' %}" >
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Enrollment</span>
                 </a>
-                <div id="collapseEnrollment" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_enrollments' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_enrollments' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_enrollments' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_enrollments' %}">Delete</a>
-                    </div>
-                </div>
-
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAssignment"
-                    aria-expanded="true" aria-controls="collapseAssignment">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_assignments' %}" >
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Assignment</span>
                 </a>
-                <div id="collapseAssignment" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Delete</a>
-                    </div>
-                </div>
-
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUserassignment"
-                    aria-expanded="true" aria-controls="collapseUserassignment">
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_userassignments' %}" >
                     <i class="fas fa-chalkboard-teacher"></i>
                     <span>Userassignment</span>
                 </a>
-                <div id="collapseUserassignment" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_userassignments' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_userassignments' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_userassignments' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_userassignments' %}">Delete</a>
-                    </div>
-                </div>
+               
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">
@@ -155,35 +124,16 @@
             </div>
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseCourseStudent"
-                    aria-expanded="true" aria-controls="collapseCourseStudent">
+                <a class="nav-link" href="{% url 'view_courses' %}" >
                     <i class="fas fa-user-graduate"></i>
                     <span>Course</span>
                 </a>
-                <div id="collapseCourseStudent" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_courses' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_courses' %}">Delete</a>
-                    </div>
-                </div>
 
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseAssignmentStudent"
-                    aria-expanded="true" aria-controls="collapseAssignmentStudent">
+                <a class="nav-link" href="{% url 'view_assignments' %}" >
                     <i class="fas fa-user-graduate"></i>
                     <span>Assignment</span>
                 </a>
-                <div id="collapseAssignmentStudent" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        {% comment %} <h6 class="collapse-header">Custom Components:</h6> {% endcomment %}
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">View</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Add</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Update</a>
-                        <a class="collapse-item" href="{% url 'view_assignments' %}">Delete</a>
-                    </div>
-                </div>
+               
             </li>
             <!-- Divider -->
             <hr class="sidebar-divider">

@@ -27,37 +27,42 @@ class Student(models.Model):
     password                = models.CharField(max_length=255)
 
 class User(models.Model):
+    id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     email = models.EmailField()
     # other user details as needed
 
 class Subscription(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     subscription_start_date = models.DateField()
     subscription_end_date = models.DateField()
     payment_details = models.TextField()
 
 class Course(models.Model):
+    id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=100)
     course_description = models.TextField()
     # other course details
 
 class Enrollment(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     enrollment_date = models.DateField()
 
 class Assignment(models.Model):
+    id = models.AutoField(primary_key=True)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     assignment_name = models.CharField(max_length=100)
     description = models.TextField()
     due_date = models.DateField()
 
 class UserAssignment(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     assignment = models.ForeignKey(Assignment, on_delete=models.CASCADE)
     submission_date = models.DateField()
     grade = models.CharField(max_length=5)
     comments = models.TextField()
-

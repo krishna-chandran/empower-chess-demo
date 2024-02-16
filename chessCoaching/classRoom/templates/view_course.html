@@ -9,29 +9,27 @@
         <div class="col-lg-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">User Details</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">Course Details</h6>
                 </div>
             
                 <div class="card-body">
-                    <p class="card-text">ID: {{ user_data.id }}</p>
-            
-                    <p class="card-text">{{ user_data.first_name }} {{ user_data.last_name }}</p>
-                    <p class="card-text">{{ user_data.username }}</p>
-                    <p class="card-text">{{ user_data.email }}</p>
+                    <p class="card-text">{{ course_data.id }}</p>
+                    <p class="card-text">{{ course_data.course_name }}</p>
+                    <p class="card-text">{{ course_data.course_description }}</p>
                     <div class="my-2"></div>
-                    <a href="/user/add/" class="btn btn-success btn-icon-split">
+                    <a href="/course/add/" class="btn btn-success btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>
                         </span>
                         <span class="text">Add</span>
                     </a>
-                    <a href="/user/{{ user_data.id }}/edit/" class="btn btn-primary btn-icon-split">
+                    <a href="/course/{{ course_data.id }}/edit/" class="btn btn-primary btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-flag"></i>
                         </span>
                         <span class="text">Edit</span>
                     </a>
-                    <a href="/user/{{ user_data.id }}/delete/" class="btn btn-danger btn-icon-split">
+                    <a href="/course/{{ course_data.id }}/delete/" class="btn btn-danger btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-trash"></i>
                         </span>
@@ -39,12 +37,13 @@
                     </a>
                     <div class="my-2"></div>
                 <div class="my-2"></div>
-                    <a href="/users/" class="btn btn-warning btn-icon-split">
+                    <a href="/courses/" class="btn btn-warning btn-icon-split">
                         <!-- <span class="icon text-white-50">
                             <i class="fas"></i>
                         </span> -->
                         <span class="text">Back</span>
                     </a>
+
                     <!-- 
                     <div class="my-2"></div>
                     <a href="#" class="btn btn-secondary btn-icon-split">
@@ -79,36 +78,7 @@
             </div>
         </div>
    <!--- Begin User details -->
-        <div class="col-lg-6">
-                <!--- Begin User Activity log -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Activity Log</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:00 PM</code>
-                        </div>
-                        <p>Logged in</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:04 PM</code>
-                        </div>
-                        <p>Attempted puzzle 1. Solution incorrect. Elapsed time 56s</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:06 PM</code>
-                        </div>
-                        <p>Attempted puzzle 1. Solution correct with hint. Elapsed time 30s</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 6:00 PM</code>
-                        </div>
-                        <p>Logged out</p>
-                        <!-- Circle Buttons (Default) -->
-                       
-                    </div>
-                </div>
-                <!--- Begin User Activity log-->
-
-        </div>
+    
     </div>
     
  

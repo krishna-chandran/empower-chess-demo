@@ -11,17 +11,38 @@
 <div class="col-lg-7">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Edit User: {{ user_data.id }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit Course: {{ course_data.id }}</h6>
         </div>
     
         <div class="card-body">
+
+            <form class="user" method="post">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">     
+                        <input type="text" class="form-control form-control-user" id="course_name" name="course_name" placeholder="Course Name" value="{{ course_data.course_name }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <textarea class="form-control form-control-user" id="course_description" name="course_description" placeholder="Course Description">{{ course_data.course_description }}</textarea>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="/course/{{ course_data.id }}/" class="btn btn-danger btn-user  btn-block">
+                    Cancel
+                </a>
+                
+            </form>
+<!-- 
             <form class="user">
                 <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
-                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" value="{{ user_data.first_name }}">
+                        <input type="text" class="form-control form-control-user" id="exampleFirstName" placeholder="First Name" value="{{ course_data.first_name }}">
                     </div>
                     <div class="col-sm-6">
-                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" value="{{ user_data.last_name }}">
+                        <input type="text" class="form-control form-control-user" id="exampleLastName" placeholder="Last Name" value="{{ course_data.last_name }}">
                     </div>
                 </div>
                 <div class="form-group">
@@ -42,7 +63,7 @@
                 <a href="/user/{{ user_data.id }}/" class="btn btn-google btn-user btn-block">
                     Cancel
                 </a>
-            </form>
+            </form> -->
         </div>
     </div>
 </div>

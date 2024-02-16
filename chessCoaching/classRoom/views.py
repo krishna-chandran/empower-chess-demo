@@ -3,7 +3,8 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User
+from .models import User, Course
+from django.urls import reverse
 
 # Create your views here.
 
@@ -26,20 +27,67 @@ def view_user(request, user_id):
     user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
     return render(request, 'view_user.html', {'user_data': user_data})
 
+def add_user(request):
+    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+    return render(request, 'add_user.html')
+
 def edit_user(request, user_id):
     user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
     return render(request, 'edit_user.html', {'user_data': user_data})
 
-def add_user(request):
-    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'add_user.html')
+def delete_user(request, user_id):
+	user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+	return render(request,'delete_user.html',{'user_data': user_data} )
 
 
 def view_subscriptions(request):
 	return render(request,"view_subscriptions.html")
 
+
 def view_courses(request):
-	return render(request,"view_courses.html")
+	# course_data = [
+    #     {'id': 1, 'name': 'Mate in One', 'description': 'Mate in one course'}, 
+	# 	{'id': 2, 'name': 'Mate in Two', 'description': 'Mate in two course'}, 
+	# 	{'id': 3, 'name': 'Mate in Three', 'description': 'Mate in three course'}, 
+	# 	{'id': 4, 'name': 'Forced Checkmate', 'description': 'Forced checkmate patterns course'}, 
+    # ]
+	course_data = Course.objects.all()
+	print(course_data)
+	return render(request,"view_courses.html",{'course_data': course_data} )
+
+def view_course(request, course_id):
+    course_data = get_object_or_404(Course, id=course_id)
+    return render(request, 'view_course.html', {'course_data': course_data})
+
+def add_course(request):
+    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+	if request.method == 'POST':
+		course_name = request.POST.get('course_name')
+		course_description = request.POST.get('course_description')
+		course = Course.objects.create(course_name=course_name, course_description=course_description)
+		return redirect(reverse('view_course', kwargs={'course_id': course.id}))
+	return render(request, 'add_course.html')
+
+def edit_course(request, course_id):
+	course_data = get_object_or_404(Course, id=course_id)
+	if request.method == 'POST':
+		course_data.course_name = request.POST.get('course_name')
+		course_data.course_description = request.POST.get('course_description')
+		course_data.save()
+		return redirect(reverse('view_course', kwargs={'course_id': course_id}))
+	return render(request, 'edit_course.html', {'course_data': course_data})
+
+
+
+def delete_course(request, course_id):
+	course_data = get_object_or_404(Course, id=course_id)
+	if request.method == 'POST':
+		course_data.delete()
+		return redirect('view_courses')
+	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
+	return render(request,'delete_course.html',{'course_data': course_data} )
+
+
 
 def view_enrollments(request):
 	return render(request,"view_enrollments.html")
@@ -49,6 +97,9 @@ def view_assignments(request):
 
 def view_userassignments(request):
 	return render(request,"view_userassignments.html")
+
+
+
 
 def forgot_password(request): 
 	return render(request,"forgot-password.html")
