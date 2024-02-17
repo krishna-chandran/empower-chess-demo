@@ -2,9 +2,10 @@ from django.urls import path
 from .views import reg_success,home,logout,index,register,login,forgot_password,error_404
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course
-from .views import view_subscriptions,view_courses,view_userassignments
+from .views import view_subscriptions,view_courses
 from .views import view_assignments, view_assignment, add_assignment, edit_assignment, delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
+from .views import view_userassignments,view_userassignment
 
 
 urlpatterns = [
@@ -45,4 +46,5 @@ urlpatterns = [
     path('assignment/<int:assignment_id>/delete/', delete_assignment, name='delete_assignment'),
 
     path('userassignments/',view_userassignments,name="view_userassignments"),
+    path('userassignments/<int:user_assignment_id>/', view_userassignment, name='view_userassignment'),
 ]

@@ -1,8 +1,43 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>User Assignment Page</h1>
-    <p>This is the user assignment page content.</p>
-</div>
+    {% load static %}
+
+    <h1 class="h3 mb-2 text-gray-800">User Assignments</h1>
+    <p class="mb-4">This page displays assignments submitted by users</p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">User Assignments</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>User Assignment ID</th>
+                            <th>Student Name</th>
+                            <th>Assignment Name</th>
+                            <th>Submission Date</th>
+                            <th>Grade</th>
+                            <th>Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user_assignment in user_assignments %}
+                            <tr>
+                                <td><a href="{% url 'view_userassignment' user_assignment.id %}">{{ user_assignment.id }}</a></td>
+                                <td>{{ user_assignment.user.username }}</td>
+                                <td>{{ user_assignment.assignment.assignment_name }}</td>
+                                <td>{{ user_assignment.submission_date }}</td>
+                                <td>{{ user_assignment.grade }}</td>
+                                <td>{{ user_assignment.comments }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 {% endblock %}

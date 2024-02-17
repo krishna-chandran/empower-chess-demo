@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment
+from .models import User, Course,Assignment,Enrollment,UserAssignment
 from django.urls import reverse
 from django.http import HttpResponseBadRequest
 # from .forms import EnrollmentForm
@@ -204,7 +204,13 @@ def delete_assignment(request, assignment_id):
 
 
 def view_userassignments(request):
-	return render(request,"view_userassignments.html")
+    user_assignments = UserAssignment.objects.all()
+    return render(request, 'view_userassignments.html', {'user_assignments': user_assignments})
+
+
+def view_userassignment(request, user_assignment_id):
+    user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
+    return render(request, 'view_userassignment.html', {'user_assignment': user_assignment})
 
 
 
