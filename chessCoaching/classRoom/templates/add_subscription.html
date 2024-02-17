@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Add Subscription</h6>
+        </div>
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="user">User:</label>
+                        <select name="user" id="user" class="form-control">
+                            {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                {% comment %} <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="course">Course:</label>
+                        <select name="course" id="course" class="form-control">
+                            {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div> {% endcomment %}
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="subscription_start_date">Subscription Start Date:</label>
+                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="subscription_end_date">Subscription End Date:</label>
+                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="payment_details">Payment Details:</label>
+                        <input type="text" class="form-control" id="payment_details" name="payment_details">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                <a href="{% url 'view_subscriptions' %}" class="btn btn-google btn-user btn-block">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
