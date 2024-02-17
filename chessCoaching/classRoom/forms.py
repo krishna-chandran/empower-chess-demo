@@ -10,6 +10,7 @@ from django.core.mail import send_mail
 from django.contrib.auth.hashers import make_password
 import re
 from django.db import transaction
+# from .models import Assignment
 
 
 class RegisterForm(forms.ModelForm):
@@ -89,6 +90,14 @@ class LoginForm(forms.Form):
 
         else:
             raise ValidationError(" The username is not valid") 
+        
+# class AssignmentForm(forms.ModelForm):
+#     class Meta:
+#         model = Assignment
+#         fields = ['course', 'assignment_name', 'description', 'due_date']
+
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
    
 
 

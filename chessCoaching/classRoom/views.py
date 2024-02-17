@@ -3,8 +3,9 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course
+from .models import User, Course,Assignment
 from django.urls import reverse
+# from .forms import AssignmentForm
 
 # Create your views here.
 
@@ -92,8 +93,45 @@ def delete_course(request, course_id):
 def view_enrollments(request):
 	return render(request,"view_enrollments.html")
 
+
+
+
 def view_assignments(request):
-	return render(request,"view_assignments.html")
+    assignments = Assignment.objects.all()
+    return render(request, 'view_assignments.html', {'assignments': assignments})
+
+def view_assignment(request, assignment_id):
+    assignment = get_object_or_404(Assignment, pk=assignment_id)
+    return render(request, 'view_assignment.html', {'assignment': assignment})
+
+# def add_assignment(request):
+#     if request.method == 'POST':
+#         form = AssignmentForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('view_assignments')
+#     else:
+#         form = AssignmentForm()
+#     return render(request, 'add_assignment.html', {'form': form})
+
+# def edit_assignment(request, assignment_id):
+#     assignment = get_object_or_404(Assignment, pk=assignment_id)
+#     if request.method == 'POST':
+#         form = AssignmentForm(request.POST, instance=assignment)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('view_assignments')
+#     else:
+#         form = AssignmentForm(instance=assignment)
+#     return render(request, 'edit_assignment.html', {'form': form, 'assignment': assignment})
+
+# def delete_assignment(request, assignment_id):
+#     assignment = get_object_or_404(Assignment, pk=assignment_id)
+#     if request.method == 'POST':
+#         assignment.delete()
+#         return redirect('view_assignments')
+#     return render(request, 'delete_assignment.html', {'assignment': assignment})
+
 
 def view_userassignments(request):
 	return render(request,"view_userassignments.html")
