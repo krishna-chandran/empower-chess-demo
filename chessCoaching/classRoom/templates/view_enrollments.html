@@ -1,8 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Enrollment Page</h1>
-    <p>This is the enrollment page content.</p>
+
+<h1 class="h3 mb-2 text-gray-800">Enrollment List</h1>
+<p class="mb-4">List of enrollments in the system</p>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Enrollments</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Enrollment ID</th>
+                        <th>User</th>
+                        <th>Course</th>
+                        <th>Enrollment Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for enrollment in enrollments %}
+                        <tr>
+                            <td><a href="/enrollment/{{ enrollment.id }}/">{{ enrollment.id }}</a></td>
+                            <td>{{ enrollment.user.username }}</td>
+                            <td>{{ enrollment.course.course_name }}</td>
+                            <td>{{ enrollment.enrollment_date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+
 {% endblock %}
