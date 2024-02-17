@@ -2,7 +2,7 @@ from django.urls import path
 from .views import reg_success,home,logout,index,register,login,forgot_password,error_404
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
-from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription
+from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
 from .views import view_assignments, view_assignment, add_assignment, edit_assignment, delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
@@ -28,7 +28,8 @@ urlpatterns = [
     path('subscriptions/',view_subscriptions,name="view_subscriptions"),
     path('subscription/<int:subscription_id>/', view_subscription, name='view_subscription'),
     path('subscription/add/', add_subscription, name='add_subscription'),
-    path('subscription/<int:subscription_id>/edit/', edit_subscription, name='edit_subscription'),  # URL pattern for editing subscriptions
+    path('subscription/<int:subscription_id>/edit/', edit_subscription, name='edit_subscription'),
+    path('subscription/<int:subscription_id>/delete/', delete_subscription, name='delete_subscription'),
 
     path('courses/',view_courses,name="view_courses"),
     path('course/<int:course_id>/',view_course, name="view_course"),

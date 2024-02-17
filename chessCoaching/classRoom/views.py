@@ -99,6 +99,13 @@ def edit_subscription(request, subscription_id):
 
     return render(request, 'edit_subscription.html', {'subscription': subscription, 'users': users})
 
+def delete_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, pk=subscription_id)
+    if request.method == 'POST':
+        subscription.delete()
+        return redirect('view_subscriptions') 
+    return render(request, 'delete_subscription.html', {'subscription': subscription})
+
 
 def view_courses(request):
 	# course_data = [
