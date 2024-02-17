@@ -75,6 +75,30 @@ def add_subscription(request):
 
     return render(request, 'add_subscription.html', {'users': users})
 
+def edit_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, id=subscription_id)
+    users = User.objects.all()
+    # courses = Course.objects.all()
+
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        # course_id = request.POST.get('course')
+        subscription_start_date = request.POST.get('subscription_start_date')
+        subscription_end_date = request.POST.get('subscription_end_date')
+        payment_details = request.POST.get('payment_details')
+
+        # Update subscription data
+        subscription.user_id = user_id
+        # subscription.course_id = course_id
+        subscription.subscription_start_date = subscription_start_date
+        subscription.subscription_end_date = subscription_end_date
+        subscription.payment_details = payment_details
+        subscription.save()
+
+        return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription_id}))
+
+    return render(request, 'edit_subscription.html', {'subscription': subscription, 'users': users})
+
 
 def view_courses(request):
 	# course_data = [
