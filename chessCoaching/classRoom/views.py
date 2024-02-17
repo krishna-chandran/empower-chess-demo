@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import User, Course,Assignment,Enrollment
 from django.urls import reverse
+# from .forms import EnrollmentForm
 # from .forms import AssignmentForm
 
 # Create your views here.
@@ -97,6 +98,19 @@ def view_enrollments(request):
 def view_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
     return render(request, 'view_enrollment.html', {'enrollment': enrollment})
+
+def add_enrollment(request):
+    courses = Course.objects.all()
+    users = User.objects.all()
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        course_id = request.POST.get('course')
+        enrollment_date = request.POST.get('enrollment_date')
+        
+        enrollment = Enrollment.objects.create(user_id=user_id, course_id=course_id, enrollment_date=enrollment_date)
+        
+        return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment.id}))
+    return render(request, 'add_enrollment.html', {'courses': courses, 'users': users})
 
 
 def view_assignments(request):

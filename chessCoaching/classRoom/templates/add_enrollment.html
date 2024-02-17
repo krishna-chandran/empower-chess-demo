@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Add Enrollment</h6>
+            </div>
+            <div class="card-body">
+                <form class="user" method="post">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="user">User:</label>
+                            <select name="user" id="user" class="form-control">
+                                {% for user in users %}
+                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="course">Course:</label>
+                            <select name="course" id="course" class="form-control">
+                                {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="enrollment_date">Enrollment Date:</label>
+                            <input type="date" class="form-control" id="enrollment_date" name="enrollment_date">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                    <a href="/enrollments/" class="btn btn-google btn-user btn-block">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
