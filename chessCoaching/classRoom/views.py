@@ -137,6 +137,15 @@ def edit_enrollment(request, enrollment_id):
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment_id}))
     
     return render(request, 'edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
+
+def delete_enrollment(request, enrollment_id):
+    enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
+    if request.method == 'POST':
+        enrollment_data.delete()
+        return redirect('view_enrollments')
+    
+    return render(request, 'delete_enrollment.html', {'enrollment_data': enrollment_data})
+
 def view_assignments(request):
     assignments = Assignment.objects.all()
     return render(request, 'view_assignments.html', {'assignments': assignments})
