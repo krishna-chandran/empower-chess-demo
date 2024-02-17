@@ -154,6 +154,23 @@ def view_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
     return render(request, 'view_assignment.html', {'assignment': assignment})
 
+def add_assignment(request):
+    courses = Course.objects.all()
+    if request.method == 'POST':
+        course_id = request.POST.get('course')
+        assignment_name = request.POST.get('assignment_name')
+        description = request.POST.get('description')
+        due_date = request.POST.get('due_date')
+
+        assignment = Assignment.objects.create(
+            course_id=course_id,
+            assignment_name=assignment_name,
+            description=description,
+            due_date=due_date
+        )
+        return redirect(reverse('view_assignment', kwargs={'assignment_id': assignment.id}))
+    return render(request, 'add_assignment.html', {'courses': courses})
+
 # def add_assignment(request):
 #     if request.method == 'POST':
 #         form = AssignmentForm(request.POST)
