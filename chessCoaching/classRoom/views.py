@@ -249,6 +249,13 @@ def edit_userassignment(request, user_assignment_id):
     
     return render(request, 'edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 
+def delete_userassignment(request, user_assignment_id):
+    user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
+    if request.method == 'POST':
+        user_assignment.delete()
+        return redirect('view_userassignments')
+    return render(request, 'delete_userassignment.html', {'user_assignment': user_assignment})
+
 def forgot_password(request): 
 	return render(request,"forgot-password.html")
 
