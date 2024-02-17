@@ -212,6 +212,25 @@ def view_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     return render(request, 'view_userassignment.html', {'user_assignment': user_assignment})
 
+def add_userassignment(request):
+    assignments = Assignment.objects.all()
+    users = User.objects.all()
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        assignment_id = request.POST.get('assignment')
+        submission_date = request.POST.get('submission_date')
+        grade = request.POST.get('grade')
+        comments = request.POST.get('comments')
+
+        user_assignment = UserAssignment.objects.create(
+            user_id=user_id,
+            assignment_id=assignment_id,
+            submission_date=submission_date,
+            grade=grade,
+            comments=comments
+        )
+        return redirect('view_userassignments')
+    return render(request, 'add_userassignment.html', {'assignments': assignments, 'users': users})
 
 
 
