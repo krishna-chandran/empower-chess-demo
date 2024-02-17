@@ -329,22 +329,22 @@ def tables(request):
 	return render(request,"tables.html")
 
 def register(request):
-	context ={}
+    context ={}
 
-	# create object of form
-	print("request",request)
-	
-	form = RegisterForm(request.POST or None)
-	
-	# # check if form data is valid
-	if form.is_valid():
-		# save the form data to model
-		form.save()
-		print(request.POST["password"]," ",form["password"])
-		return redirect("registerSuccess",permanent=True)
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
 
-	context['form']= form
-	return render(request, "register.html", context)
+        if form.is_valid():
+
+            form.save()
+            # print(request.POST["password"]," ",form["password"])
+            # return redirect("registerSuccess",permanent=True)
+            return render(request, "register_success.html")
+    else:
+        form = RegisterForm()
+
+    context['form']= form
+    return render(request, "register.html")
 
 def reg_success(request):
 	return render(request,"registerSuccess.html")
