@@ -4,7 +4,7 @@
 <div class="col-lg-7">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Add Assignment</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit Assignment: {{ assignment.id }}</h6>
         </div>
         <div class="card-body">
             <form class="user" method="post">
@@ -14,7 +14,7 @@
                         <label for="course">Course:</label>
                         <select class="form-control" id="course" name="course">
                             {% for course in courses %}
-                                <option value="{{ course.id }}">{{ course.course_name }}</option>
+                                <option value="{{ course.id }}" {% if course.id == assignment.course_id %} selected {% endif %}>{{ course.course_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -22,23 +22,23 @@
                 <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <label for="assignment_name">Assignment Name:</label>
-                        <input type="text" class="form-control" id="assignment_name" name="assignment_name" placeholder="Assignment Name">
+                        <input type="text" class="form-control" id="assignment_name" name="assignment_name" value="{{ assignment.assignment_name }}">
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="description">Description:</label>
-                        <textarea class="form-control" id="description" name="description" placeholder="Description"></textarea>
+                        <textarea class="form-control" id="description" name="description">{{ assignment.description }}</textarea>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="due_date">Due Date:</label>
-                        <input type="date" class="form-control" id="due_date" name="due_date">
+                        <input type="date" class="form-control" id="due_date" name="due_date" value="{{ assignment.due_date|date:'Y-m-d' }}">
                     </div>
-                </div>
-                <button type="submit" class="btn btn-primary btn-user btn-block">Add Assignment</button>
-                <a href="/assignments/" class="btn btn-google btn-user btn-block">Cancel</a>
+                </div>                
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="{% url 'view_assignment' assignment.id %}" class="btn btn-danger btn-user btn-block">Cancel</a>
             </form>
         </div>
     </div>

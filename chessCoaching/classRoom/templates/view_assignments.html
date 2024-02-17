@@ -15,6 +15,7 @@
                 <thead>
                     <tr>
                         <th>Assignment ID</th>
+                        <th>Course Name</th>
                         <th>Assignment Name</th>
                         <th>Description</th>
                         <th>Due Date</th>
@@ -24,6 +25,7 @@
                     {% for assignment in assignments %}
                         <tr>
                             <td><a href="{% url 'view_assignment' assignment.id %}">{{ assignment.id }}</a></td>
+                            <td>{{ assignment.course.course_name }}</td>
                             <td>{{ assignment.assignment_name }}</td>
                             <td>{{ assignment.description }}</td>
                             <td>{{ assignment.due_date }}</td>

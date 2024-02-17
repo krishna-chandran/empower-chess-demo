@@ -3,8 +3,8 @@ from .views import reg_success,home,logout,index,register,login,forgot_password,
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course
 from .views import view_subscriptions,view_courses,view_userassignments
-from .views import view_assignments, view_assignment, add_assignment
-# , edit_assignment, delete_assignment
+from .views import view_assignments, view_assignment, add_assignment, edit_assignment
+# , delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 
 
@@ -42,7 +42,7 @@ urlpatterns = [
     path('assignments/', view_assignments, name='view_assignments'),
     path('assignment/<int:assignment_id>/', view_assignment, name='view_assignment'),
     path('assignment/add/', add_assignment, name='add_assignment'),
-    # path('assignment/<int:assignment_id>/edit/', edit_assignment, name='edit_assignment'),
+    path('assignment/<int:assignment_id>/edit/', edit_assignment, name='edit_assignment'),
     # path('assignment/<int:assignment_id>/delete/', delete_assignment, name='delete_assignment'),
 
     path('userassignments/',view_userassignments,name="view_userassignments"),
