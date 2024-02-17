@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import User, Course,Assignment,Enrollment
 from django.urls import reverse
+from django.http import HttpResponseBadRequest
 # from .forms import EnrollmentForm
 # from .forms import AssignmentForm
 
@@ -112,7 +113,30 @@ def add_enrollment(request):
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment.id}))
     return render(request, 'add_enrollment.html', {'courses': courses, 'users': users})
 
+def edit_enrollment(request, enrollment_id):
+    enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
+    courses = Course.objects.all()
+    users = User.objects.all()
+    
+    if request.method == 'POST':
+        user_id = request.POST.get('user')
+        course_id = request.POST.get('course')
+        enrollment_date = request.POST.get('enrollment_date')
 
+        # Validate that course_id is not None or empty
+        if not course_id:
+            # Return a bad request response with an error message
+            return HttpResponseBadRequest("Course is required.")
+
+        # Update enrollment data
+        enrollment_data.user_id = user_id
+        enrollment_data.course_id = course_id
+        enrollment_data.enrollment_date = enrollment_date
+        enrollment_data.save()
+        
+        return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment_id}))
+    
+    return render(request, 'edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
 def view_assignments(request):
     assignments = Assignment.objects.all()
     return render(request, 'view_assignments.html', {'assignments': assignments})

@@ -5,7 +5,7 @@ from .views import view_users,view_course, edit_course, add_course, delete_cours
 from .views import view_subscriptions,view_courses,view_userassignments
 from .views import view_assignments, view_assignment
 # , add_assignment, edit_assignment, delete_assignment
-from .views import view_enrollments, view_enrollment, add_enrollment
+from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment
 
 
 urlpatterns = [
@@ -36,6 +36,7 @@ urlpatterns = [
     path('enrollments/',view_enrollments,name="view_enrollments"),
     path('enrollment/<int:enrollment_id>/',view_enrollment,name="view_enrollment"),
     path('enrollment/add/', add_enrollment, name="add_enrollment"),
+    path('enrollment/<int:enrollment_id>/edit/',edit_enrollment, name="edit_enrollment"),
 
     path('assignments/', view_assignments, name='view_assignments'),
     path('assignment/<int:assignment_id>/', view_assignment, name='view_assignment'),
