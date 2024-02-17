@@ -1,0 +1,49 @@
+<!-- view_subscription.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Subscription Details</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text">Subscription ID: {{ subscription.id }}</p>
+                <p class="card-text">User: {{ subscription.user.username }}</p>
+                <p class="card-text">Start Date: {{ subscription.subscription_start_date }}</p>
+                <p class="card-text">End Date: {{ subscription.subscription_end_date }}</p>
+                <p class="card-text">Payment Details: {{ subscription.payment_details }}</p>
+                <!-- Add more details as needed -->
+                <div class="my-2">
+                    <a href="/userassignment/add/" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="text">Add</span>
+                    </a>
+                    <a href="/userassignment/{{ user_assignment.id }}/edit/" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-flag"></i>
+                        </span>
+                        <span class="text">Edit</span>
+                    </a>
+                    <a href="/userassignment/{{ user_assignment.id }}/delete/" class="btn btn-danger btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span class="text">Delete</span>
+                    </a>
+                </div>
+                <div class="my-2">
+                    <a href="/userassignments/" class="btn btn-warning btn-icon-split">
+                        <span class="text">Back</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

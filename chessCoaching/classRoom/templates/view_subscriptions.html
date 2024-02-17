@@ -1,8 +1,40 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container">
-    <h1>Subscription Details</h1>
-    <p>This is the subscription details page content.</p>
+
+<h1 class="h3 mb-2 text-gray-800">Subscription List</h1>
+<p class="mb-4">List of subscriptions</p>
+
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Subscriptions</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Subscription ID</th>
+                        <th>User</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Payment Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for subscription in subscriptions %}
+                        <tr>
+                            <td><a href="{% url 'view_subscription' subscription.id %}">{{ subscription.id }}</a></td>
+                            
+                            <td>{{ subscription.user.username }}</td>
+                            <td>{{ subscription.subscription_start_date }}</td>
+                            <td>{{ subscription.subscription_end_date }}</td>
+                            <td>{{ subscription.payment_details }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription
 from django.urls import reverse
 from django.http import HttpResponseBadRequest
 # from .forms import EnrollmentForm
@@ -44,7 +44,12 @@ def delete_user(request, user_id):
 
 
 def view_subscriptions(request):
-	return render(request,"view_subscriptions.html")
+    subscriptions = Subscription.objects.all()
+    return render(request, 'view_subscriptions.html', {'subscriptions': subscriptions})
+
+def view_subscription(request, subscription_id):
+    subscription = get_object_or_404(Subscription, pk=subscription_id)
+    return render(request, 'view_subscription.html', {'subscription': subscription})
 
 
 def view_courses(request):
