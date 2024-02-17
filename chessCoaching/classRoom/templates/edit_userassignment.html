@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit User Assignment</h6>
+        </div>
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="user">User:</label>
+                        <select name="user" id="user" class="form-control">
+                            {% for user in users %}
+                            <option value="{{ user.id }}" {% if user.id == user_assignment.user.id %} selected {% endif %}>{{ user.username }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="assignment">Assignment:</label>
+                        <select name="assignment" id="assignment" class="form-control">
+                            {% for assignment in assignments %}
+                            <option value="{{ assignment.id }}" {% if assignment.id == user_assignment.assignment.id %} selected {% endif %}>{{ assignment.assignment_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="submission_date">Submission Date:</label>
+                        <input type="date" class="form-control" id="submission_date" name="submission_date" value="{{ user_assignment.submission_date|date:'Y-m-d'}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="grade">Grade:</label>
+                        <input type="text" class="form-control" id="grade" name="grade" value="{{ user_assignment.grade }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="comments">Comments:</label>
+                        <textarea class="form-control" id="comments" name="comments">{{ user_assignment.comments }}</textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="{% url 'view_userassignment' user_assignment.id %}" class="btn btn-danger btn-user btn-block">Cancel</a>
+
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -232,7 +232,22 @@ def add_userassignment(request):
         return redirect('view_userassignments')
     return render(request, 'add_userassignment.html', {'assignments': assignments, 'users': users})
 
-
+def edit_userassignment(request, user_assignment_id):
+    user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
+    assignments = Assignment.objects.all()
+    users = User.objects.all()
+    
+    if request.method == 'POST':
+        user_assignment.user_id = request.POST.get('user')
+        user_assignment.assignment_id = request.POST.get('assignment')
+        user_assignment.submission_date = request.POST.get('submission_date')
+        user_assignment.grade = request.POST.get('grade')
+        user_assignment.comments = request.POST.get('comments')
+        user_assignment.save()
+        
+        return redirect('view_userassignments')
+    
+    return render(request, 'edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 
 def forgot_password(request): 
 	return render(request,"forgot-password.html")
