@@ -193,33 +193,14 @@ def edit_assignment(request, assignment_id):
 
     return render(request, 'edit_assignment.html', {'assignment': assignment, 'courses': courses})
 
-# def add_assignment(request):
-#     if request.method == 'POST':
-#         form = AssignmentForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('view_assignments')
-#     else:
-#         form = AssignmentForm()
-#     return render(request, 'add_assignment.html', {'form': form})
-
-# def edit_assignment(request, assignment_id):
-#     assignment = get_object_or_404(Assignment, pk=assignment_id)
-#     if request.method == 'POST':
-#         form = AssignmentForm(request.POST, instance=assignment)
-#         if form.is_valid():
-#             form.save()
-#             return redirect('view_assignments')
-#     else:
-#         form = AssignmentForm(instance=assignment)
-#     return render(request, 'edit_assignment.html', {'form': form, 'assignment': assignment})
-
-# def delete_assignment(request, assignment_id):
-#     assignment = get_object_or_404(Assignment, pk=assignment_id)
-#     if request.method == 'POST':
-#         assignment.delete()
-#         return redirect('view_assignments')
-#     return render(request, 'delete_assignment.html', {'assignment': assignment})
+def delete_assignment(request, assignment_id):
+    assignment = get_object_or_404(Assignment, id=assignment_id)
+    
+    if request.method == 'POST':
+        assignment.delete()
+        return redirect('view_assignments')  # Redirect to the assignments list view
+        
+    return render(request, 'delete_assignment.html', {'assignment': assignment})
 
 
 def view_userassignments(request):
