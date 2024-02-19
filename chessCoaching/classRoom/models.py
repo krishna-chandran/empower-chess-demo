@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import datetime
+from django.contrib.auth.models import User as AuthUser
 
 # Create your models here.
 def no_future(value):
@@ -27,11 +28,16 @@ class Student(models.Model):
     password                = models.CharField(max_length=255)
 
 class User(models.Model):
-    id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=50)
-    password = models.CharField(max_length=50)
-    email = models.EmailField()
-    # other user details as needed
+    TEACHER = 'teacher'
+    STUDENT = 'student'
+    ROLE_CHOICES = [
+        (TEACHER, 'Teacher'),
+        (STUDENT, 'Student'),
+    ]
+    user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
+    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
+
+
 
 class Subscription(models.Model):
     id = models.AutoField(primary_key=True)

@@ -16,14 +16,16 @@
                             <th>ID</th>
                             <th>Username</th>
                             <th>Email</th>
+                            <th>Role</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for user in users %}
                             <tr>
-                                <td><a href="{% url 'view_user' user.id %}">{{ user.id }}</a></td>
-                                <td>{{ user.username }}</td>
-                                <td>{{ user.email }}</td>
+                                <td><a href="{% url 'view_user' user.user_id %}">{{ user.user_id }}</a></td>
+                                <td>{{ user.user.username }}</td>
+                                <td>{{ user.user.email }}</td>
+                                <td>{{ user.role }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

@@ -8,6 +8,9 @@ from django.urls import reverse
 from django.http import HttpResponseBadRequest
 from .forms import RegisterForm,LoginForm
 from .models import Student
+from django.contrib.auth.models import User as AuthUser
+from django.db import IntegrityError
+
 
 
 def index(request):
@@ -24,35 +27,44 @@ def view_user(request, user_id):
 def add_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
-        password = request.POST.get('password')
         email = request.POST.get('email')
+        role = request.POST.get('role')
 
-        user = User.objects.create(
-            username=username,
-            password=password,
-            email=email
-        )
+        if AuthUser.objects.filter(username=username).exists():
+            return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
 
+        auth_user = AuthUser.objects.create_user(username=username, email=email)
+        user = User.objects.create(user=auth_user, role=role)
+        
         return redirect('view_users')
+
     return render(request, 'users/add_user.html')
+
 
 def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
-
+    
     if request.method == 'POST':
-        user.username = request.POST.get('username')
-        user.password = request.POST.get('password')
-        user.email = request.POST.get('email')
+        user.user.username = request.POST.get('username')
+        user.user.email = request.POST.get('email')
+        user.role = request.POST.get('role')
+        
+        user.user.save()
         user.save()
-        return redirect('view_user', user_id=user.id)
-
+        
+        return redirect('view_user', user_id=user_id)
+    
     return render(request, 'users/edit_user.html', {'user': user})
 
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
+    
     if request.method == 'POST':
+        user.user.delete()
         user.delete()
+        
         return redirect('view_users')
+    
     return render(request, 'users/delete_user.html', {'user': user})
 
 
