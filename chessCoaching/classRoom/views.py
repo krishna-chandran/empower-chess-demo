@@ -22,7 +22,18 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 def add_user(request):
-    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        email = request.POST.get('email')
+
+        user = User.objects.create(
+            username=username,
+            password=password,
+            email=email
+        )
+
+        return redirect('view_users')
     return render(request, 'users/add_user.html')
 
 def edit_user(request, user_id):
