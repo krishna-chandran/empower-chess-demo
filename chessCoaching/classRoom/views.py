@@ -37,8 +37,16 @@ def add_user(request):
     return render(request, 'users/add_user.html')
 
 def edit_user(request, user_id):
-    user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'users/edit_user.html', {'user_data': user_data})
+    user = get_object_or_404(User, id=user_id)
+
+    if request.method == 'POST':
+        user.username = request.POST.get('username')
+        user.password = request.POST.get('password')
+        user.email = request.POST.get('email')
+        user.save()
+        return redirect('view_user', user_id=user.id)
+
+    return render(request, 'users/edit_user.html', {'user': user})
 
 # def delete_user(request, user_id):
 # 	user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
