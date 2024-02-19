@@ -2,117 +2,67 @@
 
 {% block content %}
 
-
-
-    <div class="row">
-    <!--- Begin User details -->
-        <div class="col-lg-6">
-            <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="m-0 font-weight-bold text-primary">User Details</h6>
-                </div>
-            
-                <div class="card-body">
-                    <p class="card-text">ID: {{ user_data.id }}</p>
-            
-                    <p class="card-text">{{ user_data.first_name }} {{ user_data.last_name }}</p>
-                    <p class="card-text">{{ user_data.username }}</p>
-                    <p class="card-text">{{ user_data.email }}</p>
-                    <div class="my-2"></div>
-                    <a href="/user/add/" class="btn btn-success btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-check"></i>
-                        </span>
-                        <span class="text">Add</span>
-                    </a>
-                    <a href="/user/{{ user_data.id }}/edit/" class="btn btn-primary btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-flag"></i>
-                        </span>
-                        <span class="text">Edit</span>
-                    </a>
-                    <a href="/user/{{ user_data.id }}/delete/" class="btn btn-danger btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-trash"></i>
-                        </span>
-                        <span class="text">Delete</span>
-                    </a>
-                    <div class="my-2"></div>
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User Details</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text">User ID: {{ user.id }}</p>
+                <p class="card-text">Username: {{ user.username }}</p>
+                <p class="card-text">Email: {{ user.email }}</p>
                 <div class="my-2"></div>
-                    <a href="/users/" class="btn btn-warning btn-icon-split">
-                        <!-- <span class="icon text-white-50">
-                            <i class="fas"></i>
-                        </span> -->
-                        <span class="text">Back</span>
-                    </a>
-                    <!-- 
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-secondary btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span class="text">Split Button Secondary</span>
-                    </a>
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-light btn-icon-split">
-                        <span class="icon text-gray-600">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span class="text">Split Button Light</span>
-                    </a>
-                    <div class="mb-4"></div>
-                    <p>Also works with small and large button classes!</p>
-                    <a href="#" class="btn btn-primary btn-icon-split btn-sm">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-flag"></i>
-                        </span>
-                        <span class="text">Split Button Small</span>
-                    </a>
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-primary btn-icon-split btn-lg">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-flag"></i>
-                        </span>
-                        <span class="text">Split Button Large</span>
-                    </a> -->
-                </div>
+                <a href="/user/add/" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Add</span>
+                </a>
+                <a href="/user/{{ user.id }}/edit/" class="btn btn-primary btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-flag"></i>
+                    </span>
+                    <span class="text">Edit</span>
+                </a>
+                <a href="/user/{{ user.id }}/delete/" class="btn btn-danger btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-trash"></i>
+                    </span>
+                    <span class="text">Delete</span>
+                </a>
+                <div class="my-2"></div>
+                <a href="/users/" class="btn btn-warning btn-icon-split">
+                    <span class="text">Back</span>
+                </a>
             </div>
         </div>
-   <!--- Begin User details -->
-        <div class="col-lg-6">
-                <!--- Begin User Activity log -->
-                <div class="card shadow mb-4">
-                    <div class="card-header py-3">
-                        <h6 class="m-0 font-weight-bold text-primary">Activity Log</h6>
-                    </div>
-                    <div class="card-body">
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:00 PM</code>
-                        </div>
-                        <p>Logged in</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:04 PM</code>
-                        </div>
-                        <p>Attempted puzzle 1. Solution incorrect. Elapsed time 56s</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 4:06 PM</code>
-                        </div>
-                        <p>Attempted puzzle 1. Solution correct with hint. Elapsed time 30s</p>
-                        <div class="mb-2">
-                            <code>Jan 1 2024 6:00 PM</code>
-                        </div>
-                        <p>Logged out</p>
-                        <!-- Circle Buttons (Default) -->
-                       
-                    </div>
-                </div>
-                <!--- Begin User Activity log-->
-
-        </div>
     </div>
-    
- 
-
-
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Activity Log</h6>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <code>Jan 1 2024 4:00 PM</code>
+                </div>
+                <p>Logged in</p>
+                <div class="mb-2">
+                    <code>Jan 1 2024 4:04 PM</code>
+                </div>
+                <p>Attempted puzzle 1. Solution incorrect. Elapsed time 56s</p>
+                <div class="mb-2">
+                    <code>Jan 1 2024 4:06 PM</code>
+                </div>
+                <p>Attempted puzzle 1. Solution correct with hint. Elapsed time 30s</p>
+                <div class="mb-2">
+                    <code>Jan 1 2024 6:00 PM</code>
+                </div>
+                <p>Logged out</p>               
+            </div>
+        </div>
 </div>
-{% endblock %} 
+</div>
+
+{% endblock %}

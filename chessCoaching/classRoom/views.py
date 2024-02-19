@@ -14,15 +14,12 @@ def index(request):
 	return render(request,"common/index.html")
 
 def view_users(request):
-    user_data = [
-        {'id': 1, 'username': 'shiv', 'email': 'sivabalanP@email.com', 'first_name': 'siva', 'last_name': 'balan'}, 
-        {'id': 2, 'username': 'kumar', 'email': 'kumar@email.com', 'first_name': 'kumara', 'last_name': 'guru'}
-    ]
-    return render(request, 'users/view_users.html', {'user_data': user_data})
+    users = User.objects.all()
+    return render(request, 'users/view_users.html', {'users': users})
 
 def view_user(request, user_id):
-    user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'users/view_user.html', {'user_data': user_data})
+    user = get_object_or_404(User, id=user_id)
+    return render(request, 'users/view_user.html', {'user': user})
 
 def add_user(request):
     # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
