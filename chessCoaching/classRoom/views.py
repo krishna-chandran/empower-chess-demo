@@ -6,50 +6,44 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription
 from django.urls import reverse
 from django.http import HttpResponseBadRequest
-# from .forms import EnrollmentForm
-# from .forms import AssignmentForm
-
-# Create your views here.
-
-
 from .forms import RegisterForm,LoginForm
 from .models import Student
 
 
 def index(request):
-	return render(request,"index.html")
+	return render(request,"common/index.html")
 
 def view_users(request):
     user_data = [
         {'id': 1, 'username': 'shiv', 'email': 'sivabalanP@email.com', 'first_name': 'siva', 'last_name': 'balan'}, 
         {'id': 2, 'username': 'kumar', 'email': 'kumar@email.com', 'first_name': 'kumara', 'last_name': 'guru'}
     ]
-    return render(request, 'view_users.html', {'user_data': user_data})
+    return render(request, 'users/view_users.html', {'user_data': user_data})
 
 def view_user(request, user_id):
     user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'view_user.html', {'user_data': user_data})
+    return render(request, 'users/view_user.html', {'user_data': user_data})
 
 def add_user(request):
     # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'add_user.html')
+    return render(request, 'users/add_user.html')
 
 def edit_user(request, user_id):
     user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-    return render(request, 'edit_user.html', {'user_data': user_data})
+    return render(request, 'users/edit_user.html', {'user_data': user_data})
 
-def delete_user(request, user_id):
-	user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-	return render(request,'delete_user.html',{'user_data': user_data} )
+# def delete_user(request, user_id):
+# 	user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
+# 	return render(request,'users/delete_user.html',{'user_data': user_data} )
 
 
 def view_subscriptions(request):
     subscriptions = Subscription.objects.all()
-    return render(request, 'view_subscriptions.html', {'subscriptions': subscriptions})
+    return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
 def view_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
-    return render(request, 'view_subscription.html', {'subscription': subscription})
+    return render(request, 'subscriptions/view_subscription.html', {'subscription': subscription})
 
 def add_subscription(request):
     # courses = Course.objects.all()
@@ -73,7 +67,7 @@ def add_subscription(request):
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.id}))
 
 
-    return render(request, 'add_subscription.html', {'users': users})
+    return render(request, 'subscriptions/add_subscription.html', {'users': users})
 
 def edit_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, id=subscription_id)
@@ -97,14 +91,14 @@ def edit_subscription(request, subscription_id):
 
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription_id}))
 
-    return render(request, 'edit_subscription.html', {'subscription': subscription, 'users': users})
+    return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users})
 
 def delete_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     if request.method == 'POST':
         subscription.delete()
         return redirect('view_subscriptions') 
-    return render(request, 'delete_subscription.html', {'subscription': subscription})
+    return render(request, 'subscriptions/delete_subscription.html', {'subscription': subscription})
 
 
 def view_courses(request):
@@ -116,11 +110,11 @@ def view_courses(request):
     # ]
 	course_data = Course.objects.all()
 	print(course_data)
-	return render(request,"view_courses.html",{'course_data': course_data} )
+	return render(request,"courses/view_courses.html",{'course_data': course_data} )
 
 def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
-    return render(request, 'view_course.html', {'course_data': course_data})
+    return render(request, 'courses/view_course.html', {'course_data': course_data})
 
 def add_course(request):
     # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
@@ -129,7 +123,7 @@ def add_course(request):
 		course_description = request.POST.get('course_description')
 		course = Course.objects.create(course_name=course_name, course_description=course_description)
 		return redirect(reverse('view_course', kwargs={'course_id': course.id}))
-	return render(request, 'add_course.html')
+	return render(request, 'courses/add_course.html')
 
 def edit_course(request, course_id):
 	course_data = get_object_or_404(Course, id=course_id)
@@ -138,7 +132,7 @@ def edit_course(request, course_id):
 		course_data.course_description = request.POST.get('course_description')
 		course_data.save()
 		return redirect(reverse('view_course', kwargs={'course_id': course_id}))
-	return render(request, 'edit_course.html', {'course_data': course_data})
+	return render(request, 'courses/edit_course.html', {'course_data': course_data})
 
 
 
@@ -148,17 +142,17 @@ def delete_course(request, course_id):
 		course_data.delete()
 		return redirect('view_courses')
 	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
-	return render(request,'delete_course.html',{'course_data': course_data} )
+	return render(request,'courses/delete_course.html',{'course_data': course_data} )
 
 
 
 def view_enrollments(request):
     enrollments = Enrollment.objects.all()
-    return render(request, "view_enrollments.html", {'enrollments': enrollments})
+    return render(request, "enrollments/view_enrollments.html", {'enrollments': enrollments})
 
 def view_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
-    return render(request, 'view_enrollment.html', {'enrollment': enrollment})
+    return render(request, 'enrollments/view_enrollment.html', {'enrollment': enrollment})
 
 def add_enrollment(request):
     courses = Course.objects.all()
@@ -171,7 +165,7 @@ def add_enrollment(request):
         enrollment = Enrollment.objects.create(user_id=user_id, course_id=course_id, enrollment_date=enrollment_date)
         
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment.id}))
-    return render(request, 'add_enrollment.html', {'courses': courses, 'users': users})
+    return render(request, 'enrollments/add_enrollment.html', {'courses': courses, 'users': users})
 
 def edit_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
@@ -196,7 +190,7 @@ def edit_enrollment(request, enrollment_id):
         
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment_id}))
     
-    return render(request, 'edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
+    return render(request, 'enrollments/edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
 
 def delete_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
@@ -204,15 +198,15 @@ def delete_enrollment(request, enrollment_id):
         enrollment_data.delete()
         return redirect('view_enrollments')
     
-    return render(request, 'delete_enrollment.html', {'enrollment_data': enrollment_data})
+    return render(request, 'enrollments/delete_enrollment.html', {'enrollment_data': enrollment_data})
 
 def view_assignments(request):
     assignments = Assignment.objects.all()
-    return render(request, 'view_assignments.html', {'assignments': assignments})
+    return render(request, 'assignments/view_assignments.html', {'assignments': assignments})
 
 def view_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
-    return render(request, 'view_assignment.html', {'assignment': assignment})
+    return render(request, 'assignments/view_assignment.html', {'assignment': assignment})
 
 def add_assignment(request):
     courses = Course.objects.all()
@@ -229,7 +223,7 @@ def add_assignment(request):
             due_date=due_date
         )
         return redirect(reverse('view_assignment', kwargs={'assignment_id': assignment.id}))
-    return render(request, 'add_assignment.html', {'courses': courses})
+    return render(request, 'assignments/add_assignment.html', {'courses': courses})
 
 def edit_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
@@ -251,7 +245,7 @@ def edit_assignment(request, assignment_id):
         # Redirect to a page showing the edited assignment
         return redirect(reverse('view_assignment', kwargs={'assignment_id': assignment.id}))
 
-    return render(request, 'edit_assignment.html', {'assignment': assignment, 'courses': courses})
+    return render(request, 'assignments/edit_assignment.html', {'assignment': assignment, 'courses': courses})
 
 def delete_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
@@ -260,17 +254,17 @@ def delete_assignment(request, assignment_id):
         assignment.delete()
         return redirect('view_assignments')  # Redirect to the assignments list view
         
-    return render(request, 'delete_assignment.html', {'assignment': assignment})
+    return render(request, 'assignments/delete_assignment.html', {'assignment': assignment})
 
 
 def view_userassignments(request):
     user_assignments = UserAssignment.objects.all()
-    return render(request, 'view_userassignments.html', {'user_assignments': user_assignments})
+    return render(request, 'userassignments/view_userassignments.html', {'user_assignments': user_assignments})
 
 
 def view_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
-    return render(request, 'view_userassignment.html', {'user_assignment': user_assignment})
+    return render(request, 'userassignments/view_userassignment.html', {'user_assignment': user_assignment})
 
 def add_userassignment(request):
     assignments = Assignment.objects.all()
@@ -290,7 +284,7 @@ def add_userassignment(request):
             comments=comments
         )
         return redirect('view_userassignments')
-    return render(request, 'add_userassignment.html', {'assignments': assignments, 'users': users})
+    return render(request, 'userassignments/add_userassignment.html', {'assignments': assignments, 'users': users})
 
 def edit_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
@@ -307,20 +301,20 @@ def edit_userassignment(request, user_assignment_id):
         
         return redirect('view_userassignments')
     
-    return render(request, 'edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
+    return render(request, 'userassignments/edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 
 def delete_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     if request.method == 'POST':
         user_assignment.delete()
         return redirect('view_userassignments')
-    return render(request, 'delete_userassignment.html', {'user_assignment': user_assignment})
+    return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
 
 def forgot_password(request): 
-	return render(request,"forgot-password.html")
+	return render(request,"registration/forgot-password.html")
 
 def error_404(request):
-	return render(request,"404.html")
+	return render(request,"common/404.html")
 
 
 def register(request):
@@ -334,15 +328,15 @@ def register(request):
             form.save()
             # print(request.POST["password"]," ",form["password"])
             # return redirect("registerSuccess",permanent=True)
-            return render(request, "register_success.html")
+            return render(request, "registration/register_success.html")
     else:
         form = RegisterForm()
 
     context['form']= form
-    return render(request, "register.html")
+    return render(request, "registration/register.html")
 
 def reg_success(request):
-	return render(request,"registerSuccess.html")
+	return render(request,"registration/register_success.html")
 
 def login(request):
 	print(request.POST,"reqjjd")
@@ -362,7 +356,7 @@ def login(request):
 					
 					return redirect("home")
 	else:
-		return render(request,"login.html",{'form':form})
+		return render(request,"registration/login.html",{'form':form})
 
 def getUser(request):
 	return Student.objects.filter(student_id=request.session['user_id'])
@@ -371,7 +365,7 @@ def home(request):
 	if 'user_id' in request.session and getUser(request):
 		user = getUser(request)
 		# print(user)
-		return render(request,'home.html')
+		return render(request,'common/home.html')
 	else:
 		return redirect("login")
 #always call get user and check for session id and then move to next page
@@ -381,7 +375,7 @@ def logout(request):
 	context ={}
 	form = LoginForm(request.POST or None)
 	context["form"]=form
-	return render(request,"login.html",context)
+	return render(request,"registration/login.html",context)
 		
 
 # Create
@@ -416,7 +410,7 @@ def delete_user(request, pk):
     if request.method == 'POST':
         user.delete()
         return redirect('user_list')
-    return render(request, 'delete_user.html', {'user': user})
+    return render(request, 'users/delete_user.html', {'user': user})
 
 	
 
