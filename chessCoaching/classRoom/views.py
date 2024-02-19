@@ -330,7 +330,7 @@ def edit_userassignment(request, user_assignment_id):
         user_assignment.comments = request.POST.get('comments')
         user_assignment.save()
         
-        return redirect('view_userassignments')
+        return redirect(reverse('view_userassignment', kwargs={'user_assignment_id': user_assignment_id}))
     
     return render(request, 'userassignments/edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 

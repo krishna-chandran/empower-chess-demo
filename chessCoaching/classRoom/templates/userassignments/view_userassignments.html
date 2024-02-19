@@ -28,7 +28,7 @@
                         {% for user_assignment in user_assignments %}
                             <tr>
                                 <td><a href="{% url 'view_userassignment' user_assignment.id %}">{{ user_assignment.id }}</a></td>
-                                <td>{{ user_assignment.user.username }}</td>
+                                <td>{{ user_assignment.user.user.username }}</td>
                                 <td>{{ user_assignment.assignment.assignment_name }}</td>
                                 <td>{{ user_assignment.submission_date }}</td>
                                 <td>{{ user_assignment.grade }}</td>

@@ -12,39 +12,29 @@
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="user">User:</label>
-                        <select name="user" id="user" class="form-control">
+                        <select name="user" id="user" class="form-control" required>
                             {% for user in users %}
-                                <option value="{{ user.id }}">{{ user.username }}</option>
+                                <option value="{{ user.user_id }}">{{ user.user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                {% comment %} <div class="form-group row">
-                    <div class="col-sm-6">
-                        <label for="course">Course:</label>
-                        <select name="course" id="course" class="form-control">
-                            {% for course in courses %}
-                                <option value="{{ course.id }}">{{ course.course_name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                </div> {% endcomment %}
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="subscription_start_date">Subscription Start Date:</label>
-                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date">
+                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="subscription_end_date">Subscription End Date:</label>
-                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date">
+                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="payment_details">Payment Details:</label>
-                        <input type="text" class="form-control" id="payment_details" name="payment_details">
+                        <input type="text" class="form-control" id="payment_details" name="payment_details" required>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>

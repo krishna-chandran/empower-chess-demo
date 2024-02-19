@@ -14,9 +14,9 @@
                 <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <label for="user">User:</label>
-                        <select class="form-control" id="user" name="user">
+                        <select class="form-control" id="user" name="user" required>
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == enrollment_data.user_id %} selected {% endif %}>{{ user.username }}</option>
+                                <option value="{{ user.user_id }}" {% if user.user_id == enrollment_data.user_id %} selected {% endif %}>{{ user.user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -24,7 +24,7 @@
                 <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
                         <label for="course">Course:</label>
-                        <select class="form-control" id="course" name="course">
+                        <select class="form-control" id="course" name="course" required>
                             {% for course in courses %}
                                 <option value="{{ course.id }}" {% if course.id == enrollment_data.course_id %} selected {% endif %}>{{ course.course_name }}</option>
                             {% endfor %}
@@ -35,7 +35,7 @@
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="enrollment_date">Enrollment Date:</label>
-                        <input type="date" class="form-control" id="enrollment_date" name="enrollment_date" value="{{ enrollment_data.enrollment_date|date:'Y-m-d' }}">
+                        <input type="date" class="form-control" id="enrollment_date" name="enrollment_date" value="{{ enrollment_data.enrollment_date|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 

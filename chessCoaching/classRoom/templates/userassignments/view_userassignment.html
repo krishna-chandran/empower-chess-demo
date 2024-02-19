@@ -10,7 +10,7 @@
             </div>
             <div class="card-body">
                 <p class="card-text">User Assignment ID: {{ user_assignment.id }}</p>
-                <p class="card-text">Student Name: {{ user_assignment.user.username }}</p>
+                <p class="card-text">Student Name: {{ user_assignment.user.user.username }}</p>
                 <p class="card-text">Assignment Name: {{ user_assignment.assignment.assignment_name }}</p>
                 <p class="card-text">Submission Date: {{ user_assignment.submission_date }}</p>
                 <p class="card-text">Grade: {{ user_assignment.grade }}</p>

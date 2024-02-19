@@ -11,7 +11,7 @@
             </div>
             <div class="card-body">
                 <p class="card-text">Subscription ID: {{ subscription.id }}</p>
-                <p class="card-text">User: {{ subscription.user.username }}</p>
+                <p class="card-text">User: {{ subscription.user.user.username }}</p>
                 <p class="card-text">Start Date: {{ subscription.subscription_start_date }}</p>
                 <p class="card-text">End Date: {{ subscription.subscription_end_date }}</p>
                 <p class="card-text">Payment Details: {{ subscription.payment_details }}</p>

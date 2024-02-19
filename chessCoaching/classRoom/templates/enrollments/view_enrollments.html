@@ -24,7 +24,7 @@
                     {% for enrollment in enrollments %}
                         <tr>
                             <td><a href="/enrollment/{{ enrollment.id }}/">{{ enrollment.id }}</a></td>
-                            <td>{{ enrollment.user.username }}</td>
+                            <td>{{ enrollment.user.user.username }}</td>
                             <td>{{ enrollment.course.course_name }}</td>
                             <td>{{ enrollment.enrollment_date }}</td>
                         </tr>

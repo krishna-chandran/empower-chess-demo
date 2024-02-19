@@ -26,7 +26,7 @@
                         <tr>
                             <td><a href="{% url 'view_subscription' subscription.id %}">{{ subscription.id }}</a></td>
                             
-                            <td>{{ subscription.user.username }}</td>
+                            <td>{{ subscription.user.user.username }}</td>
                             <td>{{ subscription.subscription_start_date }}</td>
                             <td>{{ subscription.subscription_end_date }}</td>
                             <td>{{ subscription.payment_details }}</td>
