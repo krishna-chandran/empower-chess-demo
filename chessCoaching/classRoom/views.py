@@ -322,11 +322,6 @@ def forgot_password(request):
 def error_404(request):
 	return render(request,"404.html")
 
-def charts(request):
-	return render(request,"charts.html")
-
-def tables(request):
-	return render(request,"tables.html")
 
 def register(request):
     context ={}
