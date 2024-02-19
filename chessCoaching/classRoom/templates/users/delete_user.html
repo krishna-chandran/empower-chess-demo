@@ -1,26 +1,19 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<!-- <p class="card-text">ID: {{ user_data.id }}</p>
-            
-                    <p class="card-text">{{ user_data.first_name }} {{ user_data.last_name }}</p>
-                    <p class="card-text">{{ user_data.username }}</p>
-                    <p class="card-text">{{ user_data.email }}</p> -->
 <div class="col-lg-7">
-    <div class="p-5">
-        <div class="text-center">
-            <h1 class="h4 text-gray-900 mb-4">Confirm Delete user {{ user_data.id }} {{ user_data.username }} ?</h1>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Confirm Delete User: {{ user.id }}?</h6>
         </div>
-        <a href="login.html" class="btn btn-danger btn-user btn-block">
-            Delete
-        </a>
-
-        <a href="/users/" class="btn btn-warning btn-user btn-block">
-            Cancel
-        </a>
-        
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                <p>Are you sure you want to delete user "{{ user.username }}"?</p>
+                <button type="submit" class="btn btn-danger btn-user btn-block">Delete</button>
+                <a href="{% url 'view_user' user.id %}" class="btn btn-warning btn-user  btn-block">Cancel</a>
+            </form>
+        </div>
     </div>
 </div>
-
-{% endblock %} 
+{% endblock %}

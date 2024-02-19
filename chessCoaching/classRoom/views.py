@@ -48,9 +48,12 @@ def edit_user(request, user_id):
 
     return render(request, 'users/edit_user.html', {'user': user})
 
-# def delete_user(request, user_id):
-# 	user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-# 	return render(request,'users/delete_user.html',{'user_data': user_data} )
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+        return redirect('view_users')
+    return render(request, 'users/delete_user.html', {'user': user})
 
 
 def view_subscriptions(request):
@@ -394,39 +397,39 @@ def logout(request):
 	return render(request,"registration/login.html",context)
 		
 
-# Create
-def create_user(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        email = request.POST.get('email')
-        user = User.objects.create(username=username, password=password, email=email)
-        return redirect('user_detail', pk=user.pk)
-    return render(request, 'create_user.html')
+# # Create
+# def create_user(request):
+#     if request.method == 'POST':
+#         username = request.POST.get('username')
+#         password = request.POST.get('password')
+#         email = request.POST.get('email')
+#         user = User.objects.create(username=username, password=password, email=email)
+#         return redirect('user_detail', pk=user.pk)
+#     return render(request, 'create_user.html')
 
-# Read
-def user_detail(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    return render(request, 'user_detail.html', {'user': user})
+# # Read
+# def user_detail(request, pk):
+#     user = get_object_or_404(User, pk=pk)
+#     return render(request, 'user_detail.html', {'user': user})
 
-# Update
-def update_user(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    if request.method == 'POST':
-        user.username = request.POST.get('username')
-        user.password = request.POST.get('password')
-        user.email = request.POST.get('email')
-        user.save()
-        return redirect('user_detail', pk=user.pk)
-    return render(request, 'update_user.html', {'user': user})
+# # Update
+# def update_user(request, pk):
+#     user = get_object_or_404(User, pk=pk)
+#     if request.method == 'POST':
+#         user.username = request.POST.get('username')
+#         user.password = request.POST.get('password')
+#         user.email = request.POST.get('email')
+#         user.save()
+#         return redirect('user_detail', pk=user.pk)
+#     return render(request, 'update_user.html', {'user': user})
 
-# Delete
-def delete_user(request, pk):
-    user = get_object_or_404(User, pk=pk)
-    if request.method == 'POST':
-        user.delete()
-        return redirect('user_list')
-    return render(request, 'users/delete_user.html', {'user': user})
+# # Delete
+# def delete_user(request, pk):
+#     user = get_object_or_404(User, pk=pk)
+#     if request.method == 'POST':
+#         user.delete()
+#         return redirect('user_list')
+#     return render(request, 'users/delete_user.html', {'user': user})
 
 	
 
