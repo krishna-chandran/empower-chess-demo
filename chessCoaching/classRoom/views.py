@@ -358,6 +358,17 @@ def add_feature(request):
         return redirect('view_features')
     else:
         return render(request, 'features/add_feature.html')
+    
+def edit_feature(request, feature_id):
+    feature = get_object_or_404(Feature, pk=feature_id)
+
+    if request.method == 'POST':
+        feature_name = request.POST.get('feature_name')
+        feature.feature_name = feature_name
+        feature.save()
+        return redirect(reverse('view_feature', kwargs={'feature_id': feature.id}))
+    
+    return render(request, 'features/edit_feature.html', {'feature': feature})
 
 def forgot_password(request): 
 	return render(request,"registration/forgot-password.html")

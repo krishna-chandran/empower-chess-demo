@@ -6,7 +6,7 @@ from .views import view_subscriptions,view_subscription,add_subscription,edit_su
 from .views import view_assignments, view_assignment, add_assignment, edit_assignment, delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
-from .views import view_features, view_feature,add_feature
+from .views import view_features, view_feature, add_feature, edit_feature
 
 
 urlpatterns = [
@@ -59,4 +59,5 @@ urlpatterns = [
     path('features/', view_features, name='view_features'),
     path('feature/<int:feature_id>/', view_feature, name='view_feature'),
     path('feature/add/', add_feature, name='add_feature'),
+    path('feature/<int:feature_id>/edit/', edit_feature, name='edit_feature'),
 ]
