@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature
 from django.urls import reverse
 from django.http import HttpResponseBadRequest
 from .forms import RegisterForm,LoginForm
@@ -340,6 +340,14 @@ def delete_userassignment(request, user_assignment_id):
         user_assignment.delete()
         return redirect('view_userassignments')
     return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
+
+def view_features(request):
+    features = Feature.objects.all()
+    return render(request, 'features/view_features.html', {'features': features})
+
+def view_feature(request, feature_id):
+    feature = get_object_or_404(Feature, pk=feature_id)
+    return render(request, 'features/view_feature.html', {'feature': feature})
 
 def forgot_password(request): 
 	return render(request,"registration/forgot-password.html")

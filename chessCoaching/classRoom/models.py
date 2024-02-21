@@ -72,3 +72,16 @@ class UserAssignment(models.Model):
     submission_date = models.DateField()
     grade = models.CharField(max_length=5)
     comments = models.TextField()
+
+class Role(models.Model):
+    id = models.AutoField(primary_key=True)
+    role_name = models.CharField(max_length=50)
+
+class Feature(models.Model):
+    id = models.AutoField(primary_key=True)
+    feature_name = models.CharField(max_length=255)
+
+class Permission(models.Model):
+    id = models.AutoField(primary_key=True)
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
+    feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
