@@ -370,6 +370,15 @@ def edit_feature(request, feature_id):
     
     return render(request, 'features/edit_feature.html', {'feature': feature})
 
+def delete_feature(request, feature_id):
+    feature = get_object_or_404(Feature, pk=feature_id)
+
+    if request.method == 'POST':
+        feature.delete()
+        return redirect('view_features')
+    
+    return render(request, 'features/delete_feature.html', {'feature': feature})
+
 def forgot_password(request): 
 	return render(request,"registration/forgot-password.html")
 

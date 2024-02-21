@@ -5,13 +5,13 @@
     <div class="p-5">
         <div class="card-body">
             <div class="text-center">
-                <h1 class="h4 text-gray-900 mb-4">Confirm Delete User Assignment {{ user_assignment.id }}?</h1>
+                <h1 class="h4 text-gray-900 mb-4">Confirm Delete Feature {{ feature.id }}?</h1>
             </div>
             <form class="user" method="post">
                 {% csrf_token %}
                 
                 <button type="submit" class="btn btn-danger btn-user btn-block">Delete</button>
-                <a href="{% url 'view_userassignment' user_assignment.id %}" class="btn btn-warning btn-user btn-block">
+                <a href="{% url 'view_feature' feature.id %}" class="btn btn-warning btn-user  btn-block">
                     Cancel
                 </a>
             </form>
