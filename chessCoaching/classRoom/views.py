@@ -349,6 +349,16 @@ def view_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     return render(request, 'features/view_feature.html', {'feature': feature})
 
+def add_feature(request):
+    if request.method == 'POST':
+        feature_name = request.POST.get('feature_name')
+
+        new_feature = Feature.objects.create(feature_name=feature_name)
+
+        return redirect('view_features')
+    else:
+        return render(request, 'features/add_feature.html')
+
 def forgot_password(request): 
 	return render(request,"registration/forgot-password.html")
 
