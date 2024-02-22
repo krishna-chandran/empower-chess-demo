@@ -54,7 +54,7 @@
                                         {% endfor %} -->
 
                                         <div class="form-group">
-                                            <input type="text" class="form-control form-control-user" name="username" placeholder="Enter User Name..." id="username" maxlength="100">
+                                            <input type="text" class="form-control form-control-user" name="username" placeholder="Enter User Name..." id="username" maxlength="100" required>
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user" name="password" required="" id="password" placeholder="Password">
@@ -67,7 +67,7 @@
                                             </div>
                                         </div>
                                         {% if error_message %}
-                                            <p>{{ error_message }}</p>
+                                            <p style="color:red;">{{ error_message }}</p>
                                         {% endif %}
                                         <button type="submit" class="btn btn-primary btn-user btn-block">Login</button>
                                         <hr>
