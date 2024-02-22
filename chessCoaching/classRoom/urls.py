@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import reg_success,home,logout,index,register,login,forgot_password,error_404
+from .views import reg_success,home,logout_user,index,register,login,forgot_password,error_404
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
@@ -12,10 +12,10 @@ from .views import view_features, view_feature, add_feature, edit_feature, delet
 urlpatterns = [
     path('registersuccess/',reg_success,name="registerSuccess"),
     path('home/',home,name="home"),
-    path('logout/',logout,name="logout"),
+    path('logout/',logout_user,name="logout"),
     path('',index,name="index"),
     path('register/',register,name="register"),
-    path('login/',login,name="login"),
+    path('accounts/login/', login, name='login'),
     path('forgot_password/',forgot_password,name="forgot_password"),
     path('error_404/',error_404,name="error_404"),
 

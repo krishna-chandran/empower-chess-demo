@@ -10,9 +10,12 @@ from .forms import RegisterForm,LoginForm
 from .models import Student
 from django.contrib.auth.models import User as AuthUser
 from django.db import IntegrityError
+from django.contrib.auth import authenticate, login as auth_login , logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 
 
-
+@login_required
 def index(request):
 	return render(request,"common/index.html")
 
@@ -29,11 +32,16 @@ def add_user(request):
         username = request.POST.get('username')
         email = request.POST.get('email')
         role = request.POST.get('role')
+        password = request.POST.get('password')  # Assuming there's a password field in the form
 
         if AuthUser.objects.filter(username=username).exists():
             return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
 
-        auth_user = AuthUser.objects.create_user(username=username, email=email)
+        hashed_password = make_password(password)
+
+        auth_user = AuthUser.objects.create(username=username, email=email, password=hashed_password)
+        auth_user.save()
+
         user = User.objects.create(user=auth_user, role=role)
         
         return redirect('view_users')
@@ -45,10 +53,22 @@ def edit_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     
     if request.method == 'POST':
-        user.user.username = request.POST.get('username')
-        user.user.email = request.POST.get('email')
-        user.role = request.POST.get('role')
-        
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        role = request.POST.get('role')
+        password = request.POST.get('password')
+
+        if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
+            return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Username already exists'})
+
+        user.user.username = username
+        user.user.email = email
+        user.role = role
+
+        if password:
+            hashed_password = make_password(password)
+            user.user.password = hashed_password
+
         user.user.save()
         user.save()
         
@@ -408,24 +428,26 @@ def reg_success(request):
 	return render(request,"registration/register_success.html")
 
 def login(request):
-	print(request.POST,"reqjjd")
-	form=LoginForm(request.POST or None) # always send the data to teh class for validation
-	print('form.is_valid()',form.is_valid())
-	if form.is_valid():
-		if request.method == "POST":
-			username = form.cleaned_data['username']
-			password = request.POST['password']
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        print("Username:", username)  
+        print("Password:", password)  
 
-        #sql
-			if Student.objects.filter(student_id=username).exists():
-				user=Student.objects.get(student_id=username)
-              
-				if check_password(password, user.password):
-					request.session['user_id']=user.student_id
-					
-					return redirect("home")
-	else:
-		return render(request,"registration/login.html",{'form':form})
+        
+        user = authenticate(request, username=username, password=password)
+        print("Authenticated User:", user) 
+
+        if user is not None:
+            auth_login(request, user)
+            return redirect('index')
+        else:
+            error_message = 'Invalid username or password.'
+            return render(request, 'registration/login.html', {'error_message': error_message})
+
+    return render(request, 'registration/login.html')
+
 
 def getUser(request):
 	return Student.objects.filter(student_id=request.session['user_id'])
@@ -437,49 +459,10 @@ def home(request):
 		return render(request,'common/home.html')
 	else:
 		return redirect("login")
-#always call get user and check for session id and then move to next page
-def logout(request):
-	user=getUser(request)
-	del request.session["user_id"]
-	context ={}
-	form = LoginForm(request.POST or None)
-	context["form"]=form
-	return render(request,"registration/login.html",context)
-		
 
-# # Create
-# def create_user(request):
-#     if request.method == 'POST':
-#         username = request.POST.get('username')
-#         password = request.POST.get('password')
-#         email = request.POST.get('email')
-#         user = User.objects.create(username=username, password=password, email=email)
-#         return redirect('user_detail', pk=user.pk)
-#     return render(request, 'create_user.html')
-
-# # Read
-# def user_detail(request, pk):
-#     user = get_object_or_404(User, pk=pk)
-#     return render(request, 'user_detail.html', {'user': user})
-
-# # Update
-# def update_user(request, pk):
-#     user = get_object_or_404(User, pk=pk)
-#     if request.method == 'POST':
-#         user.username = request.POST.get('username')
-#         user.password = request.POST.get('password')
-#         user.email = request.POST.get('email')
-#         user.save()
-#         return redirect('user_detail', pk=user.pk)
-#     return render(request, 'update_user.html', {'user': user})
-
-# # Delete
-# def delete_user(request, pk):
-#     user = get_object_or_404(User, pk=pk)
-#     if request.method == 'POST':
-#         user.delete()
-#         return redirect('user_list')
-#     return render(request, 'users/delete_user.html', {'user': user})
+def logout_user(request):
+    logout(request)
+    return redirect('login')
 
 	
 
