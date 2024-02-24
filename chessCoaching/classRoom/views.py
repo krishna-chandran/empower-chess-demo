@@ -14,6 +14,11 @@ from django.contrib.auth import authenticate, login as auth_login , logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 from functools import wraps
+from django.contrib.auth.tokens import default_token_generator
+from django.core.mail import send_mail
+from django.http import HttpResponseRedirect
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
 
 
 def user_role_required(role):
@@ -461,8 +466,35 @@ def delete_feature(request, feature_id):
     
     return render(request, 'features/delete_feature.html', {'feature': feature})
 
-def forgot_password(request): 
-	return render(request,"registration/forgot-password.html")
+def forgot_password(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        
+        try:
+            user = AuthUser.objects.get(email=email)
+        except AuthUser.DoesNotExist:
+            user = None
+
+        if user:
+            token_generator = default_token_generator
+            uid = urlsafe_base64_encode(force_bytes(user.id))
+            token = token_generator.make_token(user)
+
+            reset_url = request.build_absolute_uri(reverse('password_reset_confirm', kwargs={'uidb64': uid, 'token': token}))
+
+            send_mail(
+                'Password reset request',
+                f'Click the following link to reset your password: {reset_url}',
+                'from@example.com',
+                [email],
+                fail_silently=False,
+            )
+            
+            return HttpResponseRedirect(reverse('password_reset_done'))
+        else:
+            return render(request, 'registration/forgot-password.html', {'error_message': 'No user found with this email'})
+
+    return render(request, 'registration/forgot-password.html')
 
 def error_404(request):
 	return render(request,"common/404.html")

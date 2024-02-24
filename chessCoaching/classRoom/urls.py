@@ -7,7 +7,7 @@ from .views import view_assignments, view_assignment, add_assignment, edit_assig
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
 from .views import view_features, view_feature, add_feature, edit_feature, delete_feature
-
+from django.contrib.auth import views as auth_views
 
 urlpatterns = [
     path('registersuccess/',reg_success,name="registerSuccess"),
@@ -16,8 +16,13 @@ urlpatterns = [
     path('',index,name="index"),
     path('register/',register,name="register"),
     path('accounts/login/', login, name='login'),
-    path('forgot_password/',forgot_password,name="forgot_password"),
     path('error_404/',error_404,name="error_404"),
+    
+    path('forgot_password/', forgot_password, name='forgot_password'),
+    path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('password_reset_done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
 
     path('users/', view_users, name="view_users"),
