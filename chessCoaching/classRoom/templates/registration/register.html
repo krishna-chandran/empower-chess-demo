@@ -35,30 +35,39 @@
                             <div class="text-center">
                                 <h1 class="h4 text-gray-900 mb-4">Create an Account!</h1>
                             </div>
-                            <form class="user">
-                                <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="text" class="form-control form-control-user" id="exampleFirstName"
-                                            placeholder="First Name">
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control form-control-user" id="exampleLastName"
-                                            placeholder="Last Name">
-                                    </div>
+                            <form class="user" method="post">
+                                {% csrf_token %}
+                                {% if error_message %}
+                                    <p style="color:red;">{{ error_message }}</p>
+                                {% endif %}
+                                <div class="form-group">
+                                    <input type="text" class="form-control " id="username" name="username" placeholder="Username" required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-user" id="exampleInputEmail"
-                                        placeholder="Email Address">
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email" required>
                                 </div>
                                 <div class="form-group row">
-                                    <div class="col-sm-6 mb-3 mb-sm-0">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleInputPassword" placeholder="Password">
+                                    <div class="col-sm-5 mb-3 mb-sm-0">
+                                        <input type="password" class="form-control" id="password" name="password" placeholder="Password" required>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <input type="password" class="form-control form-control-user"
-                                            id="exampleRepeatPassword" placeholder="Repeat Password">
+                                    <div class="col-sm-5 mb-3 mb-sm-0">
+                                        <input type="password" class="form-control" id="repeatPassword" placeholder="Repeat Password" required>
+                                        <small id="passwordMismatch" class="text-danger" style="display: none;">Passwords do not match</small>
+                                        <small id="passwordMatch" class="text-success" style="display: none;">Passwords match</small>
                                     </div>
+                                    <div class="col-sm-2 ">
+                                        <label id="togglePassword" style="cursor: pointer;">
+                                            <i class="far fa-eye" id="showPasswordIcon"></i>
+                                        </label>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <select placeholder="Role" class="form-control" id="role" name="role" required>
+                                        <option value="" disabled selected>Select Your Role</option>
+                                        <option value="teacher">Teacher</option>
+                                        <option value="student">Student</option>
+                                    </select>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
                               
@@ -84,17 +93,12 @@
         </div>
 
     </div>
-
-    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'js/register.js' %}"></script>
     <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
     <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-
-    <!-- Core plugin JavaScript-->
     <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
-
-    <!-- Custom scripts for all pages-->
     <script src="{% static 'js/sb-admin-2.min.js'%}"></script>
-
+    
 </body>
 
 </html>

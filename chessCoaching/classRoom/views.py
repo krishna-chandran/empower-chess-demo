@@ -469,25 +469,28 @@ def error_404(request):
 
 
 def register(request):
-    context ={}
-
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        role = request.POST.get('role')
+        password = request.POST.get('password')
 
-        if form.is_valid():
+        if AuthUser.objects.filter(username=username).exists():
+            return render(request, 'registration/register.html', {'error_message': 'Username already exists'})
 
-            form.save()
-            # print(request.POST["password"]," ",form["password"])
-            # return redirect("registerSuccess",permanent=True)
-            return render(request, "registration/register_success.html")
-    else:
-        form = RegisterForm()
+        hashed_password = make_password(password)
 
-    context['form']= form
-    return render(request, "registration/register.html")
+        auth_user = AuthUser.objects.create(username=username, email=email, password=hashed_password)
+        auth_user.save()
+
+        user = User.objects.create(user=auth_user, role=role)
+        
+        return render(request, "registration/registerSuccess.html")
+
+    return render(request, 'registration/register.html')
 
 def reg_success(request):
-	return render(request,"registration/register_success.html")
+	return render(request,"registration/registerSuccess.html")
 
 def login(request):
     if request.method == 'POST':
