@@ -57,6 +57,9 @@ def add_user(request):
 
         if AuthUser.objects.filter(username=username).exists():
             return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
+        
+        if AuthUser.objects.filter(email=email).exists():
+            return render(request, 'users/add_user.html', {'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
 
@@ -81,6 +84,9 @@ def edit_user(request, user_id):
 
         if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
             return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Username already exists'})
+        
+        if AuthUser.objects.filter(email=email).exclude(id=user.user.id).exists():
+            return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Email already exists'})
 
         user.user.username = username
         user.user.email = email
@@ -509,6 +515,9 @@ def register(request):
 
         if AuthUser.objects.filter(username=username).exists():
             return render(request, 'registration/register.html', {'error_message': 'Username already exists'})
+        
+        if AuthUser.objects.filter(email=email).exists():
+            return render(request, 'registration/register.html', {'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
 
