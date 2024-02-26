@@ -4,14 +4,14 @@
 <div class="col-lg-7">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Edit Feature {{ feature.id }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit Feature: {{ feature.id }}</h6>
         </div>
         <div class="card-body">
             <form class="user" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="feature_name">Feature Name:</label>
+                        <label for="feature_name"><b>Feature Name</b></label>
                         <input type="text" class="form-control" id="feature_name" name="feature_name" value="{{ feature.feature_name }}" required>
                     </div>
                 </div>

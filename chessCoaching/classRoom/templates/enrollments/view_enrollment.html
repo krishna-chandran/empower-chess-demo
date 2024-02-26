@@ -9,10 +9,10 @@
                 <h6 class="m-0 font-weight-bold text-primary">Enrollment Details</h6>
             </div>
             <div class="card-body">
-                <p class="card-text">Enrollment ID: {{ enrollment.id }}</p>
-                <p class="card-text">User: {{ enrollment.user.user.username }}</p>
-                <p class="card-text">Course: {{ enrollment.course.course_name }}</p>
-                <p class="card-text">Enrollment Date: {{ enrollment.enrollment_date }}</p>
+                <p class="card-text"><b>Enrollment ID:</b> {{ enrollment.id }}</p>
+                <p class="card-text"><b>User:</b> {{ enrollment.user.user.username }}</p>
+                <p class="card-text"><b>Course:</b> {{ enrollment.course.course_name }}</p>
+                <p class="card-text"><b>Enrollment Date:</b> {{ enrollment.enrollment_date }}</p>
                 <div class="my-2"></div>
                 <a href="/enrollment/add/" class="btn btn-success btn-icon-split">
                     <span class="icon text-white-50">

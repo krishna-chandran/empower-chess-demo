@@ -9,12 +9,12 @@
                 <h6 class="m-0 font-weight-bold text-primary">User Assignment Details</h6>
             </div>
             <div class="card-body">
-                <p class="card-text">User Assignment ID: {{ user_assignment.id }}</p>
-                <p class="card-text">Student Name: {{ user_assignment.user.user.username }}</p>
-                <p class="card-text">Assignment Name: {{ user_assignment.assignment.assignment_name }}</p>
-                <p class="card-text">Submission Date: {{ user_assignment.submission_date }}</p>
-                <p class="card-text">Grade: {{ user_assignment.grade }}</p>
-                <p class="card-text">Comments: {{ user_assignment.comments }}</p>
+                <p class="card-text"><b>User Assignment ID:</b> {{ user_assignment.id }}</p>
+                <p class="card-text"><b>Student Name:</b> {{ user_assignment.user.user.username }}</p>
+                <p class="card-text"><b>Assignment Name:</b> {{ user_assignment.assignment.assignment_name }}</p>
+                <p class="card-text"><b>Submission Date:</b> {{ user_assignment.submission_date }}</p>
+                <p class="card-text"><b>Grade:</b> {{ user_assignment.grade }}</p>
+                <p class="card-text"><b>Comments:</b> {{ user_assignment.comments }}</p>
                 <div class="my-2"></div>
                 <a href="/userassignment/add/" class="btn btn-success btn-icon-split">
                     <span class="icon text-white-50">

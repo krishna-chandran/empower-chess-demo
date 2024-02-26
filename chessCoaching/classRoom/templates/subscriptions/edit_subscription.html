@@ -13,7 +13,7 @@
                 {% csrf_token %}
                 <div class="form-group row">
                     <div class="col-sm-6 mb-3 mb-sm-0">
-                        <label for="user">User:</label>
+                        <label for="user"><b>User</b></label>
                         <select class="form-control" id="user" name="user" required>
                             {% for user in users %}
                                 <option value="{{ user.id }}" {% if user.id == subscription.id %} selected {% endif %}>{{ user.user.username }}</option>
@@ -23,21 +23,21 @@
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_start_date">Subscription Start Date:</label>
+                        <label for="subscription_start_date"><b>Subscription Start Date</b></label>
                         <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" value="{{ subscription.subscription_start_date|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_end_date">Subscription End Date:</label>
+                        <label for="subscription_end_date"><b>Subscription End Date</b></label>
                         <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" value="{{ subscription.subscription_end_date|date:'Y-m-d' }}" required>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="payment_details">Payment Details:</label>
+                        <label for="payment_details"><b>Payment Details</b></label>
                         <textarea class="form-control" id="payment_details" name="payment_details" required>{{ subscription.payment_details }}</textarea>
                     </div>
                 </div>

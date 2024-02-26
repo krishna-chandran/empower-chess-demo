@@ -5,7 +5,6 @@
 
 
     <div class="row">
-    <!--- Begin User details -->
         <div class="col-lg-6">
             <div class="card shadow mb-4">
                 <div class="card-header py-3">
@@ -13,9 +12,9 @@
                 </div>
             
                 <div class="card-body">
-                    <p class="card-text">{{ course_data.id }}</p>
-                    <p class="card-text">{{ course_data.course_name }}</p>
-                    <p class="card-text">{{ course_data.course_description }}</p>
+                    <p class="card-text"><strong>Course ID:</strong> {{ course_data.id }}</p>
+                    <p class="card-text"><strong>Course Name:</strong> {{ course_data.course_name }}</p>
+                    <p class="card-text"><strong>Description:</strong> {{ course_data.course_description }}</p>
                     <div class="my-2"></div>
                     <a href="/course/add/" class="btn btn-success btn-icon-split">
                         <span class="icon text-white-50">
@@ -38,51 +37,10 @@
                     <div class="my-2"></div>
                 <div class="my-2"></div>
                     <a href="/courses/" class="btn btn-warning btn-icon-split">
-                        <!-- <span class="icon text-white-50">
-                            <i class="fas"></i>
-                        </span> -->
                         <span class="text">Back</span>
                     </a>
-
-                    <!-- 
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-secondary btn-icon-split">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span class="text">Split Button Secondary</span>
-                    </a>
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-light btn-icon-split">
-                        <span class="icon text-gray-600">
-                            <i class="fas fa-arrow-right"></i>
-                        </span>
-                        <span class="text">Split Button Light</span>
-                    </a>
-                    <div class="mb-4"></div>
-                    <p>Also works with small and large button classes!</p>
-                    <a href="#" class="btn btn-primary btn-icon-split btn-sm">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-flag"></i>
-                        </span>
-                        <span class="text">Split Button Small</span>
-                    </a>
-                    <div class="my-2"></div>
-                    <a href="#" class="btn btn-primary btn-icon-split btn-lg">
-                        <span class="icon text-white-50">
-                            <i class="fas fa-flag"></i>
-                        </span>
-                        <span class="text">Split Button Large</span>
-                    </a> -->
                 </div>
             </div>
         </div>
-   <!--- Begin User details -->
-    
     </div>
-    
- 
-
-
-</div>
 {% endblock %} 
