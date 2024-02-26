@@ -77,7 +77,7 @@ def edit_user(request, user_id):
         username = request.POST.get('username')
         email = request.POST.get('email')
         role = request.POST.get('role')
-        password = request.POST.get('password')
+        # password = request.POST.get('password')
 
         if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
             return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Username already exists'})
@@ -86,9 +86,9 @@ def edit_user(request, user_id):
         user.user.email = email
         user.role = role
 
-        if password:
-            hashed_password = make_password(password)
-            user.user.password = hashed_password
+        # if password:
+        #     hashed_password = make_password(password)
+        #     user.user.password = hashed_password
 
         user.user.save()
         user.save()
