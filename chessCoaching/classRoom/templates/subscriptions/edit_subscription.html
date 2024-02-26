@@ -16,7 +16,7 @@
                         <label for="user">User:</label>
                         <select class="form-control" id="user" name="user" required>
                             {% for user in users %}
-                                <option value="{{ user.user_id }}" {% if user.user_id == subscription.user_id %} selected {% endif %}>{{ user.user.username }}</option>
+                                <option value="{{ user.id }}" {% if user.id == subscription.id %} selected {% endif %}>{{ user.user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
