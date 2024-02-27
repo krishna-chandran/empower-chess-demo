@@ -481,6 +481,16 @@ def view_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
     return render(request, 'roles/view_role.html', {'role': role})
 
+def add_role(request):
+    if request.method == 'POST':
+        role_name = request.POST.get('role_name')
+
+        new_role = Role.objects.create(role_name=role_name)
+
+        return redirect('view_roles')
+    else:
+        return render(request, 'roles/add_role.html')
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
