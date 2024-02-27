@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="col-lg-7">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Add Permission</h6>
+            </div>
+            <div class="card-body">
+                <form class="user" method="post">
+                    {% csrf_token %}
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="role"><b>Role</b></label>
+                            <select name="role" id="role" class="form-control" required>
+                                {% for role in roles %}
+                                <option value="{{ role.id }}">{{ role.role_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="feature"><b>Feature</b></label>
+                            <select name="feature" id="feature" class="form-control" required>
+                                {% for feature in features %}
+                                <option value="{{ feature.id }}">{{ feature.feature_name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-user btn-block">Add Permission</button>
+                    <a href="{% url 'view_permissions' %}" class="btn btn-google btn-user btn-block">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

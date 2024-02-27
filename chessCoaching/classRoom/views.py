@@ -394,7 +394,7 @@ def add_userassignment(request):
             grade=grade,
             comments=comments
         )
-        return redirect('view_userassignments')
+        return redirect(reverse('view_userassignment', kwargs={'user_assignment_id': user_assignment.id}))
     return render(request, 'userassignments/add_userassignment.html', {'assignments': assignments, 'users': users})
 
 @login_required
@@ -445,7 +445,7 @@ def add_feature(request):
 
         new_feature = Feature.objects.create(feature_name=feature_name)
 
-        return redirect('view_features')
+        return redirect(reverse('view_feature', kwargs={'feature_id': new_feature.id}))
     else:
         return render(request, 'features/add_feature.html')
 
@@ -487,7 +487,7 @@ def add_role(request):
 
         new_role = Role.objects.create(role_name=role_name)
 
-        return redirect('view_roles')
+        return redirect(reverse('view_role', kwargs={'role_id': new_role.id}))
     else:
         return render(request, 'roles/add_role.html')
     
@@ -518,6 +518,20 @@ def view_permissions(request):
 def view_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     return render(request, 'permissions/view_permission.html', {'permission': permission})
+
+def add_permission(request):
+    roles = Role.objects.all()
+    features = Feature.objects.all()
+    
+    if request.method == 'POST':
+        role_id = request.POST.get('role')
+        feature_id = request.POST.get('feature')
+        
+        permission = Permission.objects.create(role_id=role_id, feature_id=feature_id)
+        
+        return redirect('view_permission', permission_id=permission.id)
+    
+    return render(request, 'permissions/add_permission.html', {'roles': roles, 'features': features})
 
 def forgot_password(request):
     if request.method == 'POST':
