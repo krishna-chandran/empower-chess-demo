@@ -557,6 +557,15 @@ def edit_permission(request, permission_id):
     
     return render(request, 'permissions/edit_permission.html', {'permission': permission, 'roles': roles, 'features': features})
 
+def delete_permission(request, permission_id):
+    permission = get_object_or_404(Permission, pk=permission_id)
+    
+    if request.method == 'POST':
+        permission.delete()
+        return redirect('view_permissions')
+    
+    return render(request, 'permissions/delete_permission.html', {'permission': permission})
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')

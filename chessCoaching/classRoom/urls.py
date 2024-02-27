@@ -8,7 +8,7 @@ from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrol
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
 from .views import view_features, view_feature, add_feature, edit_feature, delete_feature
 from .views import view_roles, view_role, add_role, edit_role, delete_role
-from .views import view_permissions, view_permission, add_permission,edit_permission
+from .views import view_permissions, view_permission, add_permission,edit_permission,delete_permission
 from django.contrib.auth import views as auth_views
 
 urlpatterns = [
@@ -78,5 +78,6 @@ urlpatterns = [
     path('permissions/', view_permissions, name='view_permissions'),
     path('permission/<int:permission_id>/', view_permission, name='view_permission'),
     path('permission/add/', add_permission, name='add_permission'),
-     path('permission/<int:permission_id>/edit/', edit_permission, name='edit_permission'),
+    path('permission/<int:permission_id>/edit/', edit_permission, name='edit_permission'),
+    path('permission/<int:permission_id>/delete/', delete_permission, name='delete_permission'),
 ]
