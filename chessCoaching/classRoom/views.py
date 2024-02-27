@@ -490,6 +490,17 @@ def add_role(request):
         return redirect('view_roles')
     else:
         return render(request, 'roles/add_role.html')
+    
+def edit_role(request, role_id):
+    role = get_object_or_404(Role, pk=role_id)
+
+    if request.method == 'POST':
+        role_name = request.POST.get('role_name')
+        role.role_name = role_name
+        role.save()
+        return redirect(reverse('view_role', kwargs={'role_id': role.id}))
+
+    return render(request, 'roles/edit_role.html', {'role': role})
 
 def forgot_password(request):
     if request.method == 'POST':
