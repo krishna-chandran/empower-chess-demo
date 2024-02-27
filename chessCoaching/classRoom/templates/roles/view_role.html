@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Role Details</h6>
+    </div>
+    <div class="card-body">
+        <p><strong>Role ID:</strong> {{ role.id }}</p>
+        <p><strong>Role Name:</strong> {{ role.role_name }}</p>
+
+        <div class="my-2">
+            {% comment %} <a href="{% url 'add_role' %}" class="btn btn-success btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-plus"></i>
+                </span>
+                <span class="text">Add Role</span>
+            </a>
+            <a href="{% url 'edit_role' role.id %}" class="btn btn-primary btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-edit"></i>
+                </span>
+                <span class="text">Edit</span>
+            </a>
+            <a href="{% url 'delete_role' role.id %}" class="btn btn-danger btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-trash"></i>
+                </span>
+                <span class="text">Delete</span>
+            </a> {% endcomment %}
+        </div>
+        
+        <div class="my-2">
+            <a href="{% url 'view_roles' %}" class="btn btn-warning btn-icon-split">
+                <span class="icon text-white-50">
+                    <i class="fas fa-arrow-left"></i>
+                </span>
+                <span class="text">Back</span>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

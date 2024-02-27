@@ -473,6 +473,14 @@ def delete_feature(request, feature_id):
     
     return render(request, 'features/delete_feature.html', {'feature': feature})
 
+def view_roles(request):
+    roles = Role.objects.all()
+    return render(request, 'roles/view_roles.html', {'roles': roles})
+
+def view_role(request, role_id):
+    role = get_object_or_404(Role, pk=role_id)
+    return render(request, 'roles/view_role.html', {'role': role})
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')

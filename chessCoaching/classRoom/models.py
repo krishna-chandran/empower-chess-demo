@@ -28,14 +28,8 @@ class Student(models.Model):
     password                = models.CharField(max_length=255)
 
 class Role(models.Model):
-    TEACHER = 'teacher'
-    STUDENT = 'student'
-    ROLE_CHOICES = [
-        (TEACHER, 'Teacher'),
-        (STUDENT, 'Student'),
-    ]
     id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=50, choices=ROLE_CHOICES)
+    role_name = models.CharField(max_length=255)
 
 class User(models.Model):
     user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
