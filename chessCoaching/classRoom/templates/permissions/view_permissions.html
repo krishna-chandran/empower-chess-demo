@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1 class="h3 mb-2 text-gray-800">Permissions</h1>
+    <p class="mb-4">This page displays all permissions.</p>
+
+    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Permission ID</th>
+                <th>Role</th>
+                <th>Feature</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for permission in permissions %}
+                <tr>
+                    <td><a href="{% url 'view_permission' permission.id %}">{{ permission.id }}</a></td>
+                    <td>{{ permission.role.role_name }}</td>
+                    <td>{{ permission.feature.feature_name }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

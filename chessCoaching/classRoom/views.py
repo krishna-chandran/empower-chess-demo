@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature,Role
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
 from .forms import RegisterForm,LoginForm
@@ -186,20 +186,20 @@ def delete_subscription(request, subscription_id):
 
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def view_courses(request):
 	course_data = Course.objects.all()
 	# print(course_data)
 	return render(request,"courses/view_courses.html",{'course_data': course_data} )
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     return render(request, 'courses/view_course.html', {'course_data': course_data})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def add_course(request):
     # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
 	if request.method == 'POST':
@@ -210,7 +210,7 @@ def add_course(request):
 	return render(request, 'courses/add_course.html')
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def edit_course(request, course_id):
 	course_data = get_object_or_404(Course, id=course_id)
 	if request.method == 'POST':
@@ -222,7 +222,7 @@ def edit_course(request, course_id):
 
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def delete_course(request, course_id):
 	course_data = get_object_or_404(Course, id=course_id)
 	if request.method == 'POST':
@@ -233,19 +233,19 @@ def delete_course(request, course_id):
 
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_enrollments(request):
     enrollments = Enrollment.objects.all()
     return render(request, "enrollments/view_enrollments.html", {'enrollments': enrollments})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
     return render(request, 'enrollments/view_enrollment.html', {'enrollment': enrollment})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def add_enrollment(request):
     courses = Course.objects.all()
     users = User.objects.all()
@@ -260,7 +260,7 @@ def add_enrollment(request):
     return render(request, 'enrollments/add_enrollment.html', {'courses': courses, 'users': users})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def edit_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
     courses = Course.objects.all()
@@ -287,7 +287,7 @@ def edit_enrollment(request, enrollment_id):
     return render(request, 'enrollments/edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def delete_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
     if request.method == 'POST':
@@ -297,19 +297,19 @@ def delete_enrollment(request, enrollment_id):
     return render(request, 'enrollments/delete_enrollment.html', {'enrollment_data': enrollment_data})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def view_assignments(request):
     assignments = Assignment.objects.all()
     return render(request, 'assignments/view_assignments.html', {'assignments': assignments})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def view_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
     return render(request, 'assignments/view_assignment.html', {'assignment': assignment})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def add_assignment(request):
     courses = Course.objects.all()
     if request.method == 'POST':
@@ -328,7 +328,7 @@ def add_assignment(request):
     return render(request, 'assignments/add_assignment.html', {'courses': courses})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def edit_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     courses = Course.objects.all()
@@ -352,7 +352,7 @@ def edit_assignment(request, assignment_id):
     return render(request, 'assignments/edit_assignment.html', {'assignment': assignment, 'courses': courses})
 
 @login_required
-@user_role_required('student')
+# @user_role_required('student')
 def delete_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     
@@ -363,20 +363,20 @@ def delete_assignment(request, assignment_id):
     return render(request, 'assignments/delete_assignment.html', {'assignment': assignment})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_userassignments(request):
     user_assignments = UserAssignment.objects.all()
     return render(request, 'userassignments/view_userassignments.html', {'user_assignments': user_assignments})
 
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     return render(request, 'userassignments/view_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def add_userassignment(request):
     assignments = Assignment.objects.all()
     users = User.objects.all()
@@ -398,7 +398,7 @@ def add_userassignment(request):
     return render(request, 'userassignments/add_userassignment.html', {'assignments': assignments, 'users': users})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def edit_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     assignments = Assignment.objects.all()
@@ -417,7 +417,7 @@ def edit_userassignment(request, user_assignment_id):
     return render(request, 'userassignments/edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def delete_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     if request.method == 'POST':
@@ -426,19 +426,19 @@ def delete_userassignment(request, user_assignment_id):
     return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_features(request):
     features = Feature.objects.all()
     return render(request, 'features/view_features.html', {'features': features})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def view_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     return render(request, 'features/view_feature.html', {'feature': feature})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def add_feature(request):
     if request.method == 'POST':
         feature_name = request.POST.get('feature_name')
@@ -450,7 +450,7 @@ def add_feature(request):
         return render(request, 'features/add_feature.html')
 
 @login_required
-@user_role_required('teacher')    
+# @user_role_required('teacher')    
 def edit_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
@@ -463,7 +463,7 @@ def edit_feature(request, feature_id):
     return render(request, 'features/edit_feature.html', {'feature': feature})
 
 @login_required
-@user_role_required('teacher')
+# @user_role_required('teacher')
 def delete_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
@@ -510,6 +510,14 @@ def delete_role(request, role_id):
         return redirect('view_roles')
     
     return render(request, 'roles/delete_role.html', {'role': role})
+
+def view_permissions(request):
+    permissions = Permission.objects.all()
+    return render(request, 'permissions/view_permissions.html', {'permissions': permissions})
+
+def view_permission(request, permission_id):
+    permission = get_object_or_404(Permission, pk=permission_id)
+    return render(request, 'permissions/view_permission.html', {'permission': permission})
 
 def forgot_password(request):
     if request.method == 'POST':
