@@ -533,6 +533,30 @@ def add_permission(request):
     
     return render(request, 'permissions/add_permission.html', {'roles': roles, 'features': features})
 
+def edit_permission(request, permission_id):
+    permission = get_object_or_404(Permission, pk=permission_id)
+    roles = Role.objects.all()
+    features = Feature.objects.all()
+    
+    if request.method == 'POST':
+        role_id = request.POST.get('role')
+        feature_id = request.POST.get('feature')
+
+        # Validate that role_id and feature_id are not None or empty
+        if not role_id:
+            return HttpResponseBadRequest("Role is required.")
+        if not feature_id:
+            return HttpResponseBadRequest("Feature is required.")
+
+        # Update permission data
+        permission.role_id = role_id
+        permission.feature_id = feature_id
+        permission.save()
+        
+        return redirect('view_permission', permission_id=permission_id)
+    
+    return render(request, 'permissions/edit_permission.html', {'permission': permission, 'roles': roles, 'features': features})
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
