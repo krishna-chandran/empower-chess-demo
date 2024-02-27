@@ -25,7 +25,7 @@
                                 <td><a href="{% url 'view_user' user.id %}">{{ user.id }}</a></td>
                                 <td>{{ user.user.username }}</td>
                                 <td>{{ user.user.email }}</td>
-                                <td>{{ user.role|title }}</td>
+                                <td>{{ user.role.role_name|title }}</td>
                             </tr>
                         {% endfor %}
                     </tbody>

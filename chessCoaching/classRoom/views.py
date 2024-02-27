@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature,Role
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
 from .forms import RegisterForm,LoginForm
@@ -52,7 +52,7 @@ def add_user(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
-        role = request.POST.get('role')
+        role_name = request.POST.get('role')
         password = request.POST.get('password')  # Assuming there's a password field in the form
 
         if AuthUser.objects.filter(username=username).exists():
@@ -63,6 +63,7 @@ def add_user(request):
 
         hashed_password = make_password(password)
 
+        role = Role.objects.get(role_name=role_name)
         auth_user = AuthUser.objects.create(username=username, email=email, password=hashed_password)
         auth_user.save()
 
@@ -510,7 +511,7 @@ def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
-        role = request.POST.get('role')
+        role_name = request.POST.get('role')
         password = request.POST.get('password')
 
         if AuthUser.objects.filter(username=username).exists():
@@ -520,7 +521,8 @@ def register(request):
             return render(request, 'registration/register.html', {'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
-
+        
+        role = Role.objects.get(role_name=role_name)
         auth_user = AuthUser.objects.create(username=username, email=email, password=hashed_password)
         auth_user.save()
 

@@ -27,17 +27,19 @@ class Student(models.Model):
     academy_interested      = models.CharField(max_length=255,choices=academy,)
     password                = models.CharField(max_length=255)
 
-class User(models.Model):
+class Role(models.Model):
     TEACHER = 'teacher'
     STUDENT = 'student'
     ROLE_CHOICES = [
         (TEACHER, 'Teacher'),
         (STUDENT, 'Student'),
     ]
+    id = models.AutoField(primary_key=True)
+    role_name = models.CharField(max_length=50, choices=ROLE_CHOICES)
+
+class User(models.Model):
     user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
-    role = models.CharField(max_length=50, choices=ROLE_CHOICES)
-
-
+    role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
 class Subscription(models.Model):
     id = models.AutoField(primary_key=True)
@@ -72,10 +74,6 @@ class UserAssignment(models.Model):
     submission_date = models.DateField()
     grade = models.CharField(max_length=5)
     comments = models.TextField()
-
-class Role(models.Model):
-    id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=50)
 
 class Feature(models.Model):
     id = models.AutoField(primary_key=True)
