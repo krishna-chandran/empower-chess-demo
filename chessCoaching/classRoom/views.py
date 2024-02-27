@@ -49,6 +49,7 @@ def view_user(request, user_id):
 
 @login_required
 def add_user(request):
+    roles = Role.objects.all()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -71,38 +72,37 @@ def add_user(request):
         
         return redirect('view_users')
 
-    return render(request, 'users/add_user.html')
+    return render(request, 'users/add_user.html', {'roles': roles})
 
 @login_required
 def edit_user(request, user_id):
+    roles = Role.objects.all()
     user = get_object_or_404(User, id=user_id)
     
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
-        role = request.POST.get('role')
-        # password = request.POST.get('password')
+        role_name = request.POST.get('role')  # Change variable name to role_name
 
         if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
-            return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Username already exists'})
+            return render(request, 'users/edit_user.html', {'user': user, 'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exclude(id=user.user.id).exists():
-            return render(request, 'users/edit_user.html', {'user': user, 'error_message': 'Email already exists'})
+            return render(request, 'users/edit_user.html', {'user': user,'roles': roles, 'error_message': 'Email already exists'})
 
         user.user.username = username
         user.user.email = email
-        user.role = role
-
-        # if password:
-        #     hashed_password = make_password(password)
-        #     user.user.password = hashed_password
+        
+        # Retrieve the Role instance corresponding to the selected role name
+        role = Role.objects.get(role_name=role_name)
+        user.role = role  # Assign the Role instance to the User's role field
 
         user.user.save()
         user.save()
         
         return redirect('view_user', user_id=user_id)
     
-    return render(request, 'users/edit_user.html', {'user': user})
+    return render(request, 'users/edit_user.html', {'user': user, 'roles': roles})
 
 @login_required
 def delete_user(request, user_id):

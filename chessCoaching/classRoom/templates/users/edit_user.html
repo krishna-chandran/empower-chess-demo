@@ -34,11 +34,12 @@
                     <div class="col-sm-6">
                         <label for="role"><b>Role</b></label>
                         <select class="form-control" id="role" name="role" required>
-                            <option value="teacher" {% if user.role == 'teacher' %} selected {% endif %}>Teacher</option>
-                            <option value="student" {% if user.role == 'student' %} selected {% endif %}>Student</option>
+                            {% for role in roles %}
+                                <option value="{{ role.role_name }}" {% if role.role_name == user.role.role_name %} selected {% endif %}>{{ role.role_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
-                </div>                
+                </div>
                 <button type="submit" class="btn btn-primary btn-user btn-block">Save Changes</button>
                 <a href="{% url 'view_user' user.id %}" class="btn btn-google btn-user btn-block">Cancel</a>
             </form>
