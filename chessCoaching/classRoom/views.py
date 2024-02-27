@@ -502,6 +502,15 @@ def edit_role(request, role_id):
 
     return render(request, 'roles/edit_role.html', {'role': role})
 
+def delete_role(request, role_id):
+    role = get_object_or_404(Role, pk=role_id)
+
+    if request.method == 'POST':
+        role.delete()
+        return redirect('view_roles')
+    
+    return render(request, 'roles/delete_role.html', {'role': role})
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
