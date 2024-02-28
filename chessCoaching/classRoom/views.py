@@ -51,6 +51,7 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 def view_user_activity(request):
+    ### activity code
     return 
 
 @login_required
