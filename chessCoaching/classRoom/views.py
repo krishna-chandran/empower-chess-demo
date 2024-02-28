@@ -51,7 +51,7 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
-# @permission_required('Add User')
+@permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
     if request.method == 'POST':
