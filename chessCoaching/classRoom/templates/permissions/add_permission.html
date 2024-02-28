@@ -8,6 +8,9 @@
             </div>
             <div class="card-body">
                 <form class="user" method="post">
+                    {% if error_message %}
+                        <p style="color:red;">{{ error_message }}</p>
+                    {% endif %}
                     {% csrf_token %}
                     <div class="form-group row">
                         <div class="col-sm-6">

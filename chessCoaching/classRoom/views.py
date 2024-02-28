@@ -16,20 +16,21 @@ from django.contrib.auth.hashers import make_password
 from functools import wraps
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
 
-def user_role_required(role):
+def permission_required(feature_name):
+
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
-            if request.user.is_authenticated and hasattr(request.user, 'user') and request.user.user.role != role:
-                return render(request, 'common/no_permission.html')
-            else:
-                return view_func(request, *args, **kwargs)
-                
+            if request.user.is_authenticated and hasattr(request.user, 'user'):
+                role = request.user.user.role
+                if Permission.objects.filter(role=role, feature__feature_name=feature_name).exists():
+                    return view_func(request, *args, **kwargs)
+            return render(request, 'common/no_permission.html')
         return _wrapped_view
     return decorator
 
@@ -38,16 +39,19 @@ def index(request):
 	return render(request,"common/index.html")
 
 @login_required
+# @permission_required('View Users')
 def view_users(request):
     users = User.objects.all()
     return render(request, 'users/view_users.html', {'users': users})
 
 @login_required
+# @permission_required('View User')
 def view_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
+# @permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
     if request.method == 'POST':
@@ -75,6 +79,7 @@ def add_user(request):
     return render(request, 'users/add_user.html', {'roles': roles})
 
 @login_required
+# @permission_required('Edit User')
 def edit_user(request, user_id):
     roles = Role.objects.all()
     user = get_object_or_404(User, id=user_id)
@@ -105,6 +110,7 @@ def edit_user(request, user_id):
     return render(request, 'users/edit_user.html', {'user': user, 'roles': roles})
 
 @login_required
+# @permission_required('Delete User')
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     
@@ -117,16 +123,19 @@ def delete_user(request, user_id):
     return render(request, 'users/delete_user.html', {'user': user})
 
 @login_required
+@permission_required('View Subscriptions')
 def view_subscriptions(request):
     subscriptions = Subscription.objects.all()
     return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
 @login_required
+@permission_required('View Subscription')
 def view_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     return render(request, 'subscriptions/view_subscription.html', {'subscription': subscription})
 
 @login_required
+@permission_required('Add Subscription')
 def add_subscription(request):
     # courses = Course.objects.all()
     users = User.objects.all()
@@ -152,6 +161,7 @@ def add_subscription(request):
     return render(request, 'subscriptions/add_subscription.html', {'users': users})
 
 @login_required
+@permission_required('Edit Subscription')
 def edit_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, id=subscription_id)
     users = User.objects.all()
@@ -177,6 +187,7 @@ def edit_subscription(request, subscription_id):
     return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users})
 
 @login_required
+@permission_required('Delete Subscription')
 def delete_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     if request.method == 'POST':
@@ -186,20 +197,20 @@ def delete_subscription(request, subscription_id):
 
 
 @login_required
-# @user_role_required('student')
+@permission_required('View Courses')
 def view_courses(request):
 	course_data = Course.objects.all()
 	# print(course_data)
 	return render(request,"courses/view_courses.html",{'course_data': course_data} )
 
 @login_required
-# @user_role_required('student')
+@permission_required('View Course')
 def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     return render(request, 'courses/view_course.html', {'course_data': course_data})
 
 @login_required
-# @user_role_required('student')
+@permission_required('Add Course')
 def add_course(request):
     # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
 	if request.method == 'POST':
@@ -210,7 +221,7 @@ def add_course(request):
 	return render(request, 'courses/add_course.html')
 
 @login_required
-# @user_role_required('student')
+@permission_required('Edit Course')
 def edit_course(request, course_id):
 	course_data = get_object_or_404(Course, id=course_id)
 	if request.method == 'POST':
@@ -222,7 +233,7 @@ def edit_course(request, course_id):
 
 
 @login_required
-# @user_role_required('student')
+@permission_required('Delete Course')
 def delete_course(request, course_id):
 	course_data = get_object_or_404(Course, id=course_id)
 	if request.method == 'POST':
@@ -233,19 +244,19 @@ def delete_course(request, course_id):
 
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('View Enrollments')
 def view_enrollments(request):
     enrollments = Enrollment.objects.all()
     return render(request, "enrollments/view_enrollments.html", {'enrollments': enrollments})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('View Enrollment')
 def view_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
     return render(request, 'enrollments/view_enrollment.html', {'enrollment': enrollment})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Add Enrollment')
 def add_enrollment(request):
     courses = Course.objects.all()
     users = User.objects.all()
@@ -260,7 +271,7 @@ def add_enrollment(request):
     return render(request, 'enrollments/add_enrollment.html', {'courses': courses, 'users': users})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Edit Enrollment')
 def edit_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
     courses = Course.objects.all()
@@ -287,7 +298,7 @@ def edit_enrollment(request, enrollment_id):
     return render(request, 'enrollments/edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Delete Enrollment')
 def delete_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
     if request.method == 'POST':
@@ -297,19 +308,19 @@ def delete_enrollment(request, enrollment_id):
     return render(request, 'enrollments/delete_enrollment.html', {'enrollment_data': enrollment_data})
 
 @login_required
-# @user_role_required('student')
+@permission_required('View Assignments')
 def view_assignments(request):
     assignments = Assignment.objects.all()
     return render(request, 'assignments/view_assignments.html', {'assignments': assignments})
 
 @login_required
-# @user_role_required('student')
+@permission_required('View Assignment')
 def view_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
     return render(request, 'assignments/view_assignment.html', {'assignment': assignment})
 
 @login_required
-# @user_role_required('student')
+@permission_required('Add Assignment')
 def add_assignment(request):
     courses = Course.objects.all()
     if request.method == 'POST':
@@ -328,7 +339,7 @@ def add_assignment(request):
     return render(request, 'assignments/add_assignment.html', {'courses': courses})
 
 @login_required
-# @user_role_required('student')
+@permission_required('Edit Assignment')
 def edit_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     courses = Course.objects.all()
@@ -352,7 +363,7 @@ def edit_assignment(request, assignment_id):
     return render(request, 'assignments/edit_assignment.html', {'assignment': assignment, 'courses': courses})
 
 @login_required
-# @user_role_required('student')
+@permission_required('Delete Assignment')
 def delete_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, id=assignment_id)
     
@@ -363,20 +374,20 @@ def delete_assignment(request, assignment_id):
     return render(request, 'assignments/delete_assignment.html', {'assignment': assignment})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('View Userassignments')
 def view_userassignments(request):
     user_assignments = UserAssignment.objects.all()
     return render(request, 'userassignments/view_userassignments.html', {'user_assignments': user_assignments})
 
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('View Userassignment')
 def view_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     return render(request, 'userassignments/view_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Add Userassignment')
 def add_userassignment(request):
     assignments = Assignment.objects.all()
     users = User.objects.all()
@@ -398,7 +409,7 @@ def add_userassignment(request):
     return render(request, 'userassignments/add_userassignment.html', {'assignments': assignments, 'users': users})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Edit Userassignment')
 def edit_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     assignments = Assignment.objects.all()
@@ -417,7 +428,7 @@ def edit_userassignment(request, user_assignment_id):
     return render(request, 'userassignments/edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
 
 @login_required
-# @user_role_required('teacher')
+@permission_required('Delete Userassignment')
 def delete_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     if request.method == 'POST':
@@ -426,44 +437,51 @@ def delete_userassignment(request, user_assignment_id):
     return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
-# @user_role_required('teacher')
+# @permission_required('View Features')
 def view_features(request):
     features = Feature.objects.all()
     return render(request, 'features/view_features.html', {'features': features})
 
 @login_required
-# @user_role_required('teacher')
+# @permission_required('View Feature'))
 def view_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     return render(request, 'features/view_feature.html', {'feature': feature})
 
 @login_required
-# @user_role_required('teacher')
+# @permission_required('Add Feature')
 def add_feature(request):
     if request.method == 'POST':
         feature_name = request.POST.get('feature_name')
 
-        new_feature = Feature.objects.create(feature_name=feature_name)
-
-        return redirect(reverse('view_feature', kwargs={'feature_id': new_feature.id}))
+        try:
+            new_feature = Feature.objects.create(feature_name=feature_name)
+            return redirect(reverse('view_feature', kwargs={'feature_id': new_feature.id}))
+        except IntegrityError:
+            error_message = "A feature with this name already exists."
+            return render(request, 'features/add_feature.html', {'error_message': error_message})
     else:
         return render(request, 'features/add_feature.html')
 
 @login_required
-# @user_role_required('teacher')    
+# @permission_required('Edit Feature')    
 def edit_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
     if request.method == 'POST':
         feature_name = request.POST.get('feature_name')
         feature.feature_name = feature_name
-        feature.save()
-        return redirect(reverse('view_feature', kwargs={'feature_id': feature.id}))
+        try:
+            feature.save()
+            return redirect(reverse('view_feature', kwargs={'feature_id': feature.id}))
+        except IntegrityError:
+            error_message = "A feature with this name already exists."
+            return render(request, 'features/edit_feature.html', {'feature': feature, 'error_message': error_message})
     
     return render(request, 'features/edit_feature.html', {'feature': feature})
 
 @login_required
-# @user_role_required('teacher')
+# @permission_required('Delete Feature')
 def delete_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
@@ -473,35 +491,52 @@ def delete_feature(request, feature_id):
     
     return render(request, 'features/delete_feature.html', {'feature': feature})
 
+@login_required
+# @permission_required('View Roles')
 def view_roles(request):
     roles = Role.objects.all()
     return render(request, 'roles/view_roles.html', {'roles': roles})
 
+@login_required
+# @permission_required('View Role')
 def view_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
     return render(request, 'roles/view_role.html', {'role': role})
 
+@login_required
+# @permission_required('Add  Role')
 def add_role(request):
     if request.method == 'POST':
         role_name = request.POST.get('role_name')
 
-        new_role = Role.objects.create(role_name=role_name)
-
-        return redirect(reverse('view_role', kwargs={'role_id': new_role.id}))
+        try:
+            new_role = Role.objects.create(role_name=role_name)
+            return redirect(reverse('view_role', kwargs={'role_id': new_role.id}))
+        except IntegrityError as e:
+            error_message = "A role with this name already exists."
+            return render(request, 'roles/add_role.html', {'error_message': error_message})
     else:
         return render(request, 'roles/add_role.html')
-    
+
+@login_required
+# @permission_required('Edit Role')    
 def edit_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
 
     if request.method == 'POST':
         role_name = request.POST.get('role_name')
         role.role_name = role_name
-        role.save()
-        return redirect(reverse('view_role', kwargs={'role_id': role.id}))
+        try:
+            role.save()
+            return redirect(reverse('view_role', kwargs={'role_id': role.id}))
+        except IntegrityError as e:
+            error_message = "A role with this name already exists."
+            return render(request, 'roles/edit_role.html', {'role': role, 'error_message': error_message})
 
     return render(request, 'roles/edit_role.html', {'role': role})
 
+@login_required
+# @permission_required('Delete Role')
 def delete_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
 
@@ -511,14 +546,20 @@ def delete_role(request, role_id):
     
     return render(request, 'roles/delete_role.html', {'role': role})
 
+@login_required
+# @permission_required('View Permissions')
 def view_permissions(request):
     permissions = Permission.objects.all()
     return render(request, 'permissions/view_permissions.html', {'permissions': permissions})
 
+@login_required
+# @permission_required('View Permission')
 def view_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     return render(request, 'permissions/view_permission.html', {'permission': permission})
 
+@login_required
+# @permission_required('Add Permission')
 def add_permission(request):
     roles = Role.objects.all()
     features = Feature.objects.all()
@@ -527,12 +568,17 @@ def add_permission(request):
         role_id = request.POST.get('role')
         feature_id = request.POST.get('feature')
         
-        permission = Permission.objects.create(role_id=role_id, feature_id=feature_id)
-        
-        return redirect('view_permission', permission_id=permission.id)
+        try:
+            permission = Permission.objects.create(role_id=role_id, feature_id=feature_id)
+            return redirect('view_permission', permission_id=permission.id)
+        except IntegrityError:
+            error_message = "A permission with this role and feature combination already exists."
+            return render(request, 'permissions/add_permission.html', {'roles': roles, 'features': features, 'error_message': error_message})
     
     return render(request, 'permissions/add_permission.html', {'roles': roles, 'features': features})
 
+@login_required
+# @permission_required('Edit Permission')
 def edit_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     roles = Role.objects.all()
@@ -548,15 +594,20 @@ def edit_permission(request, permission_id):
         if not feature_id:
             return HttpResponseBadRequest("Feature is required.")
 
-        # Update permission data
-        permission.role_id = role_id
-        permission.feature_id = feature_id
-        permission.save()
-        
-        return redirect('view_permission', permission_id=permission_id)
+        try:
+            # Update permission data
+            permission.role_id = role_id
+            permission.feature_id = feature_id
+            permission.save()
+            return redirect('view_permission', permission_id=permission_id)
+        except IntegrityError:
+            error_message = "A permission with this role and feature combination already exists."
+            return render(request, 'permissions/edit_permission.html', {'permission': permission, 'roles': roles, 'features': features, 'error_message': error_message})
     
     return render(request, 'permissions/edit_permission.html', {'permission': permission, 'roles': roles, 'features': features})
 
+@login_required
+# @permission_required('Delete Permission')
 def delete_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     

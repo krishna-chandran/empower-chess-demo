@@ -29,7 +29,7 @@ class Student(models.Model):
 
 class Role(models.Model):
     id = models.AutoField(primary_key=True)
-    role_name = models.CharField(max_length=255)
+    role_name = models.CharField(max_length=255, unique=True)
 
 class User(models.Model):
     user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
@@ -71,9 +71,13 @@ class UserAssignment(models.Model):
 
 class Feature(models.Model):
     id = models.AutoField(primary_key=True)
-    feature_name = models.CharField(max_length=255)
+    feature_name = models.CharField(max_length=255, unique=True)
 
 class Permission(models.Model):
     id = models.AutoField(primary_key=True)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     feature = models.ForeignKey(Feature, on_delete=models.CASCADE)
+    
+    
+    class Meta:
+        unique_together = ['role', 'feature']
