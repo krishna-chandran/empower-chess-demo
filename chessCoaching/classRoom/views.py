@@ -50,10 +50,6 @@ def view_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     return render(request, 'users/view_user.html', {'user': user})
 
-def view_user_activity(request):
-    ### activity code
-    return 
-
 @login_required
 @permission_required('Add User')
 def add_user(request):
