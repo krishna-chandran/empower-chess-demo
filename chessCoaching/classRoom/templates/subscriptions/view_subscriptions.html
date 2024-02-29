@@ -24,12 +24,12 @@
                 <tbody>
                     {% for subscription in subscriptions %}
                         <tr>
-                            <td><a href="{% url 'view_subscription' subscription.id %}">{{ subscription.id }}</a></td>
+                            <td><a href="{% url 'view_subscription' subscription.subscription_id %}">{{ subscription.subscription_id }}</a></td>
                             
                             <td>{{ subscription.user.user.username }}</td>
-                            <td>{{ subscription.subscription_start_date }}</td>
-                            <td>{{ subscription.subscription_end_date }}</td>
-                            <td>{{ subscription.payment_details }}</td>
+                            <td>{{ subscription.payment_date }}</td>
+                            <td>{{ subscription.expiry_date }}</td>
+                            <td>{{ subscription.package.package_name }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
