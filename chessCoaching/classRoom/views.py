@@ -647,10 +647,6 @@ def forgot_password(request):
 
     return render(request, 'registration/forgot-password.html')
 
-def error_404(request):
-	return render(request,"common/404.html")
-
-
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -716,6 +712,7 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
-	
+def error_404_view(request, exception=None , path_not_found=None):
+    return render(request, 'common/404.html', status=404)	
 
 
