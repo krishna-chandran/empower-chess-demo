@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import reg_success,home,logout_user,index,register,login,forgot_password,error_404
+from .views import reg_success,home,logout_user,index,register,login,forgot_password
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
@@ -10,6 +10,11 @@ from .views import view_features, view_feature, add_feature, edit_feature, delet
 from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission,delete_permission
 from django.contrib.auth import views as auth_views
+from django.conf.urls import handler404
+from .views import error_404_view 
+
+handler404 = 'classRoom.views.error_404_view'
+
 
 urlpatterns = [
     path('registersuccess/',reg_success,name="registerSuccess"),
@@ -18,7 +23,6 @@ urlpatterns = [
     path('',index,name="index"),
     path('register/',register,name="register"),
     path('accounts/login/', login, name='login'),
-    path('error_404/',error_404,name="error_404"),
     
     path('forgot_password/', forgot_password, name='forgot_password'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
@@ -80,4 +84,5 @@ urlpatterns = [
     path('permission/add/', add_permission, name='add_permission'),
     path('permission/<int:permission_id>/edit/', edit_permission, name='edit_permission'),
     path('permission/<int:permission_id>/delete/', delete_permission, name='delete_permission'),
+    path('<path:path_not_found>/', error_404_view),
 ]
