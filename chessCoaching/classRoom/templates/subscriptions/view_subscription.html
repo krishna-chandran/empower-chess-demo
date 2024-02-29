@@ -12,9 +12,9 @@
             <div class="card-body">
                 <p class="card-text"><b>Subscription ID:</b> {{ subscription.id }}</p>
                 <p class="card-text"><b>User:</b> {{ subscription.user.user.username }}</p>
-                <p class="card-text"><b>Start Date:</b> {{ subscription.subscription_start_date }}</p>
-                <p class="card-text"><b>End Date:</b> {{ subscription.subscription_end_date }}</p>
-                <p class="card-text"><b>Payment Details:</b> {{ subscription.payment_details }}</p>
+                <p class="card-text"><b>Start Date:</b> {{ subscription.payment_date }}</p>
+                <p class="card-text"><b>End Date:</b> {{ subscription.expiry_date }}</p>
+                <p class="card-text"><b>Payment Details:</b> {{ subscription.package }}</p>
                 <!-- Add more details as needed -->
                 <div class="my-2">
                     <a href="/subscription/add/" class="btn btn-success btn-icon-split">

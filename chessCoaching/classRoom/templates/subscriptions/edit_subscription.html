@@ -4,11 +4,10 @@
 <div class="col-lg-7">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Edit Subscription: {{ subscription.id }}</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Edit Subscription: {{ subscription.subscription_id }}</h6>
         </div>
     
         <div class="card-body">
-
             <form class="user" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
@@ -16,38 +15,37 @@
                         <label for="user"><b>User</b></label>
                         <select class="form-control" id="user" name="user" required>
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == subscription.id %} selected {% endif %}>{{ user.user.username }}</option>
+                                <option value="{{ user.id }}" {% if user.id == subscription.user_id %} selected {% endif %}>{{ user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_start_date"><b>Subscription Start Date</b></label>
-                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" value="{{ subscription.subscription_start_date|date:'Y-m-d' }}" required>
+                        <label for="payment_date"><b>Payment Date</b></label>
+                        <input type="date" class="form-control" id="payment_date" name="payment_date" value="{{ subscription.payment_date }}" required>
                     </div>
                 </div>
-                
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_end_date"><b>Subscription End Date</b></label>
-                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" value="{{ subscription.subscription_end_date|date:'Y-m-d' }}" required>
+                        <label for="expiry_date"><b>Expiry Date</b></label>
+                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="{{ subscription.expiry_date }}" required>
                     </div>
                 </div>
-
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="payment_details"><b>Payment Details</b></label>
-                        <textarea class="form-control" id="payment_details" name="payment_details" required>{{ subscription.payment_details }}</textarea>
+                        <label for="package"><b>Package</b></label>
+                        <select class="form-control" id="package" name="package" required>
+                            {% for package in packages %}
+                                <option value="{{ package.package_id }}" {% if package.package_id == subscription.package_id %} selected {% endif %}>{{ package.package_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-                
                 <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
-                <a href="{% url 'view_subscription' subscription.id %}" class="btn btn-danger btn-user btn-block">Cancel</a>
-                
+                <a href="{% url 'view_subscription' subscription.subscription_id %}" class="btn btn-danger btn-user btn-block">Cancel</a>
             </form>
         </div>
     </div>
 </div>
-
 {% endblock %}

@@ -14,27 +14,31 @@
                         <label for="user"><b>User</b></label>
                         <select name="user" id="user" class="form-control" required>
                             {% for user in users %}
-                                <option value="{{ user.user_id }}">{{ user.user.username }}</option>
+                                <option value="{{ user.pk }}">{{ user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_start_date"><b>Subscription Start Date</b></label>
-                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" required>
+                        <label for="payment_date"><b>Payment Date</b></label>
+                        <input type="date" class="form-control" id="payment_date" name="payment_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_end_date"><b>Subscription End Date</b></label>
-                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" required>
+                        <label for="expiry_date"><b>Expiry Date</b></label>
+                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="payment_details"><b>Payment Details</b></label>
-                        <input type="text" class="form-control" id="payment_details" name="payment_details" required>
+                        <label for="package"><b>Package</b></label>
+                        <select name="package" id="package" class="form-control" required>
+                            {% for package in packages %}
+                                <option value="{{ package.package_id }}">{{ package.package_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
