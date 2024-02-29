@@ -712,12 +712,8 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
-<<<<<<< HEAD
 def error_404_view(request, exception=None , path_not_found=None):
     return render(request, 'common/404.html', status=404)	
-=======
-#feature19
-	
->>>>>>> feature_19_add_collapsible_menu
+
 
 
