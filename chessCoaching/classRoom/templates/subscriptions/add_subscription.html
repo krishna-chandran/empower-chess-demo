@@ -7,7 +7,7 @@
             <h6 class="m-0 font-weight-bold text-primary">Add Subscription</h6>
         </div>
         <div class="card-body">
-            <form class="user" method="post">
+            <form class="user" id="subscription-form" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
                     <div class="col-sm-6">
@@ -36,15 +36,54 @@
                         <label for="package"><b>Package</b></label>
                         <select name="package" id="package" class="form-control" required>
                             {% for package in packages %}
-                                <option value="{{ package.package_id }}">{{ package.package_name }}</option>
+                                <option value="{{ package.package_id }}" data-price="{{ package.price }}">{{ package.package_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                <button type="button" id="pay-button" class="btn btn-primary btn-user btn-block">Pay</button>
                 <a href="{% url 'view_subscriptions' %}" class="btn btn-google btn-user btn-block">Cancel</a>
             </form>
         </div>
     </div>
 </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('pay-button').onclick = function () {
+        if (validateForm()) {
+            var packageSelect = document.getElementById('package');
+            var selectedPackage = packageSelect.options[packageSelect.selectedIndex];
+            var packageAmount = selectedPackage.getAttribute('data-price');
+    
+            var options = {
+                key: 'rzp_test_yisnmi4QnEj4h4',
+                amount: packageAmount * 100,
+                currency: 'INR',
+                handler: function (response) {
+                    console.log(response);
+                    document.getElementById('subscription-form').submit();
+                }
+            };
+    
+            var rzp = new Razorpay(options);
+            rzp.open();
+        } else {
+            alert('Please fill all required fields.');
+        }
+    };
+    
+    function validateForm() {
+        var user = document.getElementById('user').value;
+        var paymentDate = document.getElementById('payment_date').value;
+        var expiryDate = document.getElementById('expiry_date').value;
+        var package = document.getElementById('package').value;
+    
+        if (user && paymentDate && expiryDate && package) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
 {% endblock %}

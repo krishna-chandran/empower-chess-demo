@@ -51,7 +51,7 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
-@permission_required('Add User')
+# @permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
     if request.method == 'POST':
@@ -61,10 +61,10 @@ def add_user(request):
         password = request.POST.get('password')  # Assuming there's a password field in the form
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Email already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
 
@@ -750,6 +750,7 @@ def forgot_password(request):
     return render(request, 'registration/forgot-password.html')
 
 def register(request):
+    roles = Role.objects.all()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -757,10 +758,10 @@ def register(request):
         password = request.POST.get('password')
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Username already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Email already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
         
@@ -772,7 +773,7 @@ def register(request):
         
         return render(request, "registration/registerSuccess.html")
 
-    return render(request, 'registration/register.html')
+    return render(request, 'registration/register.html', {'roles': roles})
 
 def reg_success(request):
 	return render(request,"registration/registerSuccess.html")
