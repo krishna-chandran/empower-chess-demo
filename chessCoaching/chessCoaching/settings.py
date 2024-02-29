@@ -29,7 +29,7 @@ SECRET_KEY = env("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["ec2-54-167-116-102.compute-1.amazonaws.com"]
 
 
 # Application definition
@@ -132,7 +132,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+#STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -151,10 +151,10 @@ EMAIL_HOST_USER = 'sivabalanprabhu44@gmail.com'  # Replace with your Gmail email
 EMAIL_HOST_PASSWORD = 'lveu ugfg odim odae' 
 PASSWORD_RESET_TIMEOUT_DAYS = 1 
 
-STATIC_URL = '/static/'
+STATIC_URL = '/staticfiles/'
 
 # Add this line to set the STATIC_ROOT
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, '')
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
