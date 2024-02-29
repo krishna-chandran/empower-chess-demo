@@ -35,12 +35,6 @@ class User(models.Model):
     user = models.OneToOneField(AuthUser, on_delete=models.CASCADE)
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
 
-class Subscription(models.Model):
-    id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    subscription_start_date = models.DateField()
-    subscription_end_date = models.DateField()
-    payment_details = models.TextField()
 
 class Course(models.Model):
     id = models.AutoField(primary_key=True)
@@ -81,3 +75,28 @@ class Permission(models.Model):
     
     class Meta:
         unique_together = ['role', 'feature']
+        
+class Package(models.Model):
+    package_id = models.AutoField(primary_key=True)
+    package_name = models.CharField(max_length=255, unique=True)
+    package_description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+
+# class Subscription(models.Model):
+#     id = models.AutoField(primary_key=True)
+#     user = models.ForeignKey(User, on_delete=models.CASCADE)
+#     subscription_start_date = models.DateField()
+#     subscription_end_date = models.DateField()
+#     payment_details = models.TextField()
+
+class Subscription(models.Model):
+    subscription_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    payment_date = models.DateField()
+    expiry_date = models.DateField()
+    
+class PackageOptions(models.Model):
+    option_id = models.AutoField(primary_key=True)
+    package = models.ForeignKey(Package, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
