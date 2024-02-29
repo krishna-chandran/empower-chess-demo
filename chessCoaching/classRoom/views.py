@@ -188,6 +188,66 @@ def delete_subscription(request, subscription_id):
         return redirect('view_subscriptions') 
     return render(request, 'subscriptions/delete_subscription.html', {'subscription': subscription})
 
+@login_required
+def view_packages(request):
+    packages = Package.objects.all()
+    return render(request, 'packages/view_packages.html', {'packages': packages})
+
+@login_required
+def view_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    return render(request, 'packages/view_package.html', {'package': package})
+
+@login_required
+def add_package(request):
+    if request.method == 'POST':
+        package_name = request.POST.get('package_name')
+        package_description = request.POST.get('package_description')
+        price = request.POST.get('price')
+
+        try:
+            package = Package.objects.create(
+                package_name=package_name,
+                package_description=package_description,
+                price=price
+            )
+            return redirect('view_package', package_id=package.package_id)
+
+        except IntegrityError:
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/add_package.html', {'error_message': error_message})
+
+    return render(request, 'packages/add_package.html')
+
+@login_required
+def edit_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    if request.method == 'POST':
+        package_name = request.POST.get('package_name')
+        package_description = request.POST.get('package_description')
+        price = request.POST.get('price')
+
+        try:
+            package.package_name = package_name
+            package.package_description = package_description
+            package.price = price
+            package.save()
+            return redirect('view_package', package_id=package.package_id)
+
+        except IntegrityError:
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/edit_package.html', {'package': package, 'error_message': error_message})
+
+    return render(request, 'packages/edit_package.html', {'package': package})
+
+@login_required
+def delete_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    if request.method == 'POST':
+        package.delete()
+        return redirect('view_packages')
+
+    return render(request, 'packages/delete_package.html', {'package': package})
 
 @login_required
 @permission_required('View Courses')

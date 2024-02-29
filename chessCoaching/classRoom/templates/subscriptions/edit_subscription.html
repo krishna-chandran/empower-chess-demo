@@ -15,7 +15,7 @@
                         <label for="user"><b>User</b></label>
                         <select class="form-control" id="user" name="user" required>
                             {% for user in users %}
-                                <option value="{{ user.id }}" {% if user.id == subscription.user_id %} selected {% endif %}>{{ user.username }}</option>
+                                <option value="{{ user.id }}" {% if user.id == subscription.user_id %} selected {% endif %}>{{ user.user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -23,13 +23,13 @@
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="payment_date"><b>Payment Date</b></label>
-                        <input type="date" class="form-control" id="payment_date" name="payment_date" value="{{ subscription.payment_date }}" required>
+                        <input type="date" class="form-control" id="payment_date" name="payment_date" value="{{ subscription.payment_date|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="expiry_date"><b>Expiry Date</b></label>
-                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="{{ subscription.expiry_date }}" required>
+                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" value="{{ subscription.expiry_date|date:'Y-m-d' }}" required>
                     </div>
                 </div>
                 <div class="form-group row">

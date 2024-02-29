@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Add Package</h6>
+        </div>
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                {% if error_message %}
+                    <p style="color:red;">{{ error_message }}</p>
+                {% endif %}
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="package_name"><b>Package Name</b></label>
+                        <input type="text" class="form-control" id="package_name" placeholder="Package Name" name="package_name" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="package_description"><b>Package Description</b></label>
+                        <textarea class="form-control" id="package_description" placeholder="Package Description" name="package_description" rows="2" required></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="price"><b>Price</b></label>
+                        <input type="number" class="form-control" placeholder="Price" id="price" name="price" step="0.01" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                <a href="{% url 'view_packages' %}" class="btn btn-google btn-user btn-block">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

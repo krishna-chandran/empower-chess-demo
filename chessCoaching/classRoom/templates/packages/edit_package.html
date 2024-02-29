@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Package: {{ package.package_id }}</h6>
+        </div>
+    
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                {% if error_message %}
+                    <p style="color:red;">{{ error_message }}</p>
+                {% endif %}
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <label for="package_name"><b>Package Name</b></label>
+                        <input type="text" class="form-control" id="package_name" name="package_name" value="{{ package.package_name }}" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="package_description"><b>Package Description</b></label>
+                        <textarea class="form-control" id="package_description" name="package_description" rows="3" required>{{ package.package_description }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="price"><b>Price</b></label>
+                        <input type="number" class="form-control" id="price" name="price" value="{{ package.price }}" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="{% url 'view_packages' %}" class="btn btn-danger btn-user btn-block">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -3,6 +3,7 @@ from .views import reg_success,home,logout_user,index,register,login,forgot_pass
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
+from .views import view_packages, view_package, add_package, edit_package, delete_package
 from .views import view_assignments, view_assignment, add_assignment, edit_assignment, delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
@@ -42,6 +43,12 @@ urlpatterns = [
     path('subscription/add/', add_subscription, name='add_subscription'),
     path('subscription/<int:subscription_id>/edit/', edit_subscription, name='edit_subscription'),
     path('subscription/<int:subscription_id>/delete/', delete_subscription, name='delete_subscription'),
+    
+    path('packages/',view_packages, name='view_packages'),
+    path('package/<int:package_id>/', view_package, name='view_package'),
+    path('package/add/', add_package, name='add_package'),
+    path('package/<int:package_id>/edit/', edit_package, name='edit_package'),
+    path('package/<int:package_id>/delete/', delete_package, name='delete_package'),
 
     path('courses/',view_courses,name="view_courses"),
     path('course/<int:course_id>/',view_course, name="view_course"),
