@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Package Option Details</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text"><b>Option ID:</b> {{ package_option.option_id }}</p>
+                <p class="card-text"><b>Package:</b> {{ package_option.package.package_name }}</p>
+                <p class="card-text"><b>Course:</b> {{ package_option.course.course_name }}</p>
+                <!-- Add more details as needed -->
+                <div class="my-2">
+                    <a href="{% url 'add_package_option' %}" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-plus"></i>
+                        </span>
+                        <span class="text">Add</span>
+                    </a>
+                    <a href="{% url 'edit_package_option' option_id=package_option.option_id %}" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-flag"></i>
+                        </span>
+                        <span class="text">Edit</span>
+                    </a>
+                    <a href="{% url 'delete_package_option' option_id=package_option.option_id %}" class="btn btn-danger btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span class="text">Delete</span>
+                    </a>
+                </div>
+                <div class="my-2">
+                    <a href="{% url 'view_package_options' %}" class="btn btn-warning btn-icon-split">
+                        <span class="text">Back</span>
+                    </a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

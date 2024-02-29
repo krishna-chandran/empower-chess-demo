@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
 from .forms import RegisterForm,LoginForm
@@ -248,6 +248,55 @@ def delete_package(request, package_id):
         return redirect('view_packages')
 
     return render(request, 'packages/delete_package.html', {'package': package})
+
+def view_package_options(request):
+    package_options = PackageOptions.objects.all()
+    return render(request, 'package_options/view_package_options.html', {'package_options': package_options})
+
+def view_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    return render(request, 'package_options/view_package_option.html', {'package_option': package_option})
+
+@login_required
+def add_package_option(request):
+    if request.method == 'POST':
+        package_id = request.POST.get('package_id')
+        course_id = request.POST.get('course_id')
+
+        package_option = PackageOptions.objects.create(
+            package_id=package_id,
+            course_id=course_id
+        )
+
+        return redirect('view_package_option', option_id=package_option.option_id)
+
+    packages = Package.objects.all()
+    courses = Course.objects.all()
+    return render(request, 'package_options/add_package_option.html', {'packages': packages, 'courses': courses})
+
+@login_required
+def edit_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    if request.method == 'POST':
+        package_id = request.POST.get('package_id')
+        course_id = request.POST.get('course_id')
+
+        package_option.package_id = package_id
+        package_option.course_id = course_id
+        package_option.save()
+
+        return redirect('view_package_option', option_id=package_option.option_id)
+
+    packages = Package.objects.all()
+    courses = Course.objects.all()
+    return render(request, 'package_options/edit_package_option.html', {'package_option': package_option, 'packages': packages, 'courses': courses})
+
+def delete_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    if request.method == 'POST':
+        package_option.delete()
+        return redirect('view_package_options')
+    return render(request, 'package_options/delete_package_option.html', {'package_option': package_option})
 
 @login_required
 @permission_required('View Courses')
