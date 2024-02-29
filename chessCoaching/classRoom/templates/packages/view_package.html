@@ -1,5 +1,3 @@
-<!-- view_subscription.html -->
-
 {% extends 'base.html' %}
 
 {% block content %}
@@ -7,29 +5,27 @@
     <div class="col-lg-6">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Subscription Details</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Package Details</h6>
             </div>
             <div class="card-body">
-                <p class="card-text"><b>Subscription ID:</b> {{ subscription.subscription_id }}</p>
-                <p class="card-text"><b>User:</b> {{ subscription.user.user.username }}</p>
-                <p class="card-text"><b>Start Date:</b> {{ subscription.payment_date }}</p>
-                <p class="card-text"><b>End Date:</b> {{ subscription.expiry_date }}</p>
-                <p class="card-text"><b>Payment Details:</b> {{ subscription.package.package_name }}</p>
-                <!-- Add more details as needed -->
+                <p class="card-text"><b>Package ID:</b> {{ package.package_id }}</p>
+                <p class="card-text"><b>Name:</b> {{ package.package_name }}</p>
+                <p class="card-text"><b>Description:</b> {{ package.package_description }}</p>
+                <p class="card-text"><b>Price:</b> {{ package.price }}</p>
                 <div class="my-2">
-                    <a href="/subscription/add/" class="btn btn-success btn-icon-split">
+                    <a href="/package/add/" class="btn btn-success btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-check"></i>
                         </span>
                         <span class="text">Add</span>
                     </a>
-                    <a href="/subscription/{{ subscription.subscription_id }}/edit/" class="btn btn-primary btn-icon-split">
+                    <a href="/package/{{ package.package_id }}/edit/" class="btn btn-primary btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-flag"></i>
                         </span>
                         <span class="text">Edit</span>
                     </a>
-                    <a href="/subscription/{{ subscription.subscription_id }}/delete/" class="btn btn-danger btn-icon-split">
+                    <a href="/package/{{ package.package_id }}/delete/" class="btn btn-danger btn-icon-split">
                         <span class="icon text-white-50">
                             <i class="fas fa-trash"></i>
                         </span>
@@ -37,7 +33,7 @@
                     </a>
                 </div>
                 <div class="my-2">
-                    <a href="/subscriptions/" class="btn btn-warning btn-icon-split">
+                    <a href="/packages/" class="btn btn-warning btn-icon-split">
                         <span class="text">Back</span>
                     </a>
                 </div>
