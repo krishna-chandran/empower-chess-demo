@@ -716,3 +716,4 @@ def error_404_view(request, exception=None , path_not_found=None):
     return render(request, 'common/404.html', status=404)	
 
 
+

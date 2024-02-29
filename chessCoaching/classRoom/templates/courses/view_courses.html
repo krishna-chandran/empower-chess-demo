@@ -10,8 +10,20 @@
 
 <!-- DataTales Example -->
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center">
         <h6 class="m-0 font-weight-bold text-primary">Courses</h6>
+        <div class="dropdown no-arrow show">
+            <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
+                aria-expanded="true" style="float: right;">
+                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink"
+                style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-158px, 19px, 0px);"
+                x-placement="bottom-end">
+                <div class="dropdown-header"></div>
+                <a class="dropdown-item" href="/course/add/">Add Course</a>
+            </div>
+        </div>
     </div>
     <div class="card-body">
         <div class="table-responsive">
