@@ -156,6 +156,9 @@ STATIC_URL = '/static/'
 # Add this line to set the STATIC_ROOT
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-AUTHENTICATION_BACKENDS = [
-    'django.contrib.auth.backends.ModelBackend',
-]
+# AUTHENTICATION_BACKENDS = [
+#     'django.contrib.auth.backends.ModelBackend',
+# ]
+
+AUTHENTICATION_BACKENDS = ['classRoom.backends.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
+

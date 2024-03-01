@@ -19,6 +19,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.db.models import Q
 
 
 def permission_required(feature_name):
@@ -779,21 +780,33 @@ def reg_success(request):
 	return render(request,"registration/registerSuccess.html")
 
 def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # print("Username:", username)  
-        # print("Password:", password)  
+    # Print the list of email addresses in the AuthUser table
+    auth_user_emails = AuthUser.objects.values_list('email', flat=True)
+    print("Emails in AuthUser table:", list(auth_user_emails))
 
-        
-        user = authenticate(request, username=username, password=password)
-        # print("Authenticated User:", user) 
+    if request.method == 'POST':
+        username_or_email = request.POST.get('username')
+        password = request.POST.get('password')
+
+        print("Username or Email:", username_or_email)
+        print("Password:", password)
+
+        # Check if input is email format
+        if '@' in username_or_email:
+            # Try to authenticate using email
+            user = authenticate(request, email=username_or_email, password=password)
+        else:
+            # Try to authenticate using username
+            user = authenticate(request, username=username_or_email, password=password)
+
+        print("Authenticated User:", user)
 
         if user is not None:
+            # User is authenticated, log them in
             auth_login(request, user)
             return redirect('index')
         else:
+            # Authentication failed
             error_message = 'Invalid username or password.'
             return render(request, 'registration/login.html', {'error_message': error_message})
 
