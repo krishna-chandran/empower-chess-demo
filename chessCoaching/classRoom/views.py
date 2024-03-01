@@ -51,7 +51,7 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
-@permission_required('Add User')
+# @permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
     if request.method == 'POST':
@@ -61,10 +61,10 @@ def add_user(request):
         password = request.POST.get('password')  # Assuming there's a password field in the form
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Email already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
 
@@ -750,6 +750,7 @@ def forgot_password(request):
     return render(request, 'registration/forgot-password.html')
 
 def register(request):
+    roles = Role.objects.all()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -757,10 +758,10 @@ def register(request):
         password = request.POST.get('password')
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Username already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Email already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
         
@@ -772,7 +773,7 @@ def register(request):
         
         return render(request, "registration/registerSuccess.html")
 
-    return render(request, 'registration/register.html')
+    return render(request, 'registration/register.html', {'roles': roles})
 
 def reg_success(request):
 	return render(request,"registration/registerSuccess.html")
@@ -816,6 +817,42 @@ def logout_user(request):
 
 def error_404_view(request, exception=None , path_not_found=None):
     return render(request, 'common/404.html', status=404)	
+
+@login_required
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request,'profiles/view_profile.html', {'user': user})
+
+@login_required
+def edit_profile(request, user_id):
+    roles = Role.objects.all()
+    user = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        role_name = request.POST.get('role')  # Change variable name to role_name
+
+        if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
+            return render(request, 'profiles/edit_profile.html', {'user': user, 'roles': roles, 'error_message': 'Username already exists'})
+        
+        if AuthUser.objects.filter(email=email).exclude(id=user.user.id).exists():
+            return render(request, 'profiles/edit_profile.html', {'user': user,'roles': roles, 'error_message': 'Email already exists'})
+
+        user.user.username = username
+        user.user.email = email
+        
+        # Retrieve the Role instance corresponding to the selected role name
+        role = Role.objects.get(role_name=role_name)
+        user.role = role  # Assign the Role instance to the User's role field
+
+        user.user.save()
+        user.save()
+        
+        return redirect('view_profile', user_id=user_id)
+    
+    return render(request, 'profiles/edit_profile.html', {'user': user, 'roles': roles})
+
 
 
 

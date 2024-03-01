@@ -62,12 +62,15 @@
                                     </div>
                                 </div>
                                 
-                                <div class="form-group">
-                                    <select placeholder="Role" class="form-control" id="role" name="role" required>
-                                        <option value="" disabled selected>Select Your Role</option>
-                                        <option value="teacher">Teacher</option>
-                                        <option value="student">Student</option>
-                                    </select>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <select class="form-control" id="role" name="role" required>
+                                            <option value="" disabled selected>Select Your Role</option>
+                                            {% for role in roles %}
+                                                <option value="{{ role.role_name }}">{{ role.role_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-user btn-block">Register Account</button>
                               
