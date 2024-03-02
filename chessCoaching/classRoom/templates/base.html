@@ -85,6 +85,20 @@
              
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_packages' %}" >
+                    <i class="fas fa-user-shield"></i>
+                    <span>Package</span>
+                </a>
+             
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'view_package_options' %}" >
+                    <i class="fas fa-user-shield"></i>
+                    <span>Package Option</span>
+                </a>
+             
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="{% url 'view_features' %}" >
                     <i class="fas fa-user-shield"></i>
                     <span>Features</span>
@@ -176,8 +190,8 @@
                         <a class="collapse-item" href="{% url 'forgot_password' %}">Forgot Password</a> 
                         <!-- href="{% url 'forgot_password' %}" -->
                         <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="{% url 'error_404' %}">404 Page</a>
+                        {% comment %} <h6 class="collapse-header">Other Pages:</h6>
+                        <a class="collapse-item" href="{% url 'error_404' %}">404 Page</a> {% endcomment %}
                     </div>
                 </div>
             </li>
@@ -366,7 +380,7 @@
                         <!-- Dropdown - User Information -->
                         <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                             aria-labelledby="userDropdown">
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="{% url 'view_profile' user.id %}">
                                 <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                                 Profile
                             </a>

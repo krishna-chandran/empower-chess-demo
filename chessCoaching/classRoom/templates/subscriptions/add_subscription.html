@@ -7,40 +7,117 @@
             <h6 class="m-0 font-weight-bold text-primary">Add Subscription</h6>
         </div>
         <div class="card-body">
-            <form class="user" method="post">
+            <form class="user" id="subscription-form" method="post">
                 {% csrf_token %}
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="user"><b>User</b></label>
                         <select name="user" id="user" class="form-control" required>
                             {% for user in users %}
-                                <option value="{{ user.user_id }}">{{ user.user.username }}</option>
+                                <option value="{{ user.id }}">{{ user.user.username }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_start_date"><b>Subscription Start Date</b></label>
-                        <input type="date" class="form-control" id="subscription_start_date" name="subscription_start_date" required>
+                        <label for="payment_date"><b>Payment Date</b></label>
+                        <input type="date" class="form-control" id="payment_date" name="payment_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="subscription_end_date"><b>Subscription End Date</b></label>
-                        <input type="date" class="form-control" id="subscription_end_date" name="subscription_end_date" required>
+                        <label for="expiry_date"><b>Expiry Date</b></label>
+                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
                     </div>
                 </div>
                 <div class="form-group row">
                     <div class="col-sm-6">
-                        <label for="payment_details"><b>Payment Details</b></label>
-                        <input type="text" class="form-control" id="payment_details" name="payment_details" required>
+                        <label for="package"><b>Package</b></label>
+                        <select name="package" id="package" class="form-control" required>
+                            {% for package in packages %}
+                                <option value="{{ package.package_id }}" data-price="{{ package.price }}">{{ package.package_name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="payment_option"><b>Payment Option</b></label>
+                        <select name="payment_option" id="payment_option" class="form-control" required>
+                            <option value="stripe">Stripe</option>
+                            <option value="razorpay">Razorpay</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="button" id="pay-button" class="btn btn-primary btn-user btn-block">Pay</button>
                 <a href="{% url 'view_subscriptions' %}" class="btn btn-google btn-user btn-block">Cancel</a>
             </form>
         </div>
     </div>
 </div>
+
+<script src="https://checkout.stripe.com/checkout.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    document.getElementById('pay-button').onclick = function () {
+        if (validateForm()) {
+            var packageSelect = document.getElementById('package');
+            var selectedPackage = packageSelect.options[packageSelect.selectedIndex];
+            var packageAmount = selectedPackage.getAttribute('data-price');
+            var paymentOption = document.getElementById('payment_option').value;
+    
+            if (paymentOption === 'stripe') {
+                var handler = StripeCheckout.configure({
+                    key: 'pk_test_51OpX3jSHdVGHjsMYOj7tTOgpTjTAKY1WeX21CCwoM6X8hl8azBaXNdhMDwvG8jBGhTe8egAVUQUCsQuOgmfy6vF500pnyuLu39',
+                    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+                    locale: 'auto',
+                    token: function(token) {
+                        // You can send the token to your server here.
+                        // This function will be called after the user submits the Stripe payment form.
+                        console.log(token);
+                        document.getElementById('subscription-form').submit();
+                    }
+                });
+    
+                // Open Checkout with further options:
+                handler.open({
+                    name: 'Empower Chess',
+                    description: 'Subscription Payment',
+                    amount: packageAmount * 100,
+                    currency: 'INR'
+                });
+            } else if (paymentOption === 'razorpay') {
+                var options = {
+                    key: 'rzp_test_yisnmi4QnEj4h4',
+                    amount: packageAmount * 100,
+                    currency: 'INR',
+                    handler: function (response) {
+                        console.log(response);
+                        document.getElementById('subscription-form').submit();
+                    }
+                };
+    
+                var rzp = new Razorpay(options);
+                rzp.open();
+            }
+        } else {
+            alert('Please fill all required fields.');
+        }
+    };
+    
+    function validateForm() {
+        var user = document.getElementById('user').value;
+        var paymentDate = document.getElementById('payment_date').value;
+        var expiryDate = document.getElementById('expiry_date').value;
+        var package = document.getElementById('package').value;
+        var paymentOption = document.getElementById('payment_option').value;
+    
+        if (user && paymentDate && expiryDate && package && paymentOption) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+</script>
 {% endblock %}

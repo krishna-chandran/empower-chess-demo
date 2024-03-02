@@ -3,7 +3,7 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
 from .forms import RegisterForm,LoginForm
@@ -19,6 +19,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
+from django.db.models import Q
 
 
 def permission_required(feature_name):
@@ -51,7 +52,7 @@ def view_user(request, user_id):
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
-@permission_required('Add User')
+# @permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
     if request.method == 'POST':
@@ -61,10 +62,10 @@ def add_user(request):
         password = request.POST.get('password')  # Assuming there's a password field in the form
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Username already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'users/add_user.html', {'error_message': 'Email already exists'})
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
 
@@ -123,71 +124,64 @@ def delete_user(request, user_id):
     return render(request, 'users/delete_user.html', {'user': user})
 
 @login_required
-@permission_required('View Subscriptions')
+# @permission_required('View Subscriptions')
 def view_subscriptions(request):
     subscriptions = Subscription.objects.all()
     return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
 @login_required
-@permission_required('View Subscription')
+# @permission_required('View Subscription')
 def view_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     return render(request, 'subscriptions/view_subscription.html', {'subscription': subscription})
 
 @login_required
-@permission_required('Add Subscription')
+# @permission_required('Add Subscription')
 def add_subscription(request):
-    # courses = Course.objects.all()
+    packages = Package.objects.all()
     users = User.objects.all()
     
     if request.method == 'POST':
         user_id = request.POST.get('user')
-        course_id = request.POST.get('course')
-        subscription_start_date = request.POST.get('subscription_start_date')
-        subscription_end_date = request.POST.get('subscription_end_date')
-        payment_details = request.POST.get('payment_details')
+        package_id = request.POST.get('package')
+        payment_date = request.POST.get('payment_date')
+        expiry_date = request.POST.get('expiry_date')
 
         subscription = Subscription.objects.create(
             user_id=user_id,
-            # course_id=course_id,
-            subscription_start_date=subscription_start_date,
-            subscription_end_date=subscription_end_date,
-            payment_details=payment_details
+            package_id=package_id,
+            payment_date=payment_date,
+            expiry_date=expiry_date
         )
 
-        return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.id}))
+        return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.subscription_id}))
 
-
-    return render(request, 'subscriptions/add_subscription.html', {'users': users})
-
+    return render(request, 'subscriptions/add_subscription.html', {'users': users, 'packages': packages})
 @login_required
-@permission_required('Edit Subscription')
+# @permission_required('Edit Subscription')
 def edit_subscription(request, subscription_id):
-    subscription = get_object_or_404(Subscription, id=subscription_id)
+    subscription = get_object_or_404(Subscription, subscription_id=subscription_id)
     users = User.objects.all()
-    # courses = Course.objects.all()
+    packages = Package.objects.all()
 
     if request.method == 'POST':
         user_id = request.POST.get('user')
-        # course_id = request.POST.get('course')
-        subscription_start_date = request.POST.get('subscription_start_date')
-        subscription_end_date = request.POST.get('subscription_end_date')
-        payment_details = request.POST.get('payment_details')
+        package_id = request.POST.get('package')
+        payment_date = request.POST.get('payment_date')
+        expiry_date = request.POST.get('expiry_date')
 
-        # Update subscription data
         subscription.user_id = user_id
-        # subscription.course_id = course_id
-        subscription.subscription_start_date = subscription_start_date
-        subscription.subscription_end_date = subscription_end_date
-        subscription.payment_details = payment_details
+        subscription.package_id = package_id
+        subscription.payment_date = payment_date
+        subscription.expiry_date = expiry_date
         subscription.save()
 
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription_id}))
 
-    return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users})
+    return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users, 'packages': packages})
 
 @login_required
-@permission_required('Delete Subscription')
+# @permission_required('Delete Subscription')
 def delete_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     if request.method == 'POST':
@@ -195,6 +189,115 @@ def delete_subscription(request, subscription_id):
         return redirect('view_subscriptions') 
     return render(request, 'subscriptions/delete_subscription.html', {'subscription': subscription})
 
+@login_required
+def view_packages(request):
+    packages = Package.objects.all()
+    return render(request, 'packages/view_packages.html', {'packages': packages})
+
+@login_required
+def view_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    return render(request, 'packages/view_package.html', {'package': package})
+
+@login_required
+def add_package(request):
+    if request.method == 'POST':
+        package_name = request.POST.get('package_name')
+        package_description = request.POST.get('package_description')
+        price = request.POST.get('price')
+
+        try:
+            package = Package.objects.create(
+                package_name=package_name,
+                package_description=package_description,
+                price=price
+            )
+            return redirect('view_package', package_id=package.package_id)
+
+        except IntegrityError:
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/add_package.html', {'error_message': error_message})
+
+    return render(request, 'packages/add_package.html')
+
+@login_required
+def edit_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    if request.method == 'POST':
+        package_name = request.POST.get('package_name')
+        package_description = request.POST.get('package_description')
+        price = request.POST.get('price')
+
+        try:
+            package.package_name = package_name
+            package.package_description = package_description
+            package.price = price
+            package.save()
+            return redirect('view_package', package_id=package.package_id)
+
+        except IntegrityError:
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/edit_package.html', {'package': package, 'error_message': error_message})
+
+    return render(request, 'packages/edit_package.html', {'package': package})
+
+@login_required
+def delete_package(request, package_id):
+    package = get_object_or_404(Package, pk=package_id)
+    if request.method == 'POST':
+        package.delete()
+        return redirect('view_packages')
+
+    return render(request, 'packages/delete_package.html', {'package': package})
+
+def view_package_options(request):
+    package_options = PackageOptions.objects.all()
+    return render(request, 'package_options/view_package_options.html', {'package_options': package_options})
+
+def view_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    return render(request, 'package_options/view_package_option.html', {'package_option': package_option})
+
+@login_required
+def add_package_option(request):
+    if request.method == 'POST':
+        package_id = request.POST.get('package_id')
+        course_id = request.POST.get('course_id')
+
+        package_option = PackageOptions.objects.create(
+            package_id=package_id,
+            course_id=course_id
+        )
+
+        return redirect('view_package_option', option_id=package_option.option_id)
+
+    packages = Package.objects.all()
+    courses = Course.objects.all()
+    return render(request, 'package_options/add_package_option.html', {'packages': packages, 'courses': courses})
+
+@login_required
+def edit_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    if request.method == 'POST':
+        package_id = request.POST.get('package_id')
+        course_id = request.POST.get('course_id')
+
+        package_option.package_id = package_id
+        package_option.course_id = course_id
+        package_option.save()
+
+        return redirect('view_package_option', option_id=package_option.option_id)
+
+    packages = Package.objects.all()
+    courses = Course.objects.all()
+    return render(request, 'package_options/edit_package_option.html', {'package_option': package_option, 'packages': packages, 'courses': courses})
+
+def delete_package_option(request, option_id):
+    package_option = get_object_or_404(PackageOptions, pk=option_id)
+    if request.method == 'POST':
+        package_option.delete()
+        return redirect('view_package_options')
+    return render(request, 'package_options/delete_package_option.html', {'package_option': package_option})
 
 @login_required
 @permission_required('View Courses')
@@ -647,11 +750,8 @@ def forgot_password(request):
 
     return render(request, 'registration/forgot-password.html')
 
-def error_404(request):
-	return render(request,"common/404.html")
-
-
 def register(request):
+    roles = Role.objects.all()
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -659,10 +759,10 @@ def register(request):
         password = request.POST.get('password')
 
         if AuthUser.objects.filter(username=username).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Username already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Username already exists'})
         
         if AuthUser.objects.filter(email=email).exists():
-            return render(request, 'registration/register.html', {'error_message': 'Email already exists'})
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Email already exists'})
 
         hashed_password = make_password(password)
         
@@ -674,27 +774,39 @@ def register(request):
         
         return render(request, "registration/registerSuccess.html")
 
-    return render(request, 'registration/register.html')
+    return render(request, 'registration/register.html', {'roles': roles})
 
 def reg_success(request):
 	return render(request,"registration/registerSuccess.html")
 
 def login(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        
-        # print("Username:", username)  
-        # print("Password:", password)  
+    # Print the list of email addresses in the AuthUser table
+    auth_user_emails = AuthUser.objects.values_list('email', flat=True)
+    print("Emails in AuthUser table:", list(auth_user_emails))
 
-        
-        user = authenticate(request, username=username, password=password)
-        # print("Authenticated User:", user) 
+    if request.method == 'POST':
+        username_or_email = request.POST.get('username')
+        password = request.POST.get('password')
+
+        print("Username or Email:", username_or_email)
+        print("Password:", password)
+
+        # Check if input is email format
+        if '@' in username_or_email:
+            # Try to authenticate using email
+            user = authenticate(request, email=username_or_email, password=password)
+        else:
+            # Try to authenticate using username
+            user = authenticate(request, username=username_or_email, password=password)
+
+        print("Authenticated User:", user)
 
         if user is not None:
+            # User is authenticated, log them in
             auth_login(request, user)
             return redirect('index')
         else:
+            # Authentication failed
             error_message = 'Invalid username or password.'
             return render(request, 'registration/login.html', {'error_message': error_message})
 
@@ -716,6 +828,44 @@ def logout_user(request):
     logout(request)
     return redirect('login')
 
-	
+def error_404_view(request, exception=None , path_not_found=None):
+    return render(request, 'common/404.html', status=404)	
+
+@login_required
+def view_profile(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    return render(request,'profiles/view_profile.html', {'user': user})
+
+@login_required
+def edit_profile(request, user_id):
+    roles = Role.objects.all()
+    user = get_object_or_404(User, id=user_id)
+    
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        role_name = request.POST.get('role')  # Change variable name to role_name
+
+        if AuthUser.objects.filter(username=username).exclude(id=user.user.id).exists():
+            return render(request, 'profiles/edit_profile.html', {'user': user, 'roles': roles, 'error_message': 'Username already exists'})
+        
+        if AuthUser.objects.filter(email=email).exclude(id=user.user.id).exists():
+            return render(request, 'profiles/edit_profile.html', {'user': user,'roles': roles, 'error_message': 'Email already exists'})
+
+        user.user.username = username
+        user.user.email = email
+        
+        # Retrieve the Role instance corresponding to the selected role name
+        role = Role.objects.get(role_name=role_name)
+        user.role = role  # Assign the Role instance to the User's role field
+
+        user.user.save()
+        user.save()
+        
+        return redirect('view_profile', user_id=user_id)
+    
+    return render(request, 'profiles/edit_profile.html', {'user': user, 'roles': roles})
+
+
 
 

@@ -1,13 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-<h1 class="h3 mb-2 text-gray-800">Subscription List</h1>
-<p class="mb-4">List of subscriptions</p>
+<h1 class="h3 mb-2 text-gray-800">Package Options List</h1>
+<p class="mb-4">List of package options</p>
 
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center">
-        <h6 class="m-0 font-weight-bold text-primary">Subscriptions</h6>
+        <h6 class="m-0 font-weight-bold text-primary">Package Options</h6>
         <div class="dropdown no-arrow show">
             <a class="dropdown-toggle" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
                 aria-expanded="true" style="float: right;">
@@ -17,7 +16,7 @@
                 style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(-158px, 19px, 0px);"
                 x-placement="bottom-end">
                 <div class="dropdown-header"></div>
-                <a class="dropdown-item" href="/subscription/add/">Add Subscription</a>
+                <a class="dropdown-item" href="/packageoption/add/">Add Package option</a>
             </div>
         </div>
     </div>
@@ -26,22 +25,17 @@
             <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Subscription ID</th>
-                        <th>User</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Payment Details</th>
+                        <th>Option ID</th>
+                        <th>Package</th>
+                        <th>Course</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for subscription in subscriptions %}
+                    {% for package_option in package_options %}
                         <tr>
-                            <td><a href="{% url 'view_subscription' subscription.subscription_id %}">{{ subscription.subscription_id }}</a></td>
-                            
-                            <td>{{ subscription.user.user.username }}</td>
-                            <td>{{ subscription.payment_date }}</td>
-                            <td>{{ subscription.expiry_date }}</td>
-                            <td>{{ subscription.package.package_name }}</td>
+                            <td><a href="{% url 'view_package_option' option_id=package_option.option_id %}">{{ package_option.option_id }}</a></td>
+                            <td>{{ package_option.package.package_name }}</td>
+                            <td>{{ package_option.course.course_name }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

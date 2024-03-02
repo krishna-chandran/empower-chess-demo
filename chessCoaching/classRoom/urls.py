@@ -1,15 +1,23 @@
 from django.urls import path
-from .views import reg_success,home,logout_user,index,register,login,forgot_password,error_404
+from .views import reg_success,home,logout_user,index,register,login,forgot_password
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
+from .views import view_packages, view_package, add_package, edit_package, delete_package
+from .views import view_package_options, view_package_option, add_package_option, edit_package_option, delete_package_option
 from .views import view_assignments, view_assignment, add_assignment, edit_assignment, delete_assignment
 from .views import view_enrollments, view_enrollment, add_enrollment, edit_enrollment,delete_enrollment
 from .views import view_userassignments,view_userassignment, add_userassignment,edit_userassignment,delete_userassignment
 from .views import view_features, view_feature, add_feature, edit_feature, delete_feature
 from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission,delete_permission
+from .views import view_profile, edit_profile
 from django.contrib.auth import views as auth_views
+from django.conf.urls import handler404
+from .views import error_404_view 
+
+handler404 = 'classRoom.views.error_404_view'
+
 
 urlpatterns = [
     path('registersuccess/',reg_success,name="registerSuccess"),
@@ -18,7 +26,9 @@ urlpatterns = [
     path('',index,name="index"),
     path('register/',register,name="register"),
     path('accounts/login/', login, name='login'),
-    path('error_404/',error_404,name="error_404"),
+    
+    path('profile/<int:user_id>/',view_profile,name="view_profile"),
+    path('profile/<int:user_id>/edit/',edit_profile, name="edit_profile"),
     
     path('forgot_password/', forgot_password, name='forgot_password'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
@@ -38,6 +48,18 @@ urlpatterns = [
     path('subscription/add/', add_subscription, name='add_subscription'),
     path('subscription/<int:subscription_id>/edit/', edit_subscription, name='edit_subscription'),
     path('subscription/<int:subscription_id>/delete/', delete_subscription, name='delete_subscription'),
+    
+    path('packages/',view_packages, name='view_packages'),
+    path('package/<int:package_id>/', view_package, name='view_package'),
+    path('package/add/', add_package, name='add_package'),
+    path('package/<int:package_id>/edit/', edit_package, name='edit_package'),
+    path('package/<int:package_id>/delete/', delete_package, name='delete_package'),
+    
+    path('packageoptions/', view_package_options, name='view_package_options'),
+    path('packageoption/<int:option_id>/', view_package_option, name='view_package_option'),
+    path('packageoption/add/', add_package_option, name='add_package_option'),
+    path('packageoption/<int:option_id>/edit/', edit_package_option, name='edit_package_option'),
+    path('packageoption/<int:option_id>/delete/', delete_package_option, name='delete_package_option'),
 
     path('courses/',view_courses,name="view_courses"),
     path('course/<int:course_id>/',view_course, name="view_course"),
@@ -80,4 +102,5 @@ urlpatterns = [
     path('permission/add/', add_permission, name='add_permission'),
     path('permission/<int:permission_id>/edit/', edit_permission, name='edit_permission'),
     path('permission/<int:permission_id>/delete/', delete_permission, name='delete_permission'),
+    path('<path:path_not_found>/', error_404_view),
 ]
