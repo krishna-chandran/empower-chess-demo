@@ -29,6 +29,7 @@
                         <th>Name</th>
                         <th>Description</th>
                         <th>Price</th>
+                        <th>Validity (Days)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,6 +39,7 @@
                             <td>{{ package.package_name }}</td>
                             <td>{{ package.package_description }}</td>
                             <td>{{ package.price }}</td>
+                            <td>{{ package.validity }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

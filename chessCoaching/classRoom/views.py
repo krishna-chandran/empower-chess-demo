@@ -224,17 +224,23 @@ def add_package(request):
         package_name = request.POST.get('package_name')
         package_description = request.POST.get('package_description')
         price = request.POST.get('price')
+        validity = request.POST.get('validity')
+
+        if Package.objects.filter(package_name=package_name).exists():
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/add_package.html', {'error_message': error_message})
 
         try:
             package = Package.objects.create(
                 package_name=package_name,
                 package_description=package_description,
-                price=price
+                price=price,
+                validity=validity
             )
             return redirect('view_package', package_id=package.package_id)
 
         except IntegrityError:
-            error_message = "Package with this name already exists. Choose a different name."
+            error_message = "An error occurred while adding the package."
             return render(request, 'packages/add_package.html', {'error_message': error_message})
 
     return render(request, 'packages/add_package.html')
@@ -247,16 +253,22 @@ def edit_package(request, package_id):
         package_name = request.POST.get('package_name')
         package_description = request.POST.get('package_description')
         price = request.POST.get('price')
+        validity = request.POST.get('validity')
+
+        if package_name != package.package_name and Package.objects.filter(package_name=package_name).exists():
+            error_message = "Package with this name already exists. Choose a different name."
+            return render(request, 'packages/edit_package.html', {'package': package, 'error_message': error_message})
 
         try:
             package.package_name = package_name
             package.package_description = package_description
             package.price = price
+            package.validity = validity
             package.save()
             return redirect('view_package', package_id=package.package_id)
 
         except IntegrityError:
-            error_message = "Package with this name already exists. Choose a different name."
+            error_message = "An error occurred while editing the package."
             return render(request, 'packages/edit_package.html', {'package': package, 'error_message': error_message})
 
     return render(request, 'packages/edit_package.html', {'package': package})
