@@ -27,6 +27,8 @@ def permission_required(feature_name):
     def decorator(view_func):
         @wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
+            if request.user.is_superuser:
+                    return view_func(request, *args, **kwargs)
             if request.user.is_authenticated and hasattr(request.user, 'user'):
                 role = request.user.user.role
                 if Permission.objects.filter(role=role, feature__feature_name=feature_name).exists():
@@ -40,21 +42,24 @@ def index(request):
 	return render(request,"common/index.html")
 
 @login_required
-# @permission_required('View Users')
+@permission_required('View Users')
 def view_users(request):
     users = User.objects.all()
     return render(request, 'users/view_users.html', {'users': users})
 
 @login_required
-# @permission_required('View User')
+@permission_required('View User')
 def view_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     return render(request, 'users/view_user.html', {'user': user})
 
 @login_required
-# @permission_required('Add User')
+@permission_required('Add User')
 def add_user(request):
     roles = Role.objects.all()
+    
+    is_super_admin = request.user.is_superuser
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -66,6 +71,10 @@ def add_user(request):
         
         if AuthUser.objects.filter(email=email).exists():
             return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Email already exists'})
+
+        # Check if the requested role is admin and the user is not a super admin
+        if role_name == 'Admin' and not is_super_admin:
+            return render(request, 'users/add_user.html', {'roles': roles, 'error_message': 'Only super admin can register admin users'})
 
         hashed_password = make_password(password)
 
@@ -80,10 +89,13 @@ def add_user(request):
     return render(request, 'users/add_user.html', {'roles': roles})
 
 @login_required
-# @permission_required('Edit User')
+@permission_required('Edit User')
 def edit_user(request, user_id):
     roles = Role.objects.all()
     user = get_object_or_404(User, id=user_id)
+    
+    # Check if the user is super admin
+    is_super_admin = request.user.is_superuser
     
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -95,6 +107,10 @@ def edit_user(request, user_id):
         
         if AuthUser.objects.filter(email=email).exclude(id=user.user.id).exists():
             return render(request, 'users/edit_user.html', {'user': user,'roles': roles, 'error_message': 'Email already exists'})
+
+        # Check if the requested role is admin and the user is not a super admin
+        if role_name == 'Admin' and not is_super_admin:
+            return render(request, 'users/edit_user.html', {'user': user, 'roles': roles, 'error_message': 'Only super admin can edit admin users'})
 
         user.user.username = username
         user.user.email = email
@@ -111,7 +127,7 @@ def edit_user(request, user_id):
     return render(request, 'users/edit_user.html', {'user': user, 'roles': roles})
 
 @login_required
-# @permission_required('Delete User')
+@permission_required('Delete User')
 def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     
@@ -124,19 +140,19 @@ def delete_user(request, user_id):
     return render(request, 'users/delete_user.html', {'user': user})
 
 @login_required
-# @permission_required('View Subscriptions')
+@permission_required('View Subscriptions')
 def view_subscriptions(request):
     subscriptions = Subscription.objects.all()
     return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
 @login_required
-# @permission_required('View Subscription')
+@permission_required('View Subscription')
 def view_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     return render(request, 'subscriptions/view_subscription.html', {'subscription': subscription})
 
 @login_required
-# @permission_required('Add Subscription')
+@permission_required('Add Subscription')
 def add_subscription(request):
     packages = Package.objects.all()
     users = User.objects.all()
@@ -158,7 +174,7 @@ def add_subscription(request):
 
     return render(request, 'subscriptions/add_subscription.html', {'users': users, 'packages': packages})
 @login_required
-# @permission_required('Edit Subscription')
+@permission_required('Edit Subscription')
 def edit_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, subscription_id=subscription_id)
     users = User.objects.all()
@@ -181,7 +197,7 @@ def edit_subscription(request, subscription_id):
     return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users, 'packages': packages})
 
 @login_required
-# @permission_required('Delete Subscription')
+@permission_required('Delete Subscription')
 def delete_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     if request.method == 'POST':
@@ -190,16 +206,19 @@ def delete_subscription(request, subscription_id):
     return render(request, 'subscriptions/delete_subscription.html', {'subscription': subscription})
 
 @login_required
+@permission_required('View Packages')
 def view_packages(request):
     packages = Package.objects.all()
     return render(request, 'packages/view_packages.html', {'packages': packages})
 
 @login_required
+@permission_required('View Package')
 def view_package(request, package_id):
     package = get_object_or_404(Package, pk=package_id)
     return render(request, 'packages/view_package.html', {'package': package})
 
 @login_required
+@permission_required('Add Package')
 def add_package(request):
     if request.method == 'POST':
         package_name = request.POST.get('package_name')
@@ -221,6 +240,7 @@ def add_package(request):
     return render(request, 'packages/add_package.html')
 
 @login_required
+@permission_required('Edit Package')
 def edit_package(request, package_id):
     package = get_object_or_404(Package, pk=package_id)
     if request.method == 'POST':
@@ -242,6 +262,7 @@ def edit_package(request, package_id):
     return render(request, 'packages/edit_package.html', {'package': package})
 
 @login_required
+@permission_required('Delete Package')
 def delete_package(request, package_id):
     package = get_object_or_404(Package, pk=package_id)
     if request.method == 'POST':
@@ -250,15 +271,20 @@ def delete_package(request, package_id):
 
     return render(request, 'packages/delete_package.html', {'package': package})
 
+@login_required
+@permission_required('View Package Options')
 def view_package_options(request):
     package_options = PackageOptions.objects.all()
     return render(request, 'package_options/view_package_options.html', {'package_options': package_options})
 
+@login_required
+@permission_required('View Package Option')
 def view_package_option(request, option_id):
     package_option = get_object_or_404(PackageOptions, pk=option_id)
     return render(request, 'package_options/view_package_option.html', {'package_option': package_option})
 
 @login_required
+@permission_required('Add Package Option')
 def add_package_option(request):
     if request.method == 'POST':
         package_id = request.POST.get('package_id')
@@ -276,6 +302,7 @@ def add_package_option(request):
     return render(request, 'package_options/add_package_option.html', {'packages': packages, 'courses': courses})
 
 @login_required
+@permission_required('Edit Package Option')
 def edit_package_option(request, option_id):
     package_option = get_object_or_404(PackageOptions, pk=option_id)
     if request.method == 'POST':
@@ -292,6 +319,8 @@ def edit_package_option(request, option_id):
     courses = Course.objects.all()
     return render(request, 'package_options/edit_package_option.html', {'package_option': package_option, 'packages': packages, 'courses': courses})
 
+@login_required
+@permission_required('Delete Package Option')
 def delete_package_option(request, option_id):
     package_option = get_object_or_404(PackageOptions, pk=option_id)
     if request.method == 'POST':
@@ -540,19 +569,19 @@ def delete_userassignment(request, user_assignment_id):
     return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
-# @permission_required('View Features')
+@permission_required('View Features')
 def view_features(request):
     features = Feature.objects.all()
     return render(request, 'features/view_features.html', {'features': features})
 
 @login_required
-# @permission_required('View Feature'))
+@permission_required('View Feature')
 def view_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
     return render(request, 'features/view_feature.html', {'feature': feature})
 
 @login_required
-# @permission_required('Add Feature')
+@permission_required('Add Feature')
 def add_feature(request):
     if request.method == 'POST':
         feature_name = request.POST.get('feature_name')
@@ -567,7 +596,7 @@ def add_feature(request):
         return render(request, 'features/add_feature.html')
 
 @login_required
-# @permission_required('Edit Feature')    
+@permission_required('Edit Feature')    
 def edit_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
@@ -584,7 +613,7 @@ def edit_feature(request, feature_id):
     return render(request, 'features/edit_feature.html', {'feature': feature})
 
 @login_required
-# @permission_required('Delete Feature')
+@permission_required('Delete Feature')
 def delete_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
 
@@ -595,19 +624,19 @@ def delete_feature(request, feature_id):
     return render(request, 'features/delete_feature.html', {'feature': feature})
 
 @login_required
-# @permission_required('View Roles')
+@permission_required('View Roles')
 def view_roles(request):
     roles = Role.objects.all()
     return render(request, 'roles/view_roles.html', {'roles': roles})
 
 @login_required
-# @permission_required('View Role')
+@permission_required('View Role')
 def view_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
     return render(request, 'roles/view_role.html', {'role': role})
 
 @login_required
-# @permission_required('Add  Role')
+@permission_required('Add  Role')
 def add_role(request):
     if request.method == 'POST':
         role_name = request.POST.get('role_name')
@@ -622,7 +651,7 @@ def add_role(request):
         return render(request, 'roles/add_role.html')
 
 @login_required
-# @permission_required('Edit Role')    
+@permission_required('Edit Role')    
 def edit_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
 
@@ -639,7 +668,7 @@ def edit_role(request, role_id):
     return render(request, 'roles/edit_role.html', {'role': role})
 
 @login_required
-# @permission_required('Delete Role')
+@permission_required('Delete Role')
 def delete_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
 
@@ -650,19 +679,19 @@ def delete_role(request, role_id):
     return render(request, 'roles/delete_role.html', {'role': role})
 
 @login_required
-# @permission_required('View Permissions')
+@permission_required('View Permissions')
 def view_permissions(request):
     permissions = Permission.objects.all()
     return render(request, 'permissions/view_permissions.html', {'permissions': permissions})
 
 @login_required
-# @permission_required('View Permission')
+@permission_required('View Permission')
 def view_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     return render(request, 'permissions/view_permission.html', {'permission': permission})
 
 @login_required
-# @permission_required('Add Permission')
+@permission_required('Add Permission')
 def add_permission(request):
     roles = Role.objects.all()
     features = Feature.objects.all()
@@ -681,7 +710,7 @@ def add_permission(request):
     return render(request, 'permissions/add_permission.html', {'roles': roles, 'features': features})
 
 @login_required
-# @permission_required('Edit Permission')
+@permission_required('Edit Permission')
 def edit_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     roles = Role.objects.all()
@@ -710,7 +739,7 @@ def edit_permission(request, permission_id):
     return render(request, 'permissions/edit_permission.html', {'permission': permission, 'roles': roles, 'features': features})
 
 @login_required
-# @permission_required('Delete Permission')
+@permission_required('Delete Permission')
 def delete_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
     
@@ -766,6 +795,12 @@ def register(request):
 
         hashed_password = make_password(password)
         
+        is_super_admin = request.user.is_superuser
+        
+        # Check if the requested role is admin and the user is not a super admin
+        if role_name == 'Admin' and not is_super_admin:
+            return render(request, 'registration/register.html', {'roles': roles, 'error_message': 'Only super admin can register admin users'})
+
         role = Role.objects.get(role_name=role_name)
         auth_user = AuthUser.objects.create(username=username, email=email, password=hashed_password)
         auth_user.save()
@@ -788,8 +823,8 @@ def login(request):
         username_or_email = request.POST.get('username')
         password = request.POST.get('password')
 
-        print("Username or Email:", username_or_email)
-        print("Password:", password)
+        # print("Username or Email:", username_or_email)
+        # print("Password:", password)
 
         # Check if input is email format
         if '@' in username_or_email:
@@ -799,7 +834,7 @@ def login(request):
             # Try to authenticate using username
             user = authenticate(request, username=username_or_email, password=password)
 
-        print("Authenticated User:", user)
+        # print("Authenticated User:", user)
 
         if user is not None:
             # User is authenticated, log them in
