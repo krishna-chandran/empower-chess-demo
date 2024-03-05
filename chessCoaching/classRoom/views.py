@@ -816,8 +816,8 @@ def reg_success(request):
 
 def login(request):
     # Print the list of email addresses in the AuthUser table
-    auth_user_emails = AuthUser.objects.values_list('email', flat=True)
-    print("Emails in AuthUser table:", list(auth_user_emails))
+    # auth_user_emails = AuthUser.objects.values_list('email', flat=True)
+    # print("Emails in AuthUser table:", list(auth_user_emails))
 
     if request.method == 'POST':
         username_or_email = request.POST.get('username')

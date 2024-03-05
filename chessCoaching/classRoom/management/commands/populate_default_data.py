@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.db import IntegrityError
 from classRoom.models import Role, Feature, Permission
+from django.contrib.auth.models import User
 
 class Command(BaseCommand):
     help = 'Populate default roles, features, and permissions'
@@ -70,3 +71,13 @@ class Command(BaseCommand):
                 self.stdout.write(self.style.WARNING(f'Feature with ID {feature_id} does not exist'))
             except Role.DoesNotExist:
                 self.stdout.write(self.style.WARNING(f'Role with ID {role_id} does not exist'))
+
+        # Create a default superuser if none exists
+        if not User.objects.filter(is_superuser=True).exists():
+            admin_username = 'admin'
+            admin_email = 'admin@example.com'
+            admin_password = '1234'
+            User.objects.create_superuser(admin_username, admin_email, admin_password)
+            self.stdout.write(self.style.SUCCESS('Default superuser created successfully'))
+        else:
+            self.stdout.write(self.style.WARNING('Default superuser already exists'))
