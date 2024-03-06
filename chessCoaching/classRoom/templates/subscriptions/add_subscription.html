@@ -35,12 +35,13 @@
                     <div class="col-sm-6">
                         <label for="package"><b>Package</b></label>
                         <select name="package" id="package" class="form-control" required>
+                            <option value="" selected disabled>Select Package</option>
                             {% for package in packages %}
-                                <option value="{{ package.package_id }}" data-price="{{ package.price }}">{{ package.package_name }}</option>
+                            <option value="{{ package.package_id }}" data-price="{{ package.price }}" data-validity="{{ package.validity }}">{{ package.package_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                </div>
+                </div>                
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="payment_option"><b>Payment Option</b></label>
@@ -121,5 +122,35 @@
             return false;
         }
     }
+    
+    function getTodayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    function calculateExpiryDate(paymentDate, validity) {
+        var expiryDate = new Date(paymentDate);
+        expiryDate.setDate(expiryDate.getDate() + validity);
+        var dd = String(expiryDate.getDate()).padStart(2, '0');
+        var mm = String(expiryDate.getMonth() + 1).padStart(2, '0');
+        var yyyy = expiryDate.getFullYear();
+
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    window.onload = function() {
+        document.getElementById('payment_date').value = getTodayDate();
+        var packageSelect = document.getElementById('package');
+        packageSelect.addEventListener('change', function() {
+            var paymentDate = document.getElementById('payment_date').value;
+            var selectedPackage = packageSelect.options[packageSelect.selectedIndex];
+            var packageValidity = parseInt(selectedPackage.getAttribute('data-validity'));
+            document.getElementById('expiry_date').value = calculateExpiryDate(paymentDate, packageValidity);
+        });
+    };
 </script>
 {% endblock %}
