@@ -885,6 +885,34 @@ def add_setting(request):
 
     return render(request, 'settings/add_setting.html')
 
+@login_required
+# @permission_required('Edit Setting')
+def edit_setting(request, setting_id):
+    setting = get_object_or_404(Settings, pk=setting_id)
+    if request.method == 'POST':
+        key = request.POST.get('key')
+        value = request.POST.get('value')
+
+        setting.key = key
+        setting.value = value
+        setting.save()
+
+        log_user_activity(request, f'Edited setting ID: {setting_id}')
+        return redirect('view_setting', setting_id=setting.id)
+
+    return render(request, 'settings/edit_setting.html', {'setting': setting})
+
+@login_required
+# @permission_required('Delete Setting')
+def delete_setting(request, setting_id):
+    setting = get_object_or_404(Settings, pk=setting_id)
+    if request.method == 'POST':
+        setting.delete()
+        log_user_activity(request, f'Deleted setting ID: {setting_id}')
+        return redirect('view_settings')
+    return render(request, 'settings/delete_setting.html', {'setting': setting})
+
+
 def forgot_password(request):
     if request.method == 'POST':
         email = request.POST.get('email')
