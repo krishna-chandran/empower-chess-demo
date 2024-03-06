@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 import datetime
+from django.utils import timezone
 from django.contrib.auth.models import User as AuthUser
 
 # Create your models here.
@@ -42,6 +43,30 @@ class Course(models.Model):
     course_description = models.TextField()
     # other course details
 
+class Chapter(models.Model):
+    id = models.AutoField(primary_key=True)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    order = models.IntegerField(default=0)
+
+class Page(models.Model):
+    id = models.AutoField(primary_key=True)
+    chapter = models.ForeignKey(Chapter, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    order = models.IntegerField(default=0)
+
+class UserPageActivity(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+    percentage_completed = models.IntegerField(default=0)
+    time_spent_seconds = models.IntegerField(default=0)
+    last_accessed = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.page.title}"
+
 class Enrollment(models.Model):
     id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -82,9 +107,6 @@ class Package(models.Model):
     package_description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
     validity = models.IntegerField()
-
-    def __str__(self):
-        return self.package_name
 
 # class Subscription(models.Model):
 #     id = models.AutoField(primary_key=True)

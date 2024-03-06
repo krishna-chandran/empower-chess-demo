@@ -3,10 +3,10 @@ from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions
+from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions, Chapter, Page, UserPageActivity
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
-from .forms import RegisterForm,LoginForm
+from .forms import RegisterForm, LoginForm
 from .models import Student
 from django.contrib.auth.models import User as AuthUser
 from django.db import IntegrityError
@@ -19,8 +19,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.db.models import Q
-
+from django.utils import timezone
 
 def permission_required(feature_name):
 
@@ -386,6 +385,119 @@ def delete_course(request, course_id):
 	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
 	return render(request,'courses/delete_course.html',{'course_data': course_data} )
 
+@login_required
+# @permission_required('View Chapters')
+def view_chapters(request):
+	chapters = Chapter.objects.all()
+	return render(request,"chapter/view_chapters.html",{'chapters': chapters} )
+
+@login_required
+# @permission_required('View Chapter')
+def view_chapter(request, chapter_id):
+    chapter = get_object_or_404(Chapter, pk=chapter_id)
+    return render(request, 'chapter/view_chapter.html', {'chapter': chapter})
+
+
+@login_required
+# @permission_required('Add Chapter')
+def add_chapter(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        order = request.POST.get('order')
+        Chapter = Chapter.objects.create(course=course, title=title, order=order)
+        return redirect('view_course', course_id=course_id)
+    return render(request, 'chapter/add_chapter.html', {'course': course})
+
+@login_required
+# @permission_required('Edit Chapter')
+def edit_chapter(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    if request.method == 'POST':
+        chapter.title = request.POST.get('title')
+        chapter.order = request.POST.get('order')
+        chapter.save()
+        return redirect('view_course', course_id=chapter.course.id)
+    return render(request, 'chapter/edit_chapter.html', {'chapter': chapter})
+
+@login_required
+# @permission_required('Delete Chapter')
+def delete_chapter(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    course_id = chapter.course.id
+    if request.method == 'POST':
+        chapter.delete()
+        return redirect('view_course', course_id=course_id)
+    return render(request, 'chapter/delete_chapter.html', {'chapter': chapter})
+
+@login_required
+# @permission_required('View Pages')
+def view_pages(request):
+	pages = Page.objects.all()
+	return render(request,"pages/view_pages.html",{'pages': pages} )
+
+@login_required
+# @permission_required('View Page')
+def view_page(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    return render(request, 'pages/view_page.html', {'page': page})
+
+
+@login_required
+# @permission_required('Add Page')
+def add_page(request, chapter_id):
+    chapter = get_object_or_404(Chapter, id=chapter_id)
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        order = request.POST.get('order')
+        Page = Page.objects.create(chapter=chapter, title=title, content=content, order=order)
+        return redirect('view_chapter', chapter_id=chapter_id)
+    return render(request, 'pages/add_page.html', {'chapter': chapter})
+
+@login_required
+# @permission_required('Edit Page')
+def edit_page(request, page_id):
+    page = get_object_or_404(Page, id=page_id)
+    if request.method == 'POST':
+        page.title = request.POST.get('title')
+        page.content = request.POST.get('content')
+        page.order = request.POST.get('order')
+        page.save()
+        return redirect('view_chapter', chapter_id=page.chapter.id)
+    return render(request, 'pages/edit_page.html', {'page': page})
+
+@login_required
+@permission_required('Delete Page')
+def delete_page(request, page_id):
+    page = get_object_or_404(Page, id=page_id)
+    chapter_id = page.chapter.id
+    if request.method == 'POST':
+        page.delete()
+        return redirect('view_chapter', chapter_id=chapter_id)
+    return render(request, 'pages/delete_page.html', {'page': page})
+
+@login_required
+@permission_required('View Page Activity')
+def view_page_activity(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    user_page_activity = UserPageActivity.objects.filter(user=user)
+    return render(request, 'user_page_activity.html', {'user_page_activity': user_page_activity})
+
+@login_required
+def track_page_activity(request, page_id):
+    page = get_object_or_404(Page, id=page_id)
+    time_spent_seconds = 300
+    UserPageActivity.objects.update_or_create(
+        user=request.user,
+        page=page,
+        defaults={
+            'percentage_completed': 100, 
+            'time_spent_seconds': time_spent_seconds,
+            'last_accessed': timezone.now()
+        }
+    )
+    return redirect('page_detail', page_id=page_id)
 
 @login_required
 @permission_required('View Enrollments')
