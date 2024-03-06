@@ -20,6 +20,7 @@ from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
+from .models import UserActivity
 
 
 def permission_required(feature_name):
@@ -37,21 +38,39 @@ def permission_required(feature_name):
         return _wrapped_view
     return decorator
 
+def log_user_activity(request, action):
+    if request.user.is_authenticated:
+        user_id = request.user.user.id if hasattr(request.user, 'user') else None
+
+        if request.user.is_superuser:
+            user_id = 0
+
+        if user_id:
+            user = User.objects.get(id=user_id)
+            UserActivity.objects.create(user=user, action=action)
+    
 @login_required
 def index(request):
-	return render(request,"common/index.html")
+    log_user_activity(request, 'Viewed index page')
+    return render(request,"common/index.html")
 
 @login_required
 @permission_required('View Users')
 def view_users(request):
     users = User.objects.all()
+    log_user_activity(request, 'Viewed users list')
     return render(request, 'users/view_users.html', {'users': users})
 
 @login_required
 @permission_required('View User')
 def view_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
-    return render(request, 'users/view_user.html', {'user': user})
+    user_activities = UserActivity.objects.filter(user=user_id).order_by('-timestamp')[:5]
+    log_user_activity(request, f'Viewed user ID: {user_id}')
+    return render(request, 'users/view_user.html', {'user': user, 'user_activities': user_activities})
+
+
+
 
 @login_required
 @permission_required('Add User')
@@ -84,6 +103,7 @@ def add_user(request):
 
         user = User.objects.create(user=auth_user, role=role)
         
+        log_user_activity(request, f'Added a new user with ID: {user.id}')
         return redirect('view_users')
 
     return render(request, 'users/add_user.html', {'roles': roles})
@@ -122,6 +142,7 @@ def edit_user(request, user_id):
         user.user.save()
         user.save()
         
+        log_user_activity(request, f'Edited user ID: {user_id}')
         return redirect('view_user', user_id=user_id)
     
     return render(request, 'users/edit_user.html', {'user': user, 'roles': roles})
@@ -135,20 +156,51 @@ def delete_user(request, user_id):
         user.user.delete()
         user.delete()
         
+        log_user_activity(request, f'Deleted user ID: {user_id}')
         return redirect('view_users')
     
     return render(request, 'users/delete_user.html', {'user': user})
 
 @login_required
+def view_user_activities(request, user_id):
+    user_activities = UserActivity.objects.filter(user=user_id).order_by('-id')
+    return render(request, 'user_activities/view_user_activities.html', {'user_activities': user_activities})
+
+@login_required
+def view_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, pk=activity_id)
+    return render(request, 'user_activities/view_user_activity.html', {'user_activity': user_activity})
+
+@login_required
+def edit_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, id=activity_id)
+    if request.method == 'POST':
+        user_activity.action = request.POST.get('action')
+        user_activity.timestamp = request.POST.get('timestamp')
+        user_activity.save()
+        return redirect('view_user_activity', activity_id=user_activity.id)
+    return render(request, 'user_activities/edit_user_activity.html', {'user_activity': user_activity})
+
+@login_required
+def delete_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, id=activity_id)
+    if request.method == 'POST':
+        user_activity.delete()
+        return redirect('view_user_activities', user_activity.user.id)
+    return render(request, 'user_activities/delete_user_activity.html', {'user_activity': user_activity})
+
+@login_required
 @permission_required('View Subscriptions')
 def view_subscriptions(request):
     subscriptions = Subscription.objects.all()
+    log_user_activity(request, 'Viewed subscriptions')
     return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
 @login_required
 @permission_required('View Subscription')
 def view_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
+    log_user_activity(request, f'Viewed subscription ID: {subscription_id}')
     return render(request, 'subscriptions/view_subscription.html', {'subscription': subscription})
 
 @login_required
@@ -170,6 +222,7 @@ def add_subscription(request):
             expiry_date=expiry_date
         )
 
+        log_user_activity(request, f'Added subscription ID: {subscription.subscription_id}')
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.subscription_id}))
 
     return render(request, 'subscriptions/add_subscription.html', {'users': users, 'packages': packages})
@@ -192,6 +245,7 @@ def edit_subscription(request, subscription_id):
         subscription.expiry_date = expiry_date
         subscription.save()
 
+        log_user_activity(request, f'Edited subscription ID: {subscription_id}')
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription_id}))
 
     return render(request, 'subscriptions/edit_subscription.html', {'subscription': subscription, 'users': users, 'packages': packages})
@@ -202,6 +256,7 @@ def delete_subscription(request, subscription_id):
     subscription = get_object_or_404(Subscription, pk=subscription_id)
     if request.method == 'POST':
         subscription.delete()
+        log_user_activity(request, f'Deleted subscription ID: {subscription_id}')
         return redirect('view_subscriptions') 
     return render(request, 'subscriptions/delete_subscription.html', {'subscription': subscription})
 
@@ -209,12 +264,14 @@ def delete_subscription(request, subscription_id):
 @permission_required('View Packages')
 def view_packages(request):
     packages = Package.objects.all()
+    log_user_activity(request, 'Viewed packages')
     return render(request, 'packages/view_packages.html', {'packages': packages})
 
 @login_required
 @permission_required('View Package')
 def view_package(request, package_id):
     package = get_object_or_404(Package, pk=package_id)
+    log_user_activity(request, f'Viewed package ID: {package_id}')
     return render(request, 'packages/view_package.html', {'package': package})
 
 @login_required
@@ -231,6 +288,7 @@ def add_package(request):
                 package_description=package_description,
                 price=price
             )
+            log_user_activity(request, f'Added package Id: {package.package_id}')
             return redirect('view_package', package_id=package.package_id)
 
         except IntegrityError:
@@ -253,6 +311,7 @@ def edit_package(request, package_id):
             package.package_description = package_description
             package.price = price
             package.save()
+            log_user_activity(request, f'Edited package ID: {package_id}')
             return redirect('view_package', package_id=package.package_id)
 
         except IntegrityError:
@@ -267,6 +326,7 @@ def delete_package(request, package_id):
     package = get_object_or_404(Package, pk=package_id)
     if request.method == 'POST':
         package.delete()
+        log_user_activity(request, f'Deleted package ID: {package_id}')
         return redirect('view_packages')
 
     return render(request, 'packages/delete_package.html', {'package': package})
@@ -275,12 +335,14 @@ def delete_package(request, package_id):
 @permission_required('View Package Options')
 def view_package_options(request):
     package_options = PackageOptions.objects.all()
+    log_user_activity(request, 'Viewed package options')
     return render(request, 'package_options/view_package_options.html', {'package_options': package_options})
 
 @login_required
 @permission_required('View Package Option')
 def view_package_option(request, option_id):
     package_option = get_object_or_404(PackageOptions, pk=option_id)
+    log_user_activity(request, f'Viewed package option ID: {option_id}')
     return render(request, 'package_options/view_package_option.html', {'package_option': package_option})
 
 @login_required
@@ -294,7 +356,7 @@ def add_package_option(request):
             package_id=package_id,
             course_id=course_id
         )
-
+        log_user_activity(request, f'Added package option ID: {package_option.option_id}')
         return redirect('view_package_option', option_id=package_option.option_id)
 
     packages = Package.objects.all()
@@ -313,6 +375,7 @@ def edit_package_option(request, option_id):
         package_option.course_id = course_id
         package_option.save()
 
+        log_user_activity(request, f'Edited package option ID: {option_id}')
         return redirect('view_package_option', option_id=package_option.option_id)
 
     packages = Package.objects.all()
@@ -325,6 +388,7 @@ def delete_package_option(request, option_id):
     package_option = get_object_or_404(PackageOptions, pk=option_id)
     if request.method == 'POST':
         package_option.delete()
+        log_user_activity(request, f'Deleted package option ID: {option_id}')
         return redirect('view_package_options')
     return render(request, 'package_options/delete_package_option.html', {'package_option': package_option})
 
@@ -332,59 +396,63 @@ def delete_package_option(request, option_id):
 @permission_required('View Courses')
 def view_courses(request):
 	course_data = Course.objects.all()
-	# print(course_data)
+	log_user_activity(request, 'Viewed courses')
 	return render(request,"courses/view_courses.html",{'course_data': course_data} )
 
 @login_required
 @permission_required('View Course')
 def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
+    log_user_activity(request, f'Viewed course ID: {course_id}')
     return render(request, 'courses/view_course.html', {'course_data': course_data})
 
 @login_required
 @permission_required('Add Course')
 def add_course(request):
-    # user_data = {'id': user_id, 'username': 'example_username', 'email': 'example@email.com', 'first_name': 'John', 'last_name': 'Doe'}
-	if request.method == 'POST':
-		course_name = request.POST.get('course_name')
-		course_description = request.POST.get('course_description')
-		course = Course.objects.create(course_name=course_name, course_description=course_description)
-		return redirect(reverse('view_course', kwargs={'course_id': course.id}))
-	return render(request, 'courses/add_course.html')
+    if request.method == 'POST':
+        course_name = request.POST.get('course_name')
+        course_description = request.POST.get('course_description')
+        course = Course.objects.create(course_name=course_name, course_description=course_description)
+        log_user_activity(request, f'Added course ID: {course.id}')
+        return redirect(reverse('view_course', kwargs={'course_id': course.id}))
+    return render(request, 'courses/add_course.html')
 
 @login_required
 @permission_required('Edit Course')
 def edit_course(request, course_id):
-	course_data = get_object_or_404(Course, id=course_id)
-	if request.method == 'POST':
-		course_data.course_name = request.POST.get('course_name')
-		course_data.course_description = request.POST.get('course_description')
-		course_data.save()
-		return redirect(reverse('view_course', kwargs={'course_id': course_id}))
-	return render(request, 'courses/edit_course.html', {'course_data': course_data})
+    course_data = get_object_or_404(Course, id=course_id)
+    if request.method == 'POST':
+        course_data.course_name = request.POST.get('course_name')
+        course_data.course_description = request.POST.get('course_description')
+        course_data.save()
+        log_user_activity(request, f'Edited course ID: {course_id}')
+        return redirect(reverse('view_course', kwargs={'course_id': course_id}))
+    return render(request, 'courses/edit_course.html', {'course_data': course_data})
 
 
 @login_required
 @permission_required('Delete Course')
 def delete_course(request, course_id):
-	course_data = get_object_or_404(Course, id=course_id)
-	if request.method == 'POST':
-		course_data.delete()
-		return redirect('view_courses')
-	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
-	return render(request,'courses/delete_course.html',{'course_data': course_data} )
+    course_data = get_object_or_404(Course, id=course_id)
+    if request.method == 'POST':
+        course_data.delete()
+        log_user_activity(request, f'Deleted course ID: {course_id}')
+        return redirect('view_courses')
+    return render(request,'courses/delete_course.html',{'course_data': course_data} )
 
 
 @login_required
 @permission_required('View Enrollments')
 def view_enrollments(request):
     enrollments = Enrollment.objects.all()
+    log_user_activity(request, 'Viewed enrollments')
     return render(request, "enrollments/view_enrollments.html", {'enrollments': enrollments})
 
 @login_required
 @permission_required('View Enrollment')
 def view_enrollment(request, enrollment_id):
     enrollment = get_object_or_404(Enrollment, pk=enrollment_id)
+    log_user_activity(request, f'Viewed enrollment ID: {enrollment_id}')
     return render(request, 'enrollments/view_enrollment.html', {'enrollment': enrollment})
 
 @login_required
@@ -398,7 +466,7 @@ def add_enrollment(request):
         enrollment_date = request.POST.get('enrollment_date')
         
         enrollment = Enrollment.objects.create(user_id=user_id, course_id=course_id, enrollment_date=enrollment_date)
-        
+        log_user_activity(request, f'Added enrollment ID: {enrollment.id}')
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment.id}))
     return render(request, 'enrollments/add_enrollment.html', {'courses': courses, 'users': users})
 
@@ -425,6 +493,7 @@ def edit_enrollment(request, enrollment_id):
         enrollment_data.enrollment_date = enrollment_date
         enrollment_data.save()
         
+        log_user_activity(request, f'Edited enrollment ID: {enrollment_id}')
         return redirect(reverse('view_enrollment', kwargs={'enrollment_id': enrollment_id}))
     
     return render(request, 'enrollments/edit_enrollment.html', {'enrollment_data': enrollment_data, 'courses': courses, 'users': users})
@@ -435,6 +504,7 @@ def delete_enrollment(request, enrollment_id):
     enrollment_data = get_object_or_404(Enrollment, id=enrollment_id)
     if request.method == 'POST':
         enrollment_data.delete()
+        log_user_activity(request, f'Deleted enrollment ID: {enrollment_id}')
         return redirect('view_enrollments')
     
     return render(request, 'enrollments/delete_enrollment.html', {'enrollment_data': enrollment_data})
@@ -443,12 +513,14 @@ def delete_enrollment(request, enrollment_id):
 @permission_required('View Assignments')
 def view_assignments(request):
     assignments = Assignment.objects.all()
+    log_user_activity(request, 'Viewed assignments')
     return render(request, 'assignments/view_assignments.html', {'assignments': assignments})
 
 @login_required
 @permission_required('View Assignment')
 def view_assignment(request, assignment_id):
     assignment = get_object_or_404(Assignment, pk=assignment_id)
+    log_user_activity(request, f'Viewed assignment ID: {assignment_id}')
     return render(request, 'assignments/view_assignment.html', {'assignment': assignment})
 
 @login_required
@@ -467,6 +539,7 @@ def add_assignment(request):
             description=description,
             due_date=due_date
         )
+        log_user_activity(request, f'Added assignment ID: {assignment.id}')
         return redirect(reverse('view_assignment', kwargs={'assignment_id': assignment.id}))
     return render(request, 'assignments/add_assignment.html', {'courses': courses})
 
@@ -489,7 +562,7 @@ def edit_assignment(request, assignment_id):
         assignment.due_date = due_date
         assignment.save()
 
-        # Redirect to a page showing the edited assignment
+        log_user_activity(request, f'Edited assignment ID: {assignment_id}')
         return redirect(reverse('view_assignment', kwargs={'assignment_id': assignment.id}))
 
     return render(request, 'assignments/edit_assignment.html', {'assignment': assignment, 'courses': courses})
@@ -501,6 +574,7 @@ def delete_assignment(request, assignment_id):
     
     if request.method == 'POST':
         assignment.delete()
+        log_user_activity(request, f'Deleted assignment ID: {assignment_id}')
         return redirect('view_assignments')  # Redirect to the assignments list view
         
     return render(request, 'assignments/delete_assignment.html', {'assignment': assignment})
@@ -509,6 +583,7 @@ def delete_assignment(request, assignment_id):
 @permission_required('View Userassignments')
 def view_userassignments(request):
     user_assignments = UserAssignment.objects.all()
+    log_user_activity(request, 'Viewed user assignments')
     return render(request, 'userassignments/view_userassignments.html', {'user_assignments': user_assignments})
 
 
@@ -516,6 +591,7 @@ def view_userassignments(request):
 @permission_required('View Userassignment')
 def view_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
+    log_user_activity(request, f'Viewed user assignment ID: {user_assignment_id}')
     return render(request, 'userassignments/view_userassignment.html', {'user_assignment': user_assignment})
 
 @login_required
@@ -537,6 +613,7 @@ def add_userassignment(request):
             grade=grade,
             comments=comments
         )
+        log_user_activity(request, f'Added user assignment ID: {user_assignment.id}')
         return redirect(reverse('view_userassignment', kwargs={'user_assignment_id': user_assignment.id}))
     return render(request, 'userassignments/add_userassignment.html', {'assignments': assignments, 'users': users})
 
@@ -555,6 +632,7 @@ def edit_userassignment(request, user_assignment_id):
         user_assignment.comments = request.POST.get('comments')
         user_assignment.save()
         
+        log_user_activity(request, f'Edited user assignment ID: {user_assignment_id}')
         return redirect(reverse('view_userassignment', kwargs={'user_assignment_id': user_assignment_id}))
     
     return render(request, 'userassignments/edit_userassignment.html', {'user_assignment': user_assignment, 'assignments': assignments, 'users': users})
@@ -565,6 +643,7 @@ def delete_userassignment(request, user_assignment_id):
     user_assignment = get_object_or_404(UserAssignment, pk=user_assignment_id)
     if request.method == 'POST':
         user_assignment.delete()
+        log_user_activity(request, f'Deleted user assignment ID: {user_assignment_id}')
         return redirect('view_userassignments')
     return render(request, 'userassignments/delete_userassignment.html', {'user_assignment': user_assignment})
 
@@ -572,12 +651,14 @@ def delete_userassignment(request, user_assignment_id):
 @permission_required('View Features')
 def view_features(request):
     features = Feature.objects.all()
+    log_user_activity(request, 'Viewed features')
     return render(request, 'features/view_features.html', {'features': features})
 
 @login_required
 @permission_required('View Feature')
 def view_feature(request, feature_id):
     feature = get_object_or_404(Feature, pk=feature_id)
+    log_user_activity(request, f'Viewed feature ID: {feature_id}')
     return render(request, 'features/view_feature.html', {'feature': feature})
 
 @login_required
@@ -588,6 +669,7 @@ def add_feature(request):
 
         try:
             new_feature = Feature.objects.create(feature_name=feature_name)
+            log_user_activity(request, f'Added feature ID: {new_feature.id}')
             return redirect(reverse('view_feature', kwargs={'feature_id': new_feature.id}))
         except IntegrityError:
             error_message = "A feature with this name already exists."
@@ -605,6 +687,7 @@ def edit_feature(request, feature_id):
         feature.feature_name = feature_name
         try:
             feature.save()
+            log_user_activity(request, f'Edited feature ID: {feature_id}')
             return redirect(reverse('view_feature', kwargs={'feature_id': feature.id}))
         except IntegrityError:
             error_message = "A feature with this name already exists."
@@ -619,6 +702,7 @@ def delete_feature(request, feature_id):
 
     if request.method == 'POST':
         feature.delete()
+        log_user_activity(request, f'Deleted feature ID: {feature_id}')
         return redirect('view_features')
     
     return render(request, 'features/delete_feature.html', {'feature': feature})
@@ -627,12 +711,14 @@ def delete_feature(request, feature_id):
 @permission_required('View Roles')
 def view_roles(request):
     roles = Role.objects.all()
+    log_user_activity(request, 'Viewed roles')
     return render(request, 'roles/view_roles.html', {'roles': roles})
 
 @login_required
 @permission_required('View Role')
 def view_role(request, role_id):
     role = get_object_or_404(Role, pk=role_id)
+    log_user_activity(request, f'Viewed role ID: {role_id}')
     return render(request, 'roles/view_role.html', {'role': role})
 
 @login_required
@@ -643,6 +729,7 @@ def add_role(request):
 
         try:
             new_role = Role.objects.create(role_name=role_name)
+            log_user_activity(request, f'Added role ID: {new_role.id}')
             return redirect(reverse('view_role', kwargs={'role_id': new_role.id}))
         except IntegrityError as e:
             error_message = "A role with this name already exists."
@@ -660,6 +747,7 @@ def edit_role(request, role_id):
         role.role_name = role_name
         try:
             role.save()
+            log_user_activity(request, f'Edited role ID: {role_id}')
             return redirect(reverse('view_role', kwargs={'role_id': role.id}))
         except IntegrityError as e:
             error_message = "A role with this name already exists."
@@ -674,6 +762,7 @@ def delete_role(request, role_id):
 
     if request.method == 'POST':
         role.delete()
+        log_user_activity(request, f'Deleted role ID: {role_id}')
         return redirect('view_roles')
     
     return render(request, 'roles/delete_role.html', {'role': role})
@@ -682,12 +771,14 @@ def delete_role(request, role_id):
 @permission_required('View Permissions')
 def view_permissions(request):
     permissions = Permission.objects.all()
+    log_user_activity(request, 'Viewed permissions')
     return render(request, 'permissions/view_permissions.html', {'permissions': permissions})
 
 @login_required
 @permission_required('View Permission')
 def view_permission(request, permission_id):
     permission = get_object_or_404(Permission, pk=permission_id)
+    log_user_activity(request, f'Viewed permission ID: {permission_id}')
     return render(request, 'permissions/view_permission.html', {'permission': permission})
 
 @login_required
@@ -702,6 +793,7 @@ def add_permission(request):
         
         try:
             permission = Permission.objects.create(role_id=role_id, feature_id=feature_id)
+            log_user_activity(request, f'Added permission ID: {permission.id}')
             return redirect('view_permission', permission_id=permission.id)
         except IntegrityError:
             error_message = "A permission with this role and feature combination already exists."
@@ -731,6 +823,7 @@ def edit_permission(request, permission_id):
             permission.role_id = role_id
             permission.feature_id = feature_id
             permission.save()
+            log_user_activity(request, f'Edited permission ID: {permission_id}')
             return redirect('view_permission', permission_id=permission_id)
         except IntegrityError:
             error_message = "A permission with this role and feature combination already exists."
@@ -745,6 +838,7 @@ def delete_permission(request, permission_id):
     
     if request.method == 'POST':
         permission.delete()
+        log_user_activity(request, f'Deleted permission ID: {permission_id}')
         return redirect('view_permissions')
     
     return render(request, 'permissions/delete_permission.html', {'permission': permission})
