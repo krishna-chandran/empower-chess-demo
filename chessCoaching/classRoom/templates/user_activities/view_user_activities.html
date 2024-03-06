@@ -13,6 +13,7 @@
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
+                            <th>Id</th>
                             <th>Action</th>
                             <th>Timestamp</th>
                         </tr>
@@ -20,12 +21,13 @@
                     <tbody>
                         {% for activity in user_activities %}
                             <tr>
+                                <td><a href="{% url 'view_user_activity' activity.id %}">{{ activity.id }}</a></td>
                                 <td>{{ activity.action }}</td>
                                 <td>{{ activity.timestamp }}</td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="2">No activity found.</td>
+                                <td colspan="3">No activities found.</td>
                             </tr>
                         {% endfor %}
                     </tbody>

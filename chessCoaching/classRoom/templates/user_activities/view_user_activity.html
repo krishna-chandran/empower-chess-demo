@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">User Activity Details</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text"><b>ID:</b> {{ user_activity.id }}</p>
+                <p class="card-text"><b>User:</b> {{ user_activity.user.user.username }}</p>
+                <p class="card-text"><b>Action:</b> {{ user_activity.action }}</p>
+                <p class="card-text"><b>Timestamp:</b> {{ user_activity.timestamp }}</p>
+                <!-- Add more details as needed -->
+                <div class="my-2">
+                    <!-- Add buttons or links for actions like edit or delete if needed -->
+                    <a href="/user_activity/{{user_activity.id}}/edit/" class="btn btn-primary btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-edit"></i>
+                        </span>
+                        <span class="text">Edit</span>
+                    </a>
+                    <a href="/user_activity/{{user_activity.id}}/delete/" class="btn btn-danger btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-trash"></i>
+                        </span>
+                        <span class="text">Delete</span>
+                    </a>
+                </div>
+                <div class="my-2">
+                    <a href="/user-activities/{{user_activity.user.id}}/" class="btn btn-warning btn-icon-split">
+                        <span class="text">Back</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

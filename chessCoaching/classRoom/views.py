@@ -69,9 +69,7 @@ def view_user(request, user_id):
     log_user_activity(request, f'Viewed user ID: {user_id}')
     return render(request, 'users/view_user.html', {'user': user, 'user_activities': user_activities})
 
-def view_user_activities(request, user_id):
-    user_activities = UserActivity.objects.filter(user=user_id).order_by('-timestamp')
-    return render(request, 'user_activities/view_user_activities.html', {'user_activities': user_activities})
+
 
 
 @login_required
@@ -162,6 +160,34 @@ def delete_user(request, user_id):
         return redirect('view_users')
     
     return render(request, 'users/delete_user.html', {'user': user})
+
+@login_required
+def view_user_activities(request, user_id):
+    user_activities = UserActivity.objects.filter(user=user_id).order_by('-id')
+    return render(request, 'user_activities/view_user_activities.html', {'user_activities': user_activities})
+
+@login_required
+def view_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, pk=activity_id)
+    return render(request, 'user_activities/view_user_activity.html', {'user_activity': user_activity})
+
+@login_required
+def edit_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, id=activity_id)
+    if request.method == 'POST':
+        user_activity.action = request.POST.get('action')
+        user_activity.timestamp = request.POST.get('timestamp')
+        user_activity.save()
+        return redirect('view_user_activity', activity_id=user_activity.id)
+    return render(request, 'user_activities/edit_user_activity.html', {'user_activity': user_activity})
+
+@login_required
+def delete_user_activity(request, activity_id):
+    user_activity = get_object_or_404(UserActivity, id=activity_id)
+    if request.method == 'POST':
+        user_activity.delete()
+        return redirect('view_user_activities', user_activity.user.id)
+    return render(request, 'user_activities/delete_user_activity.html', {'user_activity': user_activity})
 
 @login_required
 @permission_required('View Subscriptions')

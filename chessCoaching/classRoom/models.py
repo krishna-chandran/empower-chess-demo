@@ -103,6 +103,7 @@ class PackageOptions(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
     
 class UserActivity(models.Model):
+    id = models.AutoField(primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     action = models.CharField(max_length=100)
     timestamp = models.DateTimeField(default=timezone.now)

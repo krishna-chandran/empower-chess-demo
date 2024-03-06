@@ -12,7 +12,7 @@ from .views import view_features, view_feature, add_feature, edit_feature, delet
 from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission,delete_permission
 from .views import view_profile, edit_profile
-from .views import view_user_activities
+from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404
 from .views import error_404_view 
@@ -33,6 +33,9 @@ urlpatterns = [
     
         
     path('user-activities/<int:user_id>/',view_user_activities, name='view_user_activities'),
+    path('user_activity/<int:activity_id>/',view_user_activity, name='view_user_activity'),
+    path('user_activity/<int:activity_id>/edit/', edit_user_activity, name='edit_user_activity'),
+    path('user_activity/<int:activity_id>/delete/',delete_user_activity, name='delete_user_activity'),
     
     path('forgot_password/', forgot_password, name='forgot_password'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
