@@ -60,6 +60,8 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
+    var razorpayKey = '{{ razorpay_key }}';
+    var stripeKey = '{{ stripe_key }}';
     document.getElementById('pay-button').onclick = function () {
         if (validateForm()) {
             var packageSelect = document.getElementById('package');
@@ -69,7 +71,7 @@
     
             if (paymentOption === 'stripe') {
                 var handler = StripeCheckout.configure({
-                    key: 'pk_test_51OpX3jSHdVGHjsMYOj7tTOgpTjTAKY1WeX21CCwoM6X8hl8azBaXNdhMDwvG8jBGhTe8egAVUQUCsQuOgmfy6vF500pnyuLu39',
+                    key: stripeKey,
                     image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
                     locale: 'auto',
                     token: function(token) {
@@ -89,7 +91,7 @@
                 });
             } else if (paymentOption === 'razorpay') {
                 var options = {
-                    key: 'rzp_test_yisnmi4QnEj4h4',
+                    key: razorpayKey,
                     amount: packageAmount * 100,
                     currency: 'INR',
                     handler: function (response) {

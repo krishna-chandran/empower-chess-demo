@@ -224,8 +224,11 @@ def add_subscription(request):
 
         log_user_activity(request, f'Added subscription ID: {subscription.subscription_id}')
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.subscription_id}))
+    
+    razorpay_key = Settings.objects.get(key='razorpay_key').value
+    stripe_key = Settings.objects.get(key='stripe_key').value
 
-    return render(request, 'subscriptions/add_subscription.html', {'users': users, 'packages': packages})
+    return render(request, 'subscriptions/add_subscription.html', {'users': users, 'packages': packages, 'razorpay_key': razorpay_key, 'stripe_key': stripe_key})
 @login_required
 @permission_required('Edit Subscription')
 def edit_subscription(request, subscription_id):
