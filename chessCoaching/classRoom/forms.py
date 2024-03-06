@@ -99,6 +99,20 @@ class LoginForm(forms.Form):
 #     def __init__(self, *args, **kwargs):
 #         super().__init__(*args, **kwargs)
    
+# def clean_confirm_password(self):
+#     password = self.cleaned_data.get('password')
+#     confirm_password = self.cleaned_data.get('confirm_password')
+#     if password and confirm_password:
+#         if password == confirm_password:
+#             try:
+#                 validate_password(password)
+#             except ValidationError as e:
+#                 raise ValidationError(e)
+#             return make_password(password)
+#         else:
+#             raise ValidationError("The passwords don't match")
+#     return confirm_password
+
 
 
     
