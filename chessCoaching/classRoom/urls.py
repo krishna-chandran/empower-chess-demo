@@ -13,6 +13,7 @@ from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission,delete_permission
 from .views import view_profile, edit_profile
 from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
+from .views import view_settings, view_setting, add_setting
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404
 from .views import error_404_view 
@@ -103,6 +104,10 @@ urlpatterns = [
     path('role/add/', add_role, name='add_role'),
     path('role/<int:role_id>/edit/', edit_role, name='edit_role'),
     path('role/<int:role_id>/delete/', delete_role, name='delete_role'),
+    
+    path('settings/', view_settings, name='view_settings'),
+    path('setting/<int:setting_id>/', view_setting, name='view_setting'),
+    path('setting/add/', add_setting, name='add_setting'),
     
     path('permissions/', view_permissions, name='view_permissions'),
     path('permission/<int:permission_id>/', view_permission, name='view_permission'),

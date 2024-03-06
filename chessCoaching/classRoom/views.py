@@ -20,7 +20,7 @@ from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
-from .models import UserActivity
+from .models import UserActivity, Settings
 
 
 def permission_required(feature_name):
@@ -854,6 +854,36 @@ def delete_permission(request, permission_id):
         return redirect('view_permissions')
     
     return render(request, 'permissions/delete_permission.html', {'permission': permission})
+
+@login_required
+# @permission_required('View Settings')
+def view_settings(request):
+    settings = Settings.objects.all()
+    log_user_activity(request, 'Viewed settings')
+    return render(request, 'settings/view_settings.html', {'settings': settings})
+
+@login_required
+# @permission_required('View Setting')
+def view_setting(request, setting_id):
+    setting = get_object_or_404(Settings, pk=setting_id)
+    log_user_activity(request, f'Viewed Setting ID: {setting_id}')
+    return render(request, 'settings/view_setting.html', {'setting': setting})
+
+@login_required
+# @permission_required('Add Setting')
+def add_setting(request):
+    if request.method == 'POST':
+        key = request.POST.get('key')
+        value = request.POST.get('value')
+
+        setting = Settings.objects.create(
+            key=key,
+            value=value
+        )
+        log_user_activity(request, f'Added setting ID: {setting.id}')
+        return redirect('view_setting', setting_id=setting.id)
+
+    return render(request, 'settings/add_setting.html')
 
 def forgot_password(request):
     if request.method == 'POST':

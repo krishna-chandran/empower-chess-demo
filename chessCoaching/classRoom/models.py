@@ -122,3 +122,8 @@ class UserActivity(models.Model):
             # Set the timestamp to IST
             self.timestamp = ist_time
         return super().save(*args, **kwargs)
+    
+class Settings(models.Model):
+    id = models.AutoField(primary_key=True)
+    key = models.CharField(max_length=255)
+    value = models.CharField(max_length=255)
