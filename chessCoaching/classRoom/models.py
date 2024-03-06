@@ -2,6 +2,7 @@ from django.db import models
 from django.core.exceptions import ValidationError
 import datetime
 from django.contrib.auth.models import User as AuthUser
+from django.utils import timezone
 
 # Create your models here.
 def no_future(value):
@@ -100,3 +101,19 @@ class PackageOptions(models.Model):
     option_id = models.AutoField(primary_key=True)
     package = models.ForeignKey(Package, on_delete=models.CASCADE)
     course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    
+class UserActivity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    action = models.CharField(max_length=100)
+    timestamp = models.DateTimeField(default=timezone.now)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:  # If this is a new instance
+            # Get the current UTC time
+            current_time_utc = timezone.now()
+            # Convert UTC time to Indian Standard Time (IST)
+            ist_offset = datetime.timedelta(hours=5, minutes=30)  # UTC+5:30 for IST
+            ist_time = current_time_utc + ist_offset
+            # Set the timestamp to IST
+            self.timestamp = ist_time
+        return super().save(*args, **kwargs)

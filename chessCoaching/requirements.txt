@@ -8,3 +8,4 @@ psycopg
 psycopg2-binary
 sqlparse
 typing_extensions
+pytz

@@ -43,24 +43,25 @@
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Activity Log</h6>
+                <a href="{% url 'view_user_activities' user.id %}" class="btn btn-success btn-icon-split">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">Full History</span>
+                </a>
             </div>
             <div class="card-body">
-                <div class="mb-2">
-                    <code>Jan 1 2024 4:00 PM</code>
-                </div>
-                <p>Logged in</p>
-                <div class="mb-2">
-                    <code>Jan 1 2024 4:04 PM</code>
-                </div>
-                <p>Attempted puzzle 1. Solution incorrect. Elapsed time 56s</p>
-                <div class="mb-2">
-                    <code>Jan 1 2024 4:06 PM</code>
-                </div>
-                <p>Attempted puzzle 1. Solution correct with hint. Elapsed time 30s</p>
-                <div class="mb-2">
-                    <code>Jan 1 2024 6:00 PM</code>
-                </div>
-                <p>Logged out</p>               
+                <h2>User Activities</h2>
+                {% if user_activities %}
+                    {% for activity in user_activities %}
+                        <div class="mb-2">
+                            <code>{{ activity.timestamp }}</code>
+                        </div>
+                        <p>{{ activity.action }}</p>
+                    {% endfor %}
+                {% else %}
+                    <p>No activities found for this user.</p>
+                {% endif %}
             </div>
         </div>
 </div>
