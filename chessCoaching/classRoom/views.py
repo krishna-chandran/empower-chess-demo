@@ -21,6 +21,8 @@ from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
 from .models import UserActivity, Settings
+from datetime import datetime
+from datetime import timedelta
 
 
 def permission_required(feature_name):
@@ -208,13 +210,34 @@ def view_subscription(request, subscription_id):
 def add_subscription(request):
     packages = Package.objects.all()
     users = User.objects.all()
-    
+
     if request.method == 'POST':
         user_id = request.POST.get('user')
         package_id = request.POST.get('package')
         payment_date = request.POST.get('payment_date')
         expiry_date = request.POST.get('expiry_date')
 
+        # Check if a subscription with the same package for the same user exists
+        existing_subscription = Subscription.objects.filter(user_id=user_id, package_id=package_id).order_by('-expiry_date').first()
+
+        payment_date = datetime.strptime(request.POST.get('payment_date'), '%Y-%m-%d').date()
+
+        if existing_subscription:
+            # Check if the expiry date of the existing subscription is greater than the payment date
+            if existing_subscription.expiry_date > payment_date:
+                # Calculate new expiry date based on existing subscription's expiry date and package validity
+                new_expiry_date = existing_subscription.expiry_date + timedelta(days=existing_subscription.package.validity)
+                return render(request, 'subscriptions/confirm_extension.html', {'existing_subscription': existing_subscription, 'new_expiry_date': new_expiry_date})
+            else:
+                subscription = Subscription.objects.create(
+                    user_id=user_id,
+                    package_id=package_id,
+                    payment_date=payment_date,
+                    expiry_date=expiry_date
+                )
+
+                log_user_activity(request, f'Added subscription ID: {subscription.subscription_id}')
+                return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.subscription_id}))
         subscription = Subscription.objects.create(
             user_id=user_id,
             package_id=package_id,
@@ -224,7 +247,7 @@ def add_subscription(request):
 
         log_user_activity(request, f'Added subscription ID: {subscription.subscription_id}')
         return redirect(reverse('view_subscription', kwargs={'subscription_id': subscription.subscription_id}))
-    
+
     razorpay_key = Settings.objects.get(key='razorpay_key').value
     stripe_key = Settings.objects.get(key='stripe_key').value
 
