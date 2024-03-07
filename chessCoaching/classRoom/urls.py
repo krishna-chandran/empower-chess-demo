@@ -105,20 +105,19 @@ urlpatterns = [
     path('permission/add/', add_permission, name='add_permission'),
     path('permission/<int:permission_id>/edit/', edit_permission, name='edit_permission'),
     path('permission/<int:permission_id>/delete/', delete_permission, name='delete_permission'),
-    # path('<path:path_not_found>/', error_404_view),
 
-    path('chapter/', view_chapters, name='view_chapters'),
+    path('chapters/', view_chapters, name='view_chapters'),
     path('chapter/<int:chapter_id>/', view_chapter, name='view_chapter'),
     path('chapter/add/', add_chapter, name='add_chapter'),
-    path('chapter/edit/<int:chapter_id>/', edit_chapter, name='edit_chapter'),
-    path('chapter/delete/<int:chapter_id>/', delete_chapter, name='delete_chapter'),
+    path('chapter/<int:chapter_id>/edit/', edit_chapter, name='edit_chapter'),
+    path('chapter/<int:chapter_id>/delete/', delete_chapter, name='delete_chapter'),
 
     path('pages/', view_pages, name='view_pages'),
-    path('pages/<int:page_id>/', view_page, name='view_page'),
-    path('pages/add/', add_page, name='add_page'),
-    path('pages/edit/<int:page_id>/', edit_page, name='edit_page'),
-    path('pages/delete/<int:page_id>/', delete_page, name='delete_page'),
+    path('page/<int:page_id>/', view_page, name='view_page'),
+    path('page/add/', add_page, name='add_page'),
+    path('page/<int:page_id>/edit/', edit_page, name='edit_page'),
+    path('page/<int:page_id>/delete/', delete_page, name='delete_page'),
 
-    path('page/<int:page_id>/', view_page_activity, name='page_acitivity'),
+    # path('page/<int:page_id>/', view_page_activity, name='page_acitivity'),
     path('<path:path_not_found>/', error_404_view),
 ]

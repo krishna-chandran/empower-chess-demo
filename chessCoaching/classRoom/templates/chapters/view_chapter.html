@@ -6,35 +6,34 @@
     <div class="col-lg-6">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Page Details</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Chapter Details</h6>
             </div>
             <div class="card-body">
-                <p class="card-text"><b>Page ID:</b> {{ page.id }}</p>
-                <p class="card-text"><b>Chapter Title:</b> {{ page.chapter.title }}</p>
-                <p class="card-text"><b>Title:</b> {{ page.title }}</p>
-                <p class="card-text"><b>Order:</b> {{ page.order }}</p>
-                <p class="card-text"><b>Content:</b> {{ page.content }}</p>
+                <p class="card-text"><b>Chapter ID:</b> {{ chapter.id }}</p>
+                <p class="card-text"><b>Courses:</b> {{ chapter.course.course_name }}</p>
+                <p class="card-text"><b>Title:</b> {{ chapter.title }}</p>
+                <p class="card-text"><b>Order:</b> {{ chapter.order }}</p>
                 <div class="my-2"></div>
-                <a href="/page/add/" class="btn btn-success btn-icon-split">
+                <a href="/chapter/add/" class="btn btn-success btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-check"></i>
                     </span>
                     <span class="text">Add</span>
                 </a>
-                <a href="/page/{{ page.id }}/edit/" class="btn btn-primary btn-icon-split">
+                <a href="/chapter/{{ chapter.id }}/edit/" class="btn btn-primary btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-flag"></i>
                     </span>
                     <span class="text">Edit</span>
                 </a>
-                <a href="/page/{{ page.id }}/delete/" class="btn btn-danger btn-icon-split">
+                <a href="/chapter/{{ chapter.id }}/delete/" class="btn btn-danger btn-icon-split">
                     <span class="icon text-white-50">
                         <i class="fas fa-trash"></i>
                     </span>
                     <span class="text">Delete</span>
                 </a>
                 <div class="my-2"></div>
-                <a href="/pages/" class="btn btn-warning btn-icon-split">
+                <a href="/chapters/" class="btn btn-warning btn-icon-split">
                     <span class="text">Back</span>
                 </a>
             </div>
