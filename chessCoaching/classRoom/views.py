@@ -882,21 +882,21 @@ def delete_permission(request, permission_id):
     return render(request, 'permissions/delete_permission.html', {'permission': permission})
 
 @login_required
-# @permission_required('View Settings')
+@permission_required('View Settings')
 def view_settings(request):
     settings = Settings.objects.all()
     log_user_activity(request, 'Viewed settings')
     return render(request, 'settings/view_settings.html', {'settings': settings})
 
 @login_required
-# @permission_required('View Setting')
+@permission_required('View Setting')
 def view_setting(request, setting_id):
     setting = get_object_or_404(Settings, pk=setting_id)
     log_user_activity(request, f'Viewed Setting ID: {setting_id}')
     return render(request, 'settings/view_setting.html', {'setting': setting})
 
 @login_required
-# @permission_required('Add Setting')
+@permission_required('Add Setting')
 def add_setting(request):
     if request.method == 'POST':
         key = request.POST.get('key')
@@ -912,7 +912,7 @@ def add_setting(request):
     return render(request, 'settings/add_setting.html')
 
 @login_required
-# @permission_required('Edit Setting')
+@permission_required('Edit Setting')
 def edit_setting(request, setting_id):
     setting = get_object_or_404(Settings, pk=setting_id)
     if request.method == 'POST':
@@ -929,7 +929,7 @@ def edit_setting(request, setting_id):
     return render(request, 'settings/edit_setting.html', {'setting': setting})
 
 @login_required
-# @permission_required('Delete Setting')
+@permission_required('Delete Setting')
 def delete_setting(request, setting_id):
     setting = get_object_or_404(Settings, pk=setting_id)
     if request.method == 'POST':
