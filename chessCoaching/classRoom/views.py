@@ -489,14 +489,13 @@ def edit_page(request, page_id):
     return render(request, 'pages/edit_page.html', {'page_data': page_data, 'chapters' : chapters})
 
 @login_required
-@permission_required('Delete Page')
+# @permission_required('Delete Page')
 def delete_page(request, page_id):
     page_data = get_object_or_404(Page, id=page_id)
-    chapter_id = page_data.chapter.id
     if request.method == 'POST':
         page_data.delete()
-        return redirect('view_chapter', chapter_id=chapter_id)
-    return render(request, 'pages/delete_page.html', {'page': page_data})
+        return redirect('view_pages')
+    return render(request, 'pages/delete_page.html', {'page_data': page_data})
 
 @login_required
 @permission_required('View Page Activity')
