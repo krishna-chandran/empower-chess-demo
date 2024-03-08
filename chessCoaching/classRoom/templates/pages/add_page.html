@@ -14,7 +14,7 @@
                             <label for="chapter"><b>Chapter</b></label>
                             <select name="chapter" id="chapter" class="form-control" required>
                                 {% for chapter in chapters %}
-                                <option value="{{ chapter.id }}">{{ chapter.id }}</option>
+                                <option value="{{ chapter.id }}">{{ chapter.title }}</option>
                                 {% endfor %}
                             </select>
                         </div>
@@ -34,7 +34,7 @@
                     <div class="form-group row">
                         <div class="col-sm-6">
                             <label for="order"><b>Order</b></label>
-                            <input type="text" class="form-control" id="order" name="order" required>
+                            <input type="number" class="form-control" id="order" name="order" required>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary btn-user btn-block">Add</button>

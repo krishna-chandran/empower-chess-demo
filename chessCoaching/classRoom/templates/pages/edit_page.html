@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Page: {{ page.id }}</h6>
+        </div>
+    
+        <div class="card-body">
+
+            <form class="user" method="post">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-6 mb-3 mb-sm-0">
+                        <label for="chapter"><b>Chapter</b></label>
+                        <select class="form-control" id="chapter" name="chapter" required>
+                            {% for chapter in chapters %}
+                                <option value="{{ chapter.id }}" {% if chapter.id == page_data.chapter_id %} selected {% endif %}>{{ chapter.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="title"><b>Title</b></label>
+                        <input type="text" class="form-control" id="title" name="title" value="{{ page_data.title}}" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="content"><b>Content</b></label>
+                        <input type="text" class="form-control" id="content" name="content" value="{{ page_data.content}}" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="order"><b>Order</b></label>
+                        <input type="text" class="form-control" id="order" name="order" value="{{ page_data.order}}" required>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="/page/{{ page_data.id }}/" class="btn btn-danger btn-user  btn-block">
+                    Cancel
+                </a>
+                
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -455,30 +455,38 @@ def view_page(request, page_id):
 
 @login_required
 # @permission_required('Add Page')
-def add_page(request, chapter_id):
-    chapter = Chapter.objects.all()
+def add_page(request):
+    chapters = Chapter.objects.all()
     if request.method == 'POST':
-        chapter = request.POST.get('chapter')
+        chapter_id = request.POST.get('chapter')
         title = request.POST.get('title')
         content = request.POST.get('content')
         order = request.POST.get('order')
         if not chapter_id:
             return HttpResponseBadRequest("Chapter is required.")
-        page = Page.objects.create(chapter=chapter, title=title, content=content, order=order)
+        page = Page.objects.create(chapter_id=chapter_id, title=title, content=content, order=order)
         return redirect(reverse('view_page', kwargs={'page_id': page.id}))
-    return render(request, 'pages/add_page.html', {'chapter': chapter})
+    return render(request, 'pages/add_page.html', {'chapters': chapters})
 
 @login_required
 # @permission_required('Edit Page')
 def edit_page(request, page_id):
     page_data = get_object_or_404(Page, id=page_id)
+    chapters = Chapter.objects.all()
     if request.method == 'POST':
-        page_data.title = request.POST.get('title')
-        page_data.content = request.POST.get('content')
-        page_data.order = request.POST.get('order')
+        chapter_id = request.POST.get('chapter')
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        order = request.POST.get('order')
+        if not chapter_id:
+            return HttpResponseBadRequest("Chapter is required.")
+        page_data.chapter_id = chapter_id
+        page_data.title = title
+        page_data.content = content
+        page_data.order = order
         page_data.save()
-        return redirect('view_chapter', chapter_id=page_data.chapter.id)
-    return render(request, 'pages/edit_page.html', {'page': page_data})
+        return redirect(reverse('view_page', kwargs={'page_id': page_id}))
+    return render(request, 'pages/edit_page.html', {'page_data': page_data, 'chapters' : chapters})
 
 @login_required
 @permission_required('Delete Page')
