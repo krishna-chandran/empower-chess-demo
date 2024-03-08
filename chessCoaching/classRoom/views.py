@@ -406,7 +406,7 @@ def add_chapter(request):
         course_id = request.POST.get('course')
         title = request.POST.get('title')
         order = request.POST.get('order')
-
+        
         if not course_id:
             return HttpResponseBadRequest("Course is required.")
         chapter = Chapter.objects.create(course_id=course_id, title=title, order=order,)
@@ -456,13 +456,16 @@ def view_page(request, page_id):
 @login_required
 # @permission_required('Add Page')
 def add_page(request, chapter_id):
-    chapter = get_object_or_404(Chapter, id=chapter_id)
+    chapter = Chapter.objects.all()
     if request.method == 'POST':
+        chapter = request.POST.get('chapter')
         title = request.POST.get('title')
         content = request.POST.get('content')
         order = request.POST.get('order')
-        Page = Page.objects.create(chapter=chapter, title=title, content=content, order=order)
-        return redirect('view_chapter', chapter_id=chapter_id)
+        if not chapter_id:
+            return HttpResponseBadRequest("Chapter is required.")
+        page = Page.objects.create(chapter=chapter, title=title, content=content, order=order)
+        return redirect(reverse('view_page', kwargs={'page_id': page.id}))
     return render(request, 'pages/add_page.html', {'chapter': chapter})
 
 @login_required
