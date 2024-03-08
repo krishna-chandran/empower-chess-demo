@@ -455,18 +455,18 @@ def view_page(request, page_id):
 
 @login_required
 # @permission_required('Add Page')
-def add_page(request, chapter_id):
-    chapter = Chapter.objects.all()
+def add_page(request):
+    chapters = Chapter.objects.all()
     if request.method == 'POST':
-        chapter = request.POST.get('chapter')
+        chapter_id = request.POST.get('chapter')
         title = request.POST.get('title')
         content = request.POST.get('content')
         order = request.POST.get('order')
         if not chapter_id:
             return HttpResponseBadRequest("Chapter is required.")
-        page = Page.objects.create(chapter=chapter, title=title, content=content, order=order)
+        page = Page.objects.create(chapter_id=chapter_id, title=title, content=content, order=order)
         return redirect(reverse('view_page', kwargs={'page_id': page.id}))
-    return render(request, 'pages/add_page.html', {'chapter': chapter})
+    return render(request, 'pages/add_page.html', {'chapters': chapters})
 
 @login_required
 # @permission_required('Edit Page')
