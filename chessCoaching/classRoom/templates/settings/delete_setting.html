@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Delete Setting</h6>
+        </div>
+        <div class="card-body">
+            <p>Are you sure you want to delete setting "{{ setting.id }}"?</p>
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger btn-user btn-block">Delete</button>
+                <a href="{% url 'view_setting' setting_id=setting.id %}" class="btn btn-warning btn-user btn-block">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

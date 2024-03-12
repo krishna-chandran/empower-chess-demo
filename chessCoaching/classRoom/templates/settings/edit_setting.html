@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Edit Setting</h6>
+        </div>
+        <div class="card-body">
+            <form class="user" method="post">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="key">Key</label>
+                    <input type="text" class="form-control" id="key" name="key" value="{{ setting.key }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="value">Value</label>
+                    <input type="text" class="form-control" id="value" name="value" value="{{ setting.value }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-user btn-block">Save</button>
+                <a href="{% url 'view_setting' setting.id %}" class="btn btn-google btn-user btn-block">Cancel</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

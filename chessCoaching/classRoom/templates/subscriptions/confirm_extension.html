@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<script>
+    function submitForm() {
+        setTimeout(function() {
+            document.getElementById("subscriptionForm").submit();
+        }, 5000); // 10 seconds delay
+    }
+    window.onload = function() {
+        submitForm();
+    }
+</script>
+
+<div class="col-lg-7">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Confirm Subscription Extension</h6>
+        </div>
+        <div class="card-body">
+            <h2>Don't close this window. Wait for 5 seconds, then the subscription will be extended automatically.</h2>
+            <p>You already have this same package, so it will be extended.</p>
+            <form method="post" id="subscriptionForm">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        {% comment %} <label for="user"><b>User</b></label> {% endcomment %}
+                        <input type="hidden" class="form-control" name="user" value="{{ existing_subscription.user_id  }}" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        {% comment %} <label for="package"><b>Package</b></label> {% endcomment %}
+                        <input type="hidden" class="form-control" name="package" value="{{ existing_subscription.package_id }}" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="payment_date"><b>Existing Expiry Date</b></label>
+                        <input type="date" class="form-control" name="payment_date" value="{{ existing_subscription.expiry_date|date:'Y-m-d' }}" readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="expiry_date"><b>New Expiry Date</b></label>
+                        <input type="date" class="form-control" name="expiry_date" value="{{ new_expiry_date|date:'Y-m-d' }}" readonly>
+                    </div>
+                </div>
+                {% comment %} <button type="submit" class="btn btn-primary btn-user btn-block">Yes, extend subscription</button> {% endcomment %}
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

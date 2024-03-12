@@ -19,24 +19,14 @@
                         </select>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <div class="col-sm-6">
-                        <label for="payment_date"><b>Payment Date</b></label>
-                        <input type="date" class="form-control" id="payment_date" name="payment_date" required>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-sm-6">
-                        <label for="expiry_date"><b>Expiry Date</b></label>
-                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
-                    </div>
-                </div>
+
                 <div class="form-group row">
                     <div class="col-sm-6">
                         <label for="package"><b>Package</b></label>
                         <select name="package" id="package" class="form-control" required>
+                            <option value="" selected disabled>Select Package</option>
                             {% for package in packages %}
-                                <option value="{{ package.package_id }}" data-price="{{ package.price }}">{{ package.package_name }}</option>
+                            <option value="{{ package.package_id }}" data-price="{{ package.price }}" data-validity="{{ package.validity }}">{{ package.package_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -50,7 +40,20 @@
                         </select>
                     </div>
                 </div>
-                <button type="button" id="pay-button" class="btn btn-primary btn-user btn-block">Pay</button>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="payment_date"><b>Payment Date</b></label>
+                        <input type="date" class="form-control" id="payment_date" name="payment_date" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        <label for="expiry_date"><b>Expiry Date</b></label>
+                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" required>
+                    </div>
+                </div>                
+
+                <button type="button" id="pay-button" class="btn btn-primary btn-user btn-block">Subscribe</button>
                 <a href="{% url 'view_subscriptions' %}" class="btn btn-google btn-user btn-block">Cancel</a>
             </form>
         </div>
@@ -60,51 +63,79 @@
 <script src="https://checkout.stripe.com/checkout.js"></script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
-    document.getElementById('pay-button').onclick = function () {
-        if (validateForm()) {
-            var packageSelect = document.getElementById('package');
+    var razorpayKey = '{{ razorpay_key }}';
+    var stripeKey = '{{ stripe_key }}';
+    window.onload = function() {
+        document.getElementById('payment_date').value = getTodayDate();
+        var packageSelect = document.getElementById('package');
+        var payButton = document.getElementById('pay-button');
+        var paymentOption = document.getElementById('payment_option');
+    
+        packageSelect.addEventListener('change', function() {
+            var paymentDate = document.getElementById('payment_date').value;
             var selectedPackage = packageSelect.options[packageSelect.selectedIndex];
-            var packageAmount = selectedPackage.getAttribute('data-price');
-            var paymentOption = document.getElementById('payment_option').value;
+            var packageValidity = parseInt(selectedPackage.getAttribute('data-validity'));
+            var packageAmount = parseFloat(selectedPackage.getAttribute('data-price'));
     
-            if (paymentOption === 'stripe') {
-                var handler = StripeCheckout.configure({
-                    key: 'pk_test_51OpX3jSHdVGHjsMYOj7tTOgpTjTAKY1WeX21CCwoM6X8hl8azBaXNdhMDwvG8jBGhTe8egAVUQUCsQuOgmfy6vF500pnyuLu39',
-                    image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-                    locale: 'auto',
-                    token: function(token) {
-                        // You can send the token to your server here.
-                        // This function will be called after the user submits the Stripe payment form.
-                        console.log(token);
-                        document.getElementById('subscription-form').submit();
-                    }
-                });
+            document.getElementById('expiry_date').value = calculateExpiryDate(paymentDate, packageValidity);
     
-                // Open Checkout with further options:
-                handler.open({
-                    name: 'Empower Chess',
-                    description: 'Subscription Payment',
-                    amount: packageAmount * 100,
-                    currency: 'INR'
-                });
-            } else if (paymentOption === 'razorpay') {
-                var options = {
-                    key: 'rzp_test_yisnmi4QnEj4h4',
-                    amount: packageAmount * 100,
-                    currency: 'INR',
-                    handler: function (response) {
-                        console.log(response);
-                        document.getElementById('subscription-form').submit();
+            // Check if the package amount is greater than 0
+            if (packageAmount > 0) {
+                paymentOption.removeAttribute('disabled');
+                payButton.removeAttribute('disabled');
+                // Re-enable the pay button click event handler
+                payButton.onclick = function() {
+                    if (validateForm()) {
+                        handlePayment(packageAmount);
+                    } else {
+                        alert('Please fill all required fields.');
                     }
                 };
-    
-                var rzp = new Razorpay(options);
-                rzp.open();
+            } else {
+                // Disable payment option and enable direct form submission
+                paymentOption.setAttribute('disabled', 'disabled');
+                payButton.onclick = function() {
+                    document.getElementById('subscription-form').submit();
+                };
             }
-        } else {
-            alert('Please fill all required fields.');
-        }
+        });
     };
+    
+    function handlePayment(packageAmount) {
+        var paymentOption = document.getElementById('payment_option').value;
+    
+        if (paymentOption === 'stripe') {
+            var handler = StripeCheckout.configure({
+                key: stripeKey,
+                image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+                locale: 'auto',
+                token: function(token) {
+                    console.log(token);
+                    document.getElementById('subscription-form').submit();
+                }
+            });
+    
+            handler.open({
+                name: 'Empower Chess',
+                description: 'Subscription Payment',
+                amount: packageAmount * 100,
+                currency: 'INR'
+            });
+        } else if (paymentOption === 'razorpay') {
+            var options = {
+                key: razorpayKey,
+                amount: packageAmount * 100,
+                currency: 'INR',
+                handler: function (response) {
+                    console.log(response);
+                    document.getElementById('subscription-form').submit();
+                }
+            };
+    
+            var rzp = new Razorpay(options);
+            rzp.open();
+        }
+    }
     
     function validateForm() {
         var user = document.getElementById('user').value;
@@ -118,6 +149,24 @@
         } else {
             return false;
         }
+    }
+    function getTodayDate() {
+        var today = new Date();
+        var dd = String(today.getDate()).padStart(2, '0');
+        var mm = String(today.getMonth() + 1).padStart(2, '0');
+        var yyyy = today.getFullYear();
+
+        return yyyy + '-' + mm + '-' + dd;
+    }
+
+    function calculateExpiryDate(paymentDate, validity) {
+        var expiryDate = new Date(paymentDate);
+        expiryDate.setDate(expiryDate.getDate() + validity);
+        var dd = String(expiryDate.getDate()).padStart(2, '0');
+        var mm = String(expiryDate.getMonth() + 1).padStart(2, '0');
+        var yyyy = expiryDate.getFullYear();
+
+        return yyyy + '-' + mm + '-' + dd;
     }
 </script>
 {% endblock %}

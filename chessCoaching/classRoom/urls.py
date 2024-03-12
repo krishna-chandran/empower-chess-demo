@@ -15,6 +15,8 @@ from .views import view_chapter, view_chapters, add_chapter, edit_chapter, delet
 from .views import view_page, view_pages, add_page, edit_page, delete_page
 from .views import view_page_activity
 from .views import view_profile, edit_profile
+from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
+from .views import view_settings, view_setting, add_setting, edit_setting, delete_setting
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404
 from .views import error_404_view 
@@ -32,6 +34,12 @@ urlpatterns = [
     
     path('profile/<int:user_id>/',view_profile,name="view_profile"),
     path('profile/<int:user_id>/edit/',edit_profile, name="edit_profile"),
+    
+        
+    path('user-activities/<int:user_id>/',view_user_activities, name='view_user_activities'),
+    path('user_activity/<int:activity_id>/',view_user_activity, name='view_user_activity'),
+    path('user_activity/<int:activity_id>/edit/', edit_user_activity, name='edit_user_activity'),
+    path('user_activity/<int:activity_id>/delete/',delete_user_activity, name='delete_user_activity'),
     
     path('forgot_password/', forgot_password, name='forgot_password'),
     path('password_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
@@ -99,6 +107,12 @@ urlpatterns = [
     path('role/add/', add_role, name='add_role'),
     path('role/<int:role_id>/edit/', edit_role, name='edit_role'),
     path('role/<int:role_id>/delete/', delete_role, name='delete_role'),
+    
+    path('settings/', view_settings, name='view_settings'),
+    path('setting/<int:setting_id>/', view_setting, name='view_setting'),
+    path('setting/add/', add_setting, name='add_setting'),
+    path('setting/<int:setting_id>/edit/', edit_setting, name='edit_setting'),
+    path('setting/<int:setting_id>/delete/', delete_setting, name='delete_setting'),
     
     path('permissions/', view_permissions, name='view_permissions'),
     path('permission/<int:permission_id>/', view_permission, name='view_permission'),
