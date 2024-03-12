@@ -41,7 +41,6 @@ class Course(models.Model):
     id = models.AutoField(primary_key=True)
     course_name = models.CharField(max_length=100)
     course_description = models.TextField()
-    # other course details
 
 class Chapter(models.Model):
     id = models.AutoField(primary_key=True)
