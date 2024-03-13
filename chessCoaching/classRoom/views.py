@@ -1,9 +1,10 @@
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.contrib.auth.hashers import  check_password
 from django.core.exceptions import ValidationError
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import User, Course,Assignment,Enrollment,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions, Chapter, Page, UserPageActivity
+from .models import Settings, User, Course,Assignment,Enrollment, UserActivity,UserAssignment, Subscription, Feature, Role, Permission, Package, PackageOptions, Chapter, Page, UserPageActivity
 from django.urls import reverse
 from django.http import HttpResponseBadRequest, HttpResponse
 from .forms import RegisterForm, LoginForm
@@ -19,15 +20,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-<<<<<<< HEAD
 from django.utils import timezone
-=======
-from django.db.models import Q
-from .models import UserActivity, Settings
-from datetime import datetime
-from datetime import timedelta
-
->>>>>>> feature_main
 
 def permission_required(feature_name):
 
@@ -475,21 +468,12 @@ def edit_course(request, course_id):
 @login_required
 @permission_required('Delete Course')
 def delete_course(request, course_id):
-<<<<<<< HEAD
 	course_data = get_object_or_404(Course, id=course_id)
 	if request.method == 'POST':
 		course_data.delete()
 		return redirect('view_courses')
 	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
 	return render(request,'courses/delete_course.html', {'course_data': course_data} )
-=======
-    course_data = get_object_or_404(Course, id=course_id)
-    if request.method == 'POST':
-        course_data.delete()
-        log_user_activity(request, f'Deleted course ID: {course_id}')
-        return redirect('view_courses')
-    return render(request,'courses/delete_course.html',{'course_data': course_data} )
->>>>>>> feature_main
 
 @login_required
 # @permission_required('View Chapters')
