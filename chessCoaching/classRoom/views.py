@@ -439,7 +439,18 @@ def view_courses(request):
 def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     log_user_activity(request, f'Viewed course ID: {course_id}')
-    return render(request, 'courses/view_course.html', {'course_data': course_data})
+    
+    chapters = course_data.chapter_set.all()
+    
+    for chapter in chapters:
+        chapter.pages = chapter.page_set.all()
+    
+    context = {
+        'course_data': course_data,
+        'chapters': chapters,
+    }
+    
+    return render(request, 'courses/view_course.html', context)
 
 @login_required
 @permission_required('Add Course')
