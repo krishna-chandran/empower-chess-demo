@@ -19,15 +19,11 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-<<<<<<< HEAD
-from django.utils import timezone
-=======
 from django.db.models import Q
 from .models import UserActivity, Settings
 from datetime import datetime
 from datetime import timedelta
-
->>>>>>> feature_main
+from django.utils import timezone
 
 def permission_required(feature_name):
 
@@ -475,21 +471,12 @@ def edit_course(request, course_id):
 @login_required
 @permission_required('Delete Course')
 def delete_course(request, course_id):
-<<<<<<< HEAD
-	course_data = get_object_or_404(Course, id=course_id)
-	if request.method == 'POST':
-		course_data.delete()
-		return redirect('view_courses')
-	# course_data = {'id': course_id, 'name': 'Mate in One', 'description': 'Mate in one course'}
-	return render(request,'courses/delete_course.html', {'course_data': course_data} )
-=======
     course_data = get_object_or_404(Course, id=course_id)
     if request.method == 'POST':
         course_data.delete()
         log_user_activity(request, f'Deleted course ID: {course_id}')
         return redirect('view_courses')
     return render(request,'courses/delete_course.html',{'course_data': course_data} )
->>>>>>> feature_main
 
 @login_required
 # @permission_required('View Chapters')
