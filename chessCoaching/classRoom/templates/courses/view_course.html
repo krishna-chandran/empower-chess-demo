@@ -42,5 +42,23 @@
                 </div>
             </div>
         </div>
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Chapters</h6>
+                </div>
+                <div class="card-body">
+                    {% if chapters %}
+                        <ul>
+                            {% for chapter in chapters %}
+                                <li><a href="{% url 'view_chapter' chapter.id %}">{{ chapter.title }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No chapters found for this course.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
     </div>
 {% endblock %} 

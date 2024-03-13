@@ -45,7 +45,7 @@ class Course(models.Model):
 
 class Chapter(models.Model):
     id = models.AutoField(primary_key=True)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='chapter_set')
     title = models.CharField(max_length=200)
     order = models.IntegerField(default=0)
 
