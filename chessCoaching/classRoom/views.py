@@ -443,7 +443,11 @@ def view_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     log_user_activity(request, f'Viewed course ID: {course_id}')
     
-    chapters = course_data.chapter_set.all()  # Assuming 'chapter_set' is the related name for the ForeignKey in Chapter model
+    chapters = course_data.chapter_set.all()
+    
+    for chapter in chapters:
+        chapter.pages = chapter.page_set.all()
+    
     context = {
         'course_data': course_data,
         'chapters': chapters,
