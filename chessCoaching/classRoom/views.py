@@ -24,6 +24,9 @@ from .models import UserActivity, Settings
 from datetime import datetime
 from datetime import timedelta
 from django.utils import timezone
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
 
 def permission_required(feature_name):
 
@@ -602,26 +605,75 @@ def delete_page(request, page_id):
     return render(request, 'pages/delete_page.html', {'page_data': page_data})
 
 @login_required
-@permission_required('View Page Activity')
-def view_page_activity(request, user_id):
-    user = get_object_or_404(User, id=user_id)
-    user_page_activity = UserPageActivity.objects.filter(user=user)
-    return render(request, 'user_page_activity.html', {'user_page_activity': user_page_activity})
+def update_user_page_activity(request):
+    if request.method == 'POST':
+        # print("POST request received")
+        page_id = request.POST.get('page_id')
+        percentage_completed = request.POST.get('percentage_completed')
+        time_spent_seconds = request.POST.get('time_spent_seconds')
+        
+        # print("Page ID:", page_id)
+        # print("Percentage completed:", percentage_completed)
+        # print("Time spent (seconds):", time_spent_seconds)
 
-@login_required
-def track_page_activity(request, page_id):
-    page = get_object_or_404(Page, id=page_id)
-    time_spent_seconds = 300
-    UserPageActivity.objects.update_or_create(
-        user=request.user,
-        page=page,
-        defaults={
-            'percentage_completed': 100, 
-            'time_spent_seconds': time_spent_seconds,
-            'last_accessed': timezone.now()
-        }
-    )
-    return redirect('page_detail', page_id=page_id)
+        if not all([page_id, percentage_completed, time_spent_seconds]):
+            return JsonResponse({'status': 'error', 'message': 'Incomplete data'})
+
+        try:
+            page = Page.objects.get(pk=page_id)
+        except Page.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Page not found'})
+
+        if not (0 <= float(percentage_completed) <= 100):
+            return JsonResponse({'status': 'error', 'message': 'Invalid percentage'})
+
+        try:
+            time_spent_seconds = int(time_spent_seconds)
+        except ValueError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
+
+        if not (0 <= time_spent_seconds):
+            return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
+
+        user = request.user
+        if not user.is_authenticated:
+            return JsonResponse({'status': 'error', 'message': 'User not authenticated'})
+
+        # Check if there is an existing UserPageActivity instance
+        try:
+            user_page_activity = UserPageActivity.objects.get(user=user.user, page=page)
+        except UserPageActivity.DoesNotExist:
+            user_page_activity = UserPageActivity(user=user.user, page=page)
+
+        # If there is no existing instance or the new percentage completed is greater, update
+        if user_page_activity.percentage_completed is None or float(percentage_completed) > user_page_activity.percentage_completed:
+            user_page_activity.percentage_completed = percentage_completed
+
+        # Add the new time spent to the existing time spent
+        user_page_activity.time_spent_seconds += time_spent_seconds
+
+        user_page_activity.last_accessed = timezone.now()
+        user_page_activity.save()
+
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+
+
+# @login_required
+# def track_page_activity(request, page_id):
+#     page = get_object_or_404(Page, id=page_id)
+#     time_spent_seconds = 300
+#     UserPageActivity.objects.update_or_create(
+#         user=request.user,
+#         page=page,
+#         defaults={
+#             'percentage_completed': 100, 
+#             'time_spent_seconds': time_spent_seconds,
+#             'last_accessed': timezone.now()
+#         }
+#     )
+#     return redirect('page_detail', page_id=page_id)
 
 @login_required
 @permission_required('View Enrollments')
