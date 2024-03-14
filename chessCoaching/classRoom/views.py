@@ -575,6 +575,7 @@ def view_page(request, page_id):
 @login_required
 # @permission_required('Add Page')
 def add_page(request):
+    courses = Course.objects.all()
     chapters = Chapter.objects.all()
     if request.method == 'POST':
         chapter_id = request.POST.get('chapter')
@@ -585,7 +586,15 @@ def add_page(request):
             return HttpResponseBadRequest("Chapter is required.")
         page = Page.objects.create(chapter_id=chapter_id, title=title, content=content, order=order)
         return redirect(reverse('view_page', kwargs={'page_id': page.id}))
-    return render(request, 'pages/add_page.html', {'chapters': chapters})
+    return render(request, 'pages/add_page.html', {'chapters': chapters, 'courses':courses})
+
+def get_chapters(request):
+    if request.method == 'GET' and 'course_id' in request.GET:
+        course_id = request.GET.get('course_id')
+        chapters = Chapter.objects.filter(course_id=course_id).values('id', 'title')
+        return JsonResponse(list(chapters), safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request'})
 
 @login_required
 # @permission_required('Edit Page')
