@@ -40,6 +40,20 @@
             </div>
         </div>
     </div>
+    {% if user_page_activity %}
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Page Activity</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text"><b>Percentage Completed:</b> {{ user_page_activity.percentage_completed }}%</p>
+                <p class="card-text"><b>Time Spent:</b> {{ time_spent_formatted }}</p>
+                <p class="card-text"><b>Last Accessed:</b> {{ user_page_activity.last_accessed }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <form id="csrf-form">

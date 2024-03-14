@@ -557,7 +557,19 @@ def view_pages(request):
 # @permission_required('View Page')
 def view_page(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
-    return render(request, 'pages/view_page.html', {'page': page})
+    
+    try:
+        user_page_activity = UserPageActivity.objects.get(user=request.user.user, page=page)
+        time_spent_seconds = user_page_activity.time_spent_seconds
+        hours = time_spent_seconds // 3600
+        minutes = (time_spent_seconds % 3600) // 60
+        seconds = time_spent_seconds % 60
+        time_spent_formatted = f"{hours}h {minutes}m {seconds}s"
+    except UserPageActivity.DoesNotExist:
+        user_page_activity = None
+        time_spent_formatted = None
+
+    return render(request, 'pages/view_page.html', {'page': page, 'user_page_activity': user_page_activity, 'time_spent_formatted': time_spent_formatted})
 
 
 @login_required
