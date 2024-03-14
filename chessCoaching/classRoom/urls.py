@@ -13,7 +13,7 @@ from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission, delete_permission
 from .views import view_chapter, view_chapters, add_chapter, edit_chapter, delete_chapter
 from .views import view_page, view_pages, add_page, edit_page, delete_page
-from .views import view_page_activity
+from .views import update_user_page_activity,get_chapters
 from .views import view_profile, edit_profile
 from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
 from .views import view_settings, view_setting, add_setting, edit_setting, delete_setting
@@ -132,6 +132,8 @@ urlpatterns = [
     path('page/<int:page_id>/edit/', edit_page, name='edit_page'),
     path('page/<int:page_id>/delete/', delete_page, name='delete_page'),
 
+    path('get_chapters/', get_chapters, name='get_chapters'),
+    path('update-user-page-activity/', update_user_page_activity, name='update_user_page_activity'),
     # path('page/<int:page_id>/', view_page_activity, name='page_acitivity'),
     path('<path:path_not_found>/', error_404_view),
 ]

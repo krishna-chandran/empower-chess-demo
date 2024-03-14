@@ -11,11 +11,20 @@
                     {% csrf_token %}
                     <div class="form-group row">
                         <div class="col-sm-6">
-                            <label for="chapter"><b>Chapter</b></label>
-                            <select name="chapter" id="chapter" class="form-control" required>
-                                {% for chapter in chapters %}
-                                <option value="{{ chapter.id }}">{{ chapter.title }}</option>
+                            <label for="course"><b>Course</b></label>
+                            <select name="course" id="course" class="form-control" required>
+                                <option value="">Select Course</option>
+                                {% for course in courses %}
+                                    <option value="{{ course.id }}">{{ course.course_name }}</option>
                                 {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-sm-6">
+                            <label for="chapter"><b>Chapter</b></label>
+                            <select name="chapter" id="chapter" class="form-control" required disabled>
+                                <option value="">Select Chapter</option>
                             </select>
                         </div>
                     </div>
@@ -43,4 +52,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.getElementById('course').addEventListener('change', function () {
+            var courseId = this.value;
+            var chapterSelect = document.getElementById('chapter');
+            chapterSelect.innerHTML = '<option value="">Select Chapter</option>';
+            if (courseId) {
+                fetch('/get_chapters/?course_id=' + courseId)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(chapter => {
+                            var option = document.createElement('option');
+                            option.value = chapter.id;
+                            option.text = chapter.title;
+                            chapterSelect.appendChild(option);
+                        });
+                        chapterSelect.disabled = false;
+                    })
+                    .catch(error => console.error('Error:', error));
+            } else {
+                chapterSelect.disabled = true;
+            }
+        });
+    </script>
 {% endblock %}

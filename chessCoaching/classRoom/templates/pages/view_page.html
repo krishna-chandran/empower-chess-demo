@@ -40,6 +40,53 @@
             </div>
         </div>
     </div>
+    {% if user_page_activity %}
+    <div class="col-lg-6">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Page Activity</h6>
+            </div>
+            <div class="card-body">
+                <p class="card-text"><b>Percentage Completed:</b> {{ user_page_activity.percentage_completed }}%</p>
+                <p class="card-text"><b>Time Spent:</b> {{ time_spent_formatted }}</p>
+                <p class="card-text"><b>Last Accessed:</b> {{ user_page_activity.last_accessed }}</p>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
+
+<form id="csrf-form">
+    {% csrf_token %}
+</form>
+
+<script>
+    var pageId = "{{ page.id }}";
+    var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    var startTime = new Date();
+    var pageContent = document.querySelector('.card-body');
+    var maxPercentage = 0;  // Variable to store the maximum percentage achieved during scrolling
+
+    // Send data when the page is closed or navigated away
+    window.addEventListener('beforeunload', function () {
+        var endTime = new Date();
+        var timeSpentSeconds = Math.floor((endTime - startTime) / 1000);
+
+        // Send data to server with the maximum percentage achieved during scrolling
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "{% url 'update_user_page_activity' %}", true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+        xhr.send('page_id=' + pageId + '&percentage_completed=' + maxPercentage + '&time_spent_seconds=' + timeSpentSeconds);
+    });
+
+    // Update maximum percentage achieved during scrolling
+    window.addEventListener('scroll', function() {
+        var scrollPercentage = (window.scrollY / (pageContent.scrollHeight - window.innerHeight)) * 100;
+        var currentPercentage = Math.round(Math.min(100, Math.max(0, scrollPercentage)));  // Ensure percentage is between 0 and 100
+        maxPercentage = Math.max(maxPercentage, currentPercentage);  // Update maximum percentage achieved
+    });
+</script>
+
 
 {% endblock %}
