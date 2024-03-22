@@ -197,7 +197,7 @@ def delete_user_activity(request, activity_id):
 @login_required
 @permission_required('View Subscriptions')
 def view_subscriptions(request):
-    subscriptions = Subscription.objects.all()
+    subscriptions = Subscription.objects.filter(expiry_date__gte=timezone.now().date()) # Filter subscriptions where expiry date is greater than or equal to today's date
     log_user_activity(request, 'Viewed subscriptions')
     return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
 
