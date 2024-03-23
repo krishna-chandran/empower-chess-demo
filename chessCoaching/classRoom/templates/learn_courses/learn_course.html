@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Empower Chess Game</title>
+
+    <!-- Custom fonts for this template-->
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/sb-admin-2.min.css' %}">
+</head>
+
+<body id="page-top">
+    <div id="wrapper">
+        {% if chapters %}
+            <ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{% url 'index' %}">
+                    <div class="sidebar-brand-icon rotate-n-15">
+                        <i class="fas fa-chess-knight"></i>
+                    </div>
+                    <div class="sidebar-brand-text mx-3">{{ course_data.course_name }}</div>
+                </a>
+                <hr class="sidebar-divider my-0">
+
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">
+                        <i class="fas fa-fw fa-tachometer-alt"></i>
+                        <span>Dashboard</span></a>
+                </li>
+                <!-- Divider -->
+                <hr class="sidebar-divider">
+                {% for chapter in chapters %}
+                    <li class="nav-item">
+                        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse{{ chapter.id }}" aria-expanded="false" aria-controls="collapse{{ chapter.id }}">
+                            <i class="fas fa-fw fa-folder"></i>
+                            <span>{{ chapter.title }}</span>
+                        </a>
+                        <div id="collapse{{ chapter.id }}" class="collapse" aria-labelledby="heading{{ chapter.id }}" data-parent="#accordionSidebar">
+                            <div class="bg-white py-2 collapse-inner rounded">
+                                <h6 class="collapse-header">Pages:</h6>
+                                <ul>
+                                    {% if chapter.pages.all %}
+                                        {% for page in chapter.pages.all %}
+                                        <a class="collapse-item" href="#" onclick="loadPageAndChapter({{ page.id }}, {{ chapter.id }})">
+                                            {{ page.title }}
+                                        </a>
+                                
+                                        {% endfor %}
+                                    {% else %}
+                                        <p>No pages found for this chapter.</p>
+                                    {% endif %}
+                                </ul>
+                                <div class="collapse-divider"></div>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No chapters found for this course.</p>
+        {% endif %}
+        <hr class="sidebar-divider d-none d-md-block">
+        <div class="text-center d-none d-md-inline">
+            <button class="rounded-circle border-0" id="sidebarToggle"></button>
+        </div>
+        <div id="main-content">
+            
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-lg-6">
+            <button id="prevButton" class="btn btn-primary">Previous Page</button>
+        </div>
+        <div class="col-lg-6">
+            <button id="nextButton" class="btn btn-primary float-right">Next Page</button>
+        </div>
+    </div>
+   
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="{% static 'vendor/jquery-easing/jquery.easing.min.js' %}"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="{% static 'js/sb-admin-2.min.js' %}"></script>
+
+    <!-- Page level plugins -->
+    <script src="{% static 'vendor/chart.js/Chart.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+    <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+    <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+    
+    <!-- AJAX to load page content -->
+    <script>
+        function loadPageAndChapter(pageId, chapterId) {
+            loadChapterPages(chapterId, pageId);
+        }
+    
+        function loadPageContent(pageId) {
+            $.ajax({
+                url: '/learn_course_page/' + pageId + '/',
+                type: 'GET',
+                dataType: 'html',
+                success: function(response) {
+                    $('#main-content').html(response);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    
+        function loadChapterPages(chapterId, pageId) {
+            $.ajax({
+                url: '/get_chapter_pages/' + chapterId + '/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    pagesInChapter = response.pages;
+                    currentPageId = pageId; // Set currentPageId to the specified pageId
+                    loadPageContent(currentPageId);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', error);
+                }
+            });
+        }
+    
+        function loadNextPage() {
+            var nextPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) + 1;
+            if (nextPageIndex < pagesInChapter.length) {
+                currentPageId = pagesInChapter[nextPageIndex].id;
+                loadPageContent(currentPageId);
+            }
+        }
+    
+        function loadPrevPage() {
+            var prevPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) - 1;
+            if (prevPageIndex >= 0) {
+                currentPageId = pagesInChapter[prevPageIndex].id;
+                loadPageContent(currentPageId);
+            }
+        }
+    
+        $(document).ready(function() {
+            // Attach click event handlers to next and previous buttons
+            $('#nextButton').click(function() {
+                loadNextPage();
+            });
+    
+            $('#prevButton').click(function() {
+                loadPrevPage();
+            });
+    
+            // Load chapter pages when the page loads
+            var chapterId = "{{ chapters.0.id }}"; // Assuming the first chapter is loaded initially
+            var firstPageId = "{{ chapters.0.pages.first.id }}"; // Assuming the first page of the first chapter is loaded initially
+            loadChapterPages(chapterId, firstPageId);
+        });
+    </script>
+</body>
+
+</html>

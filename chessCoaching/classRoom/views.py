@@ -460,6 +460,16 @@ def learn_course(request, course_id):
     return render(request, 'learn_courses/learn_course.html', context)
 
 @login_required
+# @permission_required('Learn Course Page')
+def learn_course_page(request, page_id):
+    page = get_object_or_404(Page, pk=page_id)
+    return render(request, 'learn_courses/learn_course_page.html', {'page': page})
+
+def get_chapter_pages(request, chapter_id):
+    pages = Page.objects.filter(chapter_id=chapter_id).order_by('order').values('id')
+    return JsonResponse({'pages': list(pages)})
+
+@login_required
 @permission_required('View Courses')
 def view_courses(request):
 	course_data = Course.objects.all()
