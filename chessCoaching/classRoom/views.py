@@ -53,6 +53,42 @@ def log_user_activity(request, action):
         if user_id:
             user = User.objects.get(id=user_id)
             UserActivity.objects.create(user=user, action=action)
+            
+def subscription_required(view_func):
+    @wraps(view_func)
+    def wrapper(request, *args, **kwargs):
+        user = request.user
+        if user.is_authenticated:
+            if user.is_superuser:
+               return view_func(request, *args, **kwargs)  # Superusers can access all content
+            # Check if the user has a subscription
+            subscription = Subscription.objects.filter(user=user.user, expiry_date__gt=timezone.now().date())
+            if subscription:
+                packages  = [x.package for x in subscription]
+                # Get courses related to the package
+                package_courses = []
+                for package in packages:
+                    package_courses.append(PackageOptions.objects.filter(package=package).values_list('course_id', flat=True))
+
+                # Filter courses based on package
+                course_data = Course.objects.filter(id__in=package_courses)
+                # Check if subscription expiry date is past
+                
+                return view_func(request, course_data=course_data, *args, **kwargs)
+            else:
+                return render(request, 'common/no_subscription.html')
+        else:
+            return redirect('login')  # Redirect to your login URL
+    return wrapper
+
+@login_required
+@permission_required('Learn Courses')
+@subscription_required
+def learn_courses(request, course_data=None):
+    if course_data is None:
+        course_data = Course.objects.all()
+    log_user_activity(request, 'Viewed learn courses')
+    return render(request, "learn_courses/learn_courses.html", {'course_data': course_data})
     
 @login_required
 def index(request):
@@ -434,12 +470,13 @@ def delete_package_option(request, option_id):
     return render(request, 'package_options/delete_package_option.html', {'package_option': package_option})
 
 
-@login_required
-# @permission_required('Learn Courses')
-def learn_courses(request):
-    course_data = Course.objects.all()
-    log_user_activity(request, 'Viewed learn courses')
-    return render(request, "learn_courses/learn_courses.html", {'course_data': course_data})
+# @login_required
+# # @permission_required('Learn Courses')
+# @subscription_required
+# def learn_courses(request):
+#     course_data = Course.objects.all()
+#     log_user_activity(request, 'Viewed learn courses')
+#     return render(request, "learn_courses/learn_courses.html", {'course_data': course_data})
 
 @login_required
 # @permission_required('Learn Course')

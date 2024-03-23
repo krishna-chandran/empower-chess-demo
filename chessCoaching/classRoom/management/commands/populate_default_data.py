@@ -22,7 +22,8 @@ class Command(BaseCommand):
             'View Userassignments', 'View Userassignment', 'Add Userassignment', 'Edit Userassignment', 'Delete Userassignment',
             'View Packages', 'View Package', 'Add Package', 'Edit Package', 'Delete Package',
             'View Package Options', 'View Package Option', 'Add Package Option', 'Edit Package Option', 'Delete Package Option',    
-            'View Settings', 'View Setting' , 'Add Setting', 'Edit Setting', 'Delete Setting', 
+            'View Settings', 'View Setting' , 'Add Setting', 'Edit Setting', 'Delete Setting',
+            'Learn Courses', 
         ]
         
         permission_sql_statements = [
@@ -43,6 +44,7 @@ class Command(BaseCommand):
             ('46', '3'), ('47', '3'), ('48', '3'), ('49', '3'), ('50', '3'),
             ('51', '3'), ('52', '3'), ('53', '3'), ('54', '3'), ('55', '3'),
             ('56', '3'), ('57', '3'), ('58', '3'), ('59', '3'), ('60', '3'),
+            ('61', '2'),
         ]
 
         for role_name in default_roles:
