@@ -1,0 +1,28 @@
+<!-- learn_courses.html -->
+{% extends 'base.html' %}
+
+{% block title %}
+    Learn Courses
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Available Courses</h1>
+    <div class="row">
+        {% for course in course_data %}
+        <div class="col-lg-6">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">{{ course.course_name }}</h6>
+                </div>
+                <div class="card-body">
+                    <p class="card-text"><b>Description:</b> {{ course.course_description }}</p>
+                    <a href="/learn_course/{{ course.id }}/">Start</a>
+                </div>
+            </div>
+        </div>
+        {% cycle '' '</div><div class="row">' %}
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

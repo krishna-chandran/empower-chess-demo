@@ -433,6 +433,32 @@ def delete_package_option(request, option_id):
         return redirect('view_package_options')
     return render(request, 'package_options/delete_package_option.html', {'package_option': package_option})
 
+
+@login_required
+# @permission_required('Learn Courses')
+def learn_courses(request):
+    course_data = Course.objects.all()
+    log_user_activity(request, 'Viewed learn courses')
+    return render(request, "learn_courses/learn_courses.html", {'course_data': course_data})
+
+@login_required
+# @permission_required('Learn Course')
+def learn_course(request, course_id):
+    course_data = get_object_or_404(Course, id=course_id)
+    log_user_activity(request, f'Viewed learn course ID: {course_id}')
+    
+    chapters = course_data.chapter_set.all()
+    
+    for chapter in chapters:
+        chapter.pages = chapter.page_set.all()
+    
+    context = {
+        'course_data': course_data,
+        'chapters': chapters,
+    }
+    
+    return render(request, 'learn_courses/learn_course.html', context)
+
 @login_required
 @permission_required('View Courses')
 def view_courses(request):

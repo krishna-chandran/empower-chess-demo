@@ -1,7 +1,8 @@
 from django.urls import path
 from .views import reg_success,home,logout_user,index,register,login,forgot_password
 from .views import view_users,view_user, edit_user, add_user, delete_user
-from .views import view_users,view_course, edit_course, add_course, delete_course,view_courses
+from .views import view_courses,view_course, edit_course, add_course, delete_course
+from .views import learn_courses, learn_course
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
 from .views import view_packages, view_package, add_package, edit_package, delete_package
 from .views import view_package_options, view_package_option, add_package_option, edit_package_option, delete_package_option
@@ -77,6 +78,9 @@ urlpatterns = [
     path('course/<int:course_id>/edit/',edit_course, name="edit_course"),
     path('course/add/',add_course, name="add_course"),
     path('course/<int:course_id>/delete/',delete_course, name="delete_course"),
+    
+    path('learn_courses/',learn_courses,name="learn_courses"),
+    path('learn_course/<int:course_id>/',learn_course, name="learn_course"),
 
     path('enrollments/',view_enrollments,name="view_enrollments"),
     path('enrollment/<int:enrollment_id>/',view_enrollment,name="view_enrollment"),
