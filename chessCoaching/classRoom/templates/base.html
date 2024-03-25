@@ -62,139 +62,27 @@
                     <i class="fas fa-fw fa-tachometer-alt"></i>
                     <span>Dashboard</span></a>
             </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Admin
-            </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_users' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>User</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_subscriptions' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Subscription</span>
-                </a>
-             
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_packages' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Package</span>
-                </a>
-             
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_package_options' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Package Option</span>
-                </a>
-             
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_features' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Features</span>
-                </a>
-             
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_roles' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Roles</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_permissions' %}" >
-                    <i class="fas fa-user-shield"></i>
-                    <span>Permissions</span>
-                </a>
-            </li>
-            <!-- Divider -->
             <hr class="sidebar-divider">
 
             <div class="sidebar-heading">
-                Teacher
+                {% if request.user.is_authenticated %}
+                    {{ request.user.user.role.role_name }}
+                {% endif %}
             </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_courses' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Course</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_chapters' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Chapter</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_pages' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Pages</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_enrollments' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Enrollment</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_assignments' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Assignment</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_userassignments' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Userassignment</span>
-                </a>
-               
-            </li>
-
-            <!-- Divider -->
-            <hr class="sidebar-divider">
-
-            <div class="sidebar-heading">
-                Student
-            </div>
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'view_courses' %}" >
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Course</span>
-                </a>
-
-                <a class="nav-link" href="{% url 'view_chapters' %}" >
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Chapter</span>
-                </a>
-
-                <a class="nav-link" href="{% url 'view_pages' %}" >
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Pages</span>
-                </a>
-
-                <a class="nav-link" href="{% url 'view_assignments' %}" >
-                    <i class="fas fa-user-graduate"></i>
-                    <span>Assignment</span>
-                </a>
-                <a class="nav-link" href="{% url 'learn_courses' %}" >
-                    <i class="fas fa-chalkboard-teacher"></i>
-                    <span>Learn Course</span>
-                </a>
-            </li>
-            <!-- Divider -->
+            {% if sidebar_data %}
+                {% for feature_name, url in sidebar_data.items %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url }}">
+                            <!-- You can use appropriate icons for each feature -->
+                            <span>{{ feature_name }}</span>
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="nav-item">
+                    <span>No sidebar data available.</span>
+                </li>
+            {% endif %}
             <hr class="sidebar-divider">
             <!-- Heading -->
             <div class="sidebar-heading">

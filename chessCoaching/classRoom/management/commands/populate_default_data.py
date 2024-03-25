@@ -23,7 +23,9 @@ class Command(BaseCommand):
             'View Packages', 'View Package', 'Add Package', 'Edit Package', 'Delete Package',
             'View Package Options', 'View Package Option', 'Add Package Option', 'Edit Package Option', 'Delete Package Option',    
             'View Settings', 'View Setting' , 'Add Setting', 'Edit Setting', 'Delete Setting',
-            'Learn Courses', 
+            'View Pages', 'View Page', 'Add Page', 'Edit Page', 'Delete Page',
+            'View Chapters', 'View Chapter', 'Add Chapter', 'Edit Chapter', 'Delete Chapter',
+            'Learn Courses','Learn Course', 'Learn Course Page'
         ]
         
         permission_sql_statements = [
@@ -31,7 +33,11 @@ class Command(BaseCommand):
             ('31', '1'), ('32', '1'), ('33', '1'), ('34', '1'), ('35', '1'),
             ('36', '1'), ('37', '1'), ('38', '1'), ('39', '1'), ('40', '1'),
             ('41', '1'), ('42', '1'), ('43', '1'), ('44', '1'), ('45', '1'),
+            ('61', '1'), ('62', '1'), ('63', '1'), ('64', '1'), ('65', '1'),
+            ('66', '1'), ('67', '1'), ('68', '1'), ('69', '1'), ('70', '1'),
+            ('6', '2'),('7', '2'),('8', '2'),
             ('26', '2'), ('27', '2'), ('36', '2'), ('37', '2'),
+            ('71', '2'),('72', '2'),('73', '2'),
             ('1', '3'), ('2', '3'), ('3', '3'), ('4', '3'), ('5', '3'),
             ('6', '3'), ('7', '3'), ('8', '3'), ('9', '3'), ('10', '3'),
             ('11', '3'), ('12', '3'), ('13', '3'), ('14', '3'), ('15', '3'),
@@ -44,7 +50,8 @@ class Command(BaseCommand):
             ('46', '3'), ('47', '3'), ('48', '3'), ('49', '3'), ('50', '3'),
             ('51', '3'), ('52', '3'), ('53', '3'), ('54', '3'), ('55', '3'),
             ('56', '3'), ('57', '3'), ('58', '3'), ('59', '3'), ('60', '3'),
-            ('61', '2'),
+            ('61', '3'), ('62', '3'), ('63', '3'), ('64', '3'), ('65', '3'),
+            ('66', '3'), ('67', '3'), ('68', '3'), ('69', '3'), ('70', '3'),
         ]
 
         for role_name in default_roles:
