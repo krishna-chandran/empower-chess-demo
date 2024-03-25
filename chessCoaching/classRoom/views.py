@@ -479,7 +479,7 @@ def delete_package_option(request, option_id):
 #     return render(request, "learn_courses/learn_courses.html", {'course_data': course_data})
 
 @login_required
-@permission_required('Learn Course')
+# @permission_required('Learn Course')
 def learn_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     log_user_activity(request, f'Viewed learn course ID: {course_id}')
@@ -497,7 +497,7 @@ def learn_course(request, course_id):
     return render(request, 'learn_courses/learn_course.html', context)
 
 @login_required
-@permission_required('Learn Course Page')
+# @permission_required('Learn Course Page')
 def learn_course_page(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     return render(request, 'learn_courses/learn_course_page.html', {'page': page})
@@ -566,20 +566,20 @@ def delete_course(request, course_id):
     return render(request,'courses/delete_course.html',{'course_data': course_data} )
 
 @login_required
-@permission_required('View Chapters')
+# @permission_required('View Chapters')
 def view_chapters(request):
     chapters = Chapter.objects.all()
     print(chapters)
     return render(request,"chapters/view_chapters.html",{'chapters': chapters} )
 
 @login_required
-@permission_required('View Chapter')
+# @permission_required('View Chapter')
 def view_chapter(request, chapter_id):
     chapter = get_object_or_404(Chapter, pk=chapter_id)
     return render(request, 'chapters/view_chapter.html', {'chapter': chapter})
 
 @login_required
-@permission_required('Add Chapter')
+# @permission_required('Add Chapter')
 def add_chapter(request):
     courses = Course.objects.all()
     if request.method == 'POST':
@@ -594,7 +594,7 @@ def add_chapter(request):
     return render(request, 'chapters/add_chapter.html', {'courses': courses})
 
 @login_required
-@permission_required('Edit Chapter')
+# @permission_required('Edit Chapter')
 def edit_chapter(request, chapter_id):
     chapter_data = get_object_or_404(Chapter, pk=chapter_id)
     courses = Course.objects.all()
@@ -612,7 +612,7 @@ def edit_chapter(request, chapter_id):
     return render(request, 'chapters/edit_chapter.html', {'chapter_data': chapter_data, 'courses': courses})
 
 @login_required
-@permission_required('Delete Chapter')
+# @permission_required('Delete Chapter')
 def delete_chapter(request, chapter_id):
     chapter_data = get_object_or_404(Chapter, id=chapter_id)
     if request.method == 'POST':
@@ -621,13 +621,13 @@ def delete_chapter(request, chapter_id):
     return render(request, 'chapters/delete_chapter.html', {'chapter_data': chapter_data})
 
 @login_required
-@permission_required('View Pages')
+# @permission_required('View Pages')
 def view_pages(request):
 	pages = Page.objects.all()
 	return render(request,"pages/view_pages.html",{'pages': pages} )
 
 @login_required
-@permission_required('View Page')
+# @permission_required('View Page')
 def view_page(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
     if request.user.is_superuser:
@@ -649,7 +649,7 @@ def view_page(request, page_id):
 
 
 @login_required
-@permission_required('Add Page')
+# @permission_required('Add Page')
 def add_page(request):
     courses = Course.objects.all()
     chapters = Chapter.objects.all()
@@ -673,7 +673,7 @@ def get_chapters(request):
         return JsonResponse({'error': 'Invalid request'})
 
 @login_required
-@permission_required('Edit Page')
+# @permission_required('Edit Page')
 def edit_page(request, page_id):
     page_data = get_object_or_404(Page, id=page_id)
     chapters = Chapter.objects.all()
@@ -693,7 +693,7 @@ def edit_page(request, page_id):
     return render(request, 'pages/edit_page.html', {'page_data': page_data, 'chapters' : chapters})
 
 @login_required
-@permission_required('Delete Page')
+# @permission_required('Delete Page')
 def delete_page(request, page_id):
     page_data = get_object_or_404(Page, id=page_id)
     if request.method == 'POST':
