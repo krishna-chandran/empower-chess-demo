@@ -22,4 +22,4 @@ def sidebar_data(request):
                 except:
                     pass
 
-    return {'sidebar_data': sidebar_data}
+    return {'sidebar_data': sidebar_data} 
