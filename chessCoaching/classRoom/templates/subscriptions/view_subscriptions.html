@@ -30,21 +30,29 @@
                         <th>User</th>
                         <th>Payment Date</th>
                         <th>Expiry Date</th>
-                        <th>Payment Details</th>
+                        <th>Package Name</th>
+                        <th>Courses</th> <!-- New column for displaying courses -->
                     </tr>
                 </thead>
                 <tbody>
-                    {% for subscription in subscriptions %}
+                    {% for subscription_data in subscription_data %}
                         <tr>
-                            <td><a href="{% url 'view_subscription' subscription.subscription_id %}">{{ subscription.subscription_id }}</a></td>
-                            
-                            <td>{{ subscription.user.user.username }}</td>
-                            <td>{{ subscription.payment_date }}</td>
-                            <td>{{ subscription.expiry_date }}</td>
-                            <td>{{ subscription.package.package_name }}</td>
+                            <td><a href="{% url 'view_subscription' subscription_data.subscription.subscription_id %}">{{ subscription_data.subscription.subscription_id }}</a></td>
+                            <td>{{ subscription_data.subscription.user.user.username }}</td>
+                            <td>{{ subscription_data.subscription.payment_date }}</td>
+                            <td>{{ subscription_data.subscription.expiry_date }}</td>
+                            <td>{{ subscription_data.package_name }}</td>
+                            <td>
+                                <ul>
+                                    {% for course in subscription_data.courses %}
+                                        <li>{{ course.name }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
                         </tr>
                     {% endfor %}
                 </tbody>
+                
             </table>
         </div>
     </div>

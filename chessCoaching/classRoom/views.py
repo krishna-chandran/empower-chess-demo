@@ -197,9 +197,22 @@ def delete_user_activity(request, activity_id):
 @login_required
 @permission_required('View Subscriptions')
 def view_subscriptions(request):
-    subscriptions = Subscription.objects.filter(expiry_date__gte=timezone.now().date()) # Filter subscriptions where expiry date is greater than or equal to today's date
+    subscriptions = Subscription.objects.filter(expiry_date__gte=timezone.now().date())
+    package_ids = subscriptions.values_list('package_id', flat=True).distinct()
+
+    subscription_data = []
+    for package_id in package_ids:
+        subscription = Subscription.objects.filter(package_id=package_id).first()
+        package_options = PackageOptions.objects.filter(package_id=package_id)
+        courses = [{'id': option.course.id, 'name': option.course.course_name} for option in package_options]
+        subscription_data.append({
+            'subscription': subscription,
+            'package_name': subscription.package.package_name,
+            'courses': courses
+        })
+
     log_user_activity(request, 'Viewed subscriptions')
-    return render(request, 'subscriptions/view_subscriptions.html', {'subscriptions': subscriptions})
+    return render(request, 'subscriptions/view_subscriptions.html', {'subscription_data': subscription_data})
 
 @login_required
 @permission_required('View Subscription')
