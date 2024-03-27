@@ -2,7 +2,7 @@ from django.urls import path
 from .views import reg_success,home,logout_user,index,register,login,forgot_password
 from .views import view_users,view_user, edit_user, add_user, delete_user
 from .views import view_courses,view_course, edit_course, add_course, delete_course
-from .views import learn_courses, learn_course,learn_course_page,get_chapter_pages
+from .views import learn_courses, learn_course,learn_course_page,get_chapter_pages,render_user_page_activity,update_user_page_activity
 from .views import view_subscriptions,view_subscription,add_subscription,edit_subscription, delete_subscription
 from .views import view_packages, view_package, add_package, edit_package, delete_package
 from .views import view_package_options, view_package_option, add_package_option, edit_package_option, delete_package_option
@@ -14,7 +14,7 @@ from .views import view_roles, view_role, add_role, edit_role, delete_role
 from .views import view_permissions, view_permission, add_permission,edit_permission, delete_permission
 from .views import view_chapter, view_chapters, add_chapter, edit_chapter, delete_chapter
 from .views import view_page, view_pages, add_page, edit_page, delete_page
-from .views import update_user_page_activity,get_chapters
+from .views import get_chapters
 from .views import view_profile, edit_profile
 from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
 from .views import view_settings, view_setting, add_setting, edit_setting, delete_setting
@@ -83,6 +83,8 @@ urlpatterns = [
     path('learn_course/<int:course_id>/',learn_course, name="learn_course"),
     path('learn_course_page/<int:page_id>/', learn_course_page, name='learn_course_page'),
     path('get_chapter_pages/<int:chapter_id>/', get_chapter_pages, name='get_chapter_pages'),
+    path('render_user_page_activity/<int:page_id>/', render_user_page_activity, name='render_user_page_activity'),
+    path('update_user_page_activity/', update_user_page_activity, name='update_user_page_activity'),
 
     path('enrollments/',view_enrollments,name="view_enrollments"),
     path('enrollment/<int:enrollment_id>/',view_enrollment,name="view_enrollment"),
@@ -139,7 +141,7 @@ urlpatterns = [
     path('page/<int:page_id>/delete/', delete_page, name='delete_page'),
 
     path('get_chapters/', get_chapters, name='get_chapters'),
-    path('update-user-page-activity/', update_user_page_activity, name='update_user_page_activity'),
+    # path('update-user-page-activity/', update_user_page_activity, name='update_user_page_activity'),
     # path('page/<int:page_id>/', view_page_activity, name='page_acitivity'),
     path('<path:path_not_found>/', error_404_view),
 ]

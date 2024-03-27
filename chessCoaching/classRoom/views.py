@@ -26,6 +26,8 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+from django.template.loader import render_to_string
+from django.db.models import F
 
 
 def permission_required(feature_name):
@@ -484,17 +486,69 @@ def learn_course(request, course_id):
     course_data = get_object_or_404(Course, id=course_id)
     log_user_activity(request, f'Viewed learn course ID: {course_id}')
     
+    # Fetch chapters associated with the course
     chapters = course_data.chapter_set.all()
     
+    # Fetch pages associated with each chapter
     for chapter in chapters:
         chapter.pages = chapter.page_set.all()
+    
+    # Retrieve user page activity
+    user_page_activity = UserPageActivity.objects.filter(user=request.user.user, page__chapter__course=course_data).first()
+    
+    # Get completed page IDs for the current user
+    completed_pages = UserPageActivity.objects.filter(user=request.user.user, percentage_completed=100).values_list('page_id', flat=True)
     
     context = {
         'course_data': course_data,
         'chapters': chapters,
+        'user_page_activity': user_page_activity,
+        'completed_pages': completed_pages,
     }
     
     return render(request, 'learn_courses/learn_course.html', context)
+
+def render_user_page_activity(request, page_id):
+    if request.user.is_superuser:
+        user_page_activity = None
+        time_spent_formatted = None
+    else:
+        try:
+            user_page_activity = UserPageActivity.objects.get(user=request.user.user, page=page_id)
+            time_spent_seconds = user_page_activity.time_spent_seconds
+            hours = time_spent_seconds // 3600
+            minutes = (time_spent_seconds % 3600) // 60
+            seconds = time_spent_seconds % 60
+            time_spent_formatted = f"{hours}h {minutes}m {seconds}s"
+        except UserPageActivity.DoesNotExist:
+            user_page_activity = None
+            time_spent_formatted = None
+    
+    html = render_to_string('learn_courses/render_user_page_activity.html', {'user_page_activity': user_page_activity, 'time_spent_formatted': time_spent_formatted})
+    return JsonResponse({'html': html})
+
+def update_user_page_activity(request):
+    if request.method == 'POST':
+        page_id = request.POST.get('page_id')
+        time_spent = int(request.POST.get('time_spent'))
+        update_percentage_completed = request.POST.get('update_percentage_completed') == 'true'  # Convert string to boolean
+
+        # Try to get the UserPageActivity object, or create it if it doesn't exist
+        user_page_activity, created = UserPageActivity.objects.get_or_create(
+            user=request.user.user,
+            page_id=page_id,
+            defaults={'time_spent_seconds': 0, 'percentage_completed': 0}
+        )
+
+        # Update time spent and percentage completed
+        user_page_activity.time_spent_seconds = F('time_spent_seconds') + time_spent
+        if update_percentage_completed:
+            user_page_activity.percentage_completed = 100
+        user_page_activity.save()
+
+        return JsonResponse({'success': True})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 @login_required
 @permission_required('Learn Course Page')
@@ -630,23 +684,23 @@ def view_pages(request):
 @permission_required('View Page')
 def view_page(request, page_id):
     page = get_object_or_404(Page, pk=page_id)
-    if request.user.is_superuser:
-        user_page_activity = None
-        time_spent_formatted = None
-    else:
-        try:
-            user_page_activity = UserPageActivity.objects.get(user=request.user.user, page=page)
-            time_spent_seconds = user_page_activity.time_spent_seconds
-            hours = time_spent_seconds // 3600
-            minutes = (time_spent_seconds % 3600) // 60
-            seconds = time_spent_seconds % 60
-            time_spent_formatted = f"{hours}h {minutes}m {seconds}s"
-        except UserPageActivity.DoesNotExist:
-            user_page_activity = None
-            time_spent_formatted = None
+    # if request.user.is_superuser:
+    #     user_page_activity = None
+    #     time_spent_formatted = None
+    # else:
+    #     try:
+    #         user_page_activity = UserPageActivity.objects.get(user=request.user.user, page=page)
+    #         time_spent_seconds = user_page_activity.time_spent_seconds
+    #         hours = time_spent_seconds // 3600
+    #         minutes = (time_spent_seconds % 3600) // 60
+    #         seconds = time_spent_seconds % 60
+    #         time_spent_formatted = f"{hours}h {minutes}m {seconds}s"
+    #     except UserPageActivity.DoesNotExist:
+    #         user_page_activity = None
+    #         time_spent_formatted = None
 
-    return render(request, 'pages/view_page.html', {'page': page, 'user_page_activity': user_page_activity, 'time_spent_formatted': time_spent_formatted})
-
+    # return render(request, 'pages/view_page.html', {'page': page, 'user_page_activity': user_page_activity, 'time_spent_formatted': time_spent_formatted})
+    return render(request, 'pages/view_page.html', {'page': page})
 
 @login_required
 @permission_required('Add Page')
@@ -701,62 +755,62 @@ def delete_page(request, page_id):
         return redirect('view_pages')
     return render(request, 'pages/delete_page.html', {'page_data': page_data})
 
-@login_required
-def update_user_page_activity(request):
-    if request.user.is_superuser:
-        return JsonResponse({'status': 'error', 'message': 'Superusers are not allowed to update user page activity'})
-    if request.method == 'POST':
-        # print("POST request received")
-        page_id = request.POST.get('page_id')
-        percentage_completed = request.POST.get('percentage_completed')
-        time_spent_seconds = request.POST.get('time_spent_seconds')
+# @login_required
+# def update_user_page_activity(request):
+#     if request.user.is_superuser:
+#         return JsonResponse({'status': 'error', 'message': 'Superusers are not allowed to update user page activity'})
+#     if request.method == 'POST':
+#         # print("POST request received")
+#         page_id = request.POST.get('page_id')
+#         percentage_completed = request.POST.get('percentage_completed')
+#         time_spent_seconds = request.POST.get('time_spent_seconds')
         
-        # print("Page ID:", page_id)
-        # print("Percentage completed:", percentage_completed)
-        # print("Time spent (seconds):", time_spent_seconds)
+#         # print("Page ID:", page_id)
+#         # print("Percentage completed:", percentage_completed)
+#         # print("Time spent (seconds):", time_spent_seconds)
 
-        if not all([page_id, percentage_completed, time_spent_seconds]):
-            return JsonResponse({'status': 'error', 'message': 'Incomplete data'})
+#         if not all([page_id, percentage_completed, time_spent_seconds]):
+#             return JsonResponse({'status': 'error', 'message': 'Incomplete data'})
 
-        try:
-            page = Page.objects.get(pk=page_id)
-        except Page.DoesNotExist:
-            return JsonResponse({'status': 'error', 'message': 'Page not found'})
+#         try:
+#             page = Page.objects.get(pk=page_id)
+#         except Page.DoesNotExist:
+#             return JsonResponse({'status': 'error', 'message': 'Page not found'})
 
-        if not (0 <= float(percentage_completed) <= 100):
-            return JsonResponse({'status': 'error', 'message': 'Invalid percentage'})
+#         if not (0 <= float(percentage_completed) <= 100):
+#             return JsonResponse({'status': 'error', 'message': 'Invalid percentage'})
 
-        try:
-            time_spent_seconds = int(time_spent_seconds)
-        except ValueError:
-            return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
+#         try:
+#             time_spent_seconds = int(time_spent_seconds)
+#         except ValueError:
+#             return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
 
-        if not (0 <= time_spent_seconds):
-            return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
+#         if not (0 <= time_spent_seconds):
+#             return JsonResponse({'status': 'error', 'message': 'Invalid time spent'})
 
-        user = request.user
-        if not user.is_authenticated:
-            return JsonResponse({'status': 'error', 'message': 'User not authenticated'})
+#         user = request.user
+#         if not user.is_authenticated:
+#             return JsonResponse({'status': 'error', 'message': 'User not authenticated'})
 
-        # Check if there is an existing UserPageActivity instance
-        try:
-            user_page_activity = UserPageActivity.objects.get(user=user.user, page=page)
-        except UserPageActivity.DoesNotExist:
-            user_page_activity = UserPageActivity(user=user.user, page=page)
+#         # Check if there is an existing UserPageActivity instance
+#         try:
+#             user_page_activity = UserPageActivity.objects.get(user=user.user, page=page)
+#         except UserPageActivity.DoesNotExist:
+#             user_page_activity = UserPageActivity(user=user.user, page=page)
 
-        # If there is no existing instance or the new percentage completed is greater, update
-        if user_page_activity.percentage_completed is None or float(percentage_completed) > user_page_activity.percentage_completed:
-            user_page_activity.percentage_completed = percentage_completed
+#         # If there is no existing instance or the new percentage completed is greater, update
+#         if user_page_activity.percentage_completed is None or float(percentage_completed) > user_page_activity.percentage_completed:
+#             user_page_activity.percentage_completed = percentage_completed
 
-        # Add the new time spent to the existing time spent
-        user_page_activity.time_spent_seconds += time_spent_seconds
+#         # Add the new time spent to the existing time spent
+#         user_page_activity.time_spent_seconds += time_spent_seconds
 
-        user_page_activity.last_accessed = timezone.now()
-        user_page_activity.save()
+#         user_page_activity.last_accessed = timezone.now()
+#         user_page_activity.save()
 
-        return JsonResponse({'status': 'success'})
+#         return JsonResponse({'status': 'success'})
 
-    return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
+#     return JsonResponse({'status': 'error', 'message': 'Invalid request method'})
 
 
 # @login_required

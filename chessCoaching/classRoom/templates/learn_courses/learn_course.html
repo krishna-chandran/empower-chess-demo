@@ -50,10 +50,12 @@
                                 <ul>
                                     {% if chapter.pages.all %}
                                         {% for page in chapter.pages.all %}
-                                        <a class="collapse-item" href="#" onclick="loadPageAndChapter({{ page.id }}, {{ chapter.id }})">
-                                            {{ page.title }}
-                                        </a>
-                                
+                                            <a class="collapse-item" href="#" onclick="loadPageAndChapter({{ page.id }}, {{ chapter.id }})">
+                                                {{ page.title }}
+                                                {% if page.id in completed_pages %}
+                                                    <span style="color: green;">✓</span>
+                                                {% endif %}
+                                            </a>
                                         {% endfor %}
                                     {% else %}
                                         <p>No pages found for this chapter.</p>
@@ -64,28 +66,40 @@
                         </div>
                     </li>
                 {% endfor %}
+                <hr class="sidebar-divider d-none d-md-block">
+                <div class="text-center d-none d-md-inline">
+                    <button class="rounded-circle border-0" id="sidebarToggle"></button>
+                </div>
             </ul>
         {% else %}
             <p>No chapters found for this course.</p>
         {% endif %}
-        <hr class="sidebar-divider d-none d-md-block">
-        <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-        <div id="main-content">
-            
-        </div>
-
-    </div>
-    <footer class="fixed-bottom bg-dark p-1 float-right">
-        <div class="row">
-            <div class="col-lg-6">
-                <button id="nextButton" class="btn btn-primary float-right">Next Page</button>
-                <button id="prevButton" class="btn btn-primary float-right mr-2">Previous Page</button>
-                
+        <div id="content-wrapper" class="d-flex flex-column">
+            <nav class="user-page-activity navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <!-- User page activity section will be updated dynamically -->
+            </nav>
+            <div class="container-fluid flex-grow-1">
+                <div id="main-content" style="margin-bottom: 50px;"></div> <!-- Adjust the margin value according to your preference -->
             </div>
+            <a class="scroll-to-top rounded" href="#page-top" style="margin-bottom: 50px;">
+                <i class="fas fa-angle-up"></i>
+            </a>
+        
+            <footer class="fixed-bottom p-1 bg-white shadow">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 text-left">
+                        <button id="prevButton" class="btn btn-dark">Previous Page</button>
+                    </div>
+                    <div class="col-lg-6 col-md-6 text-right">
+                        <button id="nextButton" class="btn btn-dark">Next Page</button>
+                    </div>
+                </div>
+            </footer>
         </div>
-    </footer>
+        
+    
+
+    
 
    
 
@@ -122,6 +136,10 @@
                 dataType: 'html',
                 success: function(response) {
                     $('#main-content').html(response);
+                    // Update user page activity after loading the page
+                    renderUserPageActivity(pageId);
+                    // Scroll to the top of the page
+                    $(window).scrollTop(0);
                 },
                 error: function(xhr, status, error) {
                     console.error('Error:', error);
@@ -129,6 +147,20 @@
             });
         }
     
+        function renderUserPageActivity(pageId) {
+            $.ajax({
+                url: '/render_user_page_activity/' + pageId + '/',
+                type: 'GET',
+                dataType: 'json',
+                success: function(response) {
+                    // Update the user page activity section with the new data
+                    $('.user-page-activity').html(response.html);
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating user page activity:', error);
+                }
+            });
+        }
         function loadChapterPages(chapterId, pageId) {
             $.ajax({
                 url: '/get_chapter_pages/' + chapterId + '/',
@@ -144,8 +176,94 @@
                 }
             });
         }
-    
+        var pageStartTime = new Date();
+
         function loadNextPage() {
+            var nextPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) + 1;
+            if (nextPageIndex < pagesInChapter.length) {
+                var nextPageId = pagesInChapter[nextPageIndex].id;
+                var currentTime = new Date();
+                var timeSpent = Math.floor((currentTime - pageStartTime) / 1000); // Calculate time spent in seconds
+                updatePageActivity(currentPageId, timeSpent, true); // Update both time spent and percentage completed
+                currentPageId = nextPageId;
+                pageStartTime = new Date(); // Update start time for the next page
+                loadPageContent(currentPageId);
+            } else {
+                // Update the activity for the last page in the chapter
+                var lastPageId = pagesInChapter[nextPageIndex - 1].id;
+                var currentTime = new Date();
+                var timeSpent = Math.floor((currentTime - pageStartTime) / 1000); // Calculate time spent in seconds
+                updatePageActivity(lastPageId, timeSpent, true); // Update both time spent and percentage completed
+        
+                // Display a message indicating that all pages in the chapter have been completed
+                alert("You have completed all pages in this chapter.");
+                
+                //$('#main-content').html("<p>You have completed all pages in this chapter. Would you like to proceed to the next chapter?</p>");
+
+                //$('#main-content').append('<button id="proceedToNextChapterButton" class="btn btn-primary">Proceed to Next Chapter</button>');
+        
+                //$('#proceedToNextChapterButton').click(function() {
+                //});
+            }
+        }
+        
+
+        function loadPrevPage() {
+            var prevPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) - 1;
+            if (prevPageIndex >= 0) {
+                var prevPageId = pagesInChapter[prevPageIndex].id;
+                var currentTime = new Date();
+                var timeSpent = Math.floor((currentTime - pageStartTime) / 1000); // Calculate time spent in seconds
+                updatePageActivity(currentPageId, timeSpent, false); // Update only time spent
+                currentPageId = prevPageId;
+                pageStartTime = new Date(); // Update start time for the previous page
+                loadPageContent(currentPageId);
+            }
+        }
+        
+
+        function updatePageActivity(pageId, timeSpent, updatePercentageCompleted) {
+            // Get CSRF token
+            var csrftoken = getCookie('csrftoken');
+            
+            $.ajax({
+                url: '/update_user_page_activity/',
+                type: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                data: {
+                    'page_id': pageId,
+                    'time_spent': timeSpent,
+                    'update_percentage_completed': updatePercentageCompleted // Pass whether to update percentage completed
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log('Page activity updated successfully.');
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error updating page activity:', error);
+                }
+            });
+        }
+        
+        // Function to get CSRF cookie value
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Check if the cookie name matches with the desired cookie
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        {% comment %} function loadNextPage() {
             var nextPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) + 1;
             if (nextPageIndex < pagesInChapter.length) {
                 currentPageId = pagesInChapter[nextPageIndex].id;
@@ -159,9 +277,33 @@
                 currentPageId = pagesInChapter[prevPageIndex].id;
                 loadPageContent(currentPageId);
             }
-        }
+        } {% endcomment %}
     
         $(document).ready(function() {
+            // Function to check if the content is scrollable
+            function isContentScrollable() {
+                return $(document).height() > $(window).height();
+            }
+    
+            // Function to check if the user has scrolled to the bottom of the page
+            function isScrolledToBottom() {
+                return $(window).scrollTop() + $(window).height() === $(document).height();
+            }
+    
+            // Function to update the status of the next button
+            function updateNextButtonStatus() {
+                if (isContentScrollable() && isScrolledToBottom()) {
+                    $('#nextButton').prop('disabled', false);
+                } else {
+                    $('#nextButton').prop('disabled', true);
+                }
+            }
+    
+            // Attach scroll event handler to update button status
+            $(window).scroll(function() {
+                updateNextButtonStatus();
+            });
+    
             // Attach click event handlers to next and previous buttons
             $('#nextButton').click(function() {
                 loadNextPage();
@@ -175,6 +317,9 @@
             var chapterId = "{{ chapters.0.id }}"; // Assuming the first chapter is loaded initially
             var firstPageId = "{{ chapters.0.pages.first.id }}"; // Assuming the first page of the first chapter is loaded initially
             loadChapterPages(chapterId, firstPageId);
+    
+            // Initial check of the next button status
+            updateNextButtonStatus();
         });
     </script>
 </body>
