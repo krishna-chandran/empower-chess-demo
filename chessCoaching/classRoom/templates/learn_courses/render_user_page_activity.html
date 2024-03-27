@@ -1,0 +1,7 @@
+{% if user_page_activity %}
+    <p>Percentage Completed: {{ user_page_activity.percentage_completed }}%&nbsp;&nbsp;&nbsp;&nbsp;</p>
+    <p>Time Spent: {{ time_spent_formatted }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
+    <p>Last Accessed: {{ user_page_activity.last_accessed }}&nbsp;&nbsp;&nbsp;&nbsp;</p>
+{% else %}
+    <p>No activity found for this user.</p>
+{% endif %}
