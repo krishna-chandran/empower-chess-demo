@@ -188,8 +188,25 @@
                 currentPageId = nextPageId;
                 pageStartTime = new Date(); // Update start time for the next page
                 loadPageContent(currentPageId);
+            } else {
+                // Update the activity for the last page in the chapter
+                var lastPageId = pagesInChapter[nextPageIndex - 1].id;
+                var currentTime = new Date();
+                var timeSpent = Math.floor((currentTime - pageStartTime) / 1000); // Calculate time spent in seconds
+                updatePageActivity(lastPageId, timeSpent, true); // Update both time spent and percentage completed
+        
+                // Display a message indicating that all pages in the chapter have been completed
+                alert("You have completed all pages in this chapter.");
+                
+                //$('#main-content').html("<p>You have completed all pages in this chapter. Would you like to proceed to the next chapter?</p>");
+
+                //$('#main-content').append('<button id="proceedToNextChapterButton" class="btn btn-primary">Proceed to Next Chapter</button>');
+        
+                //$('#proceedToNextChapterButton').click(function() {
+                //});
             }
         }
+        
 
         function loadPrevPage() {
             var prevPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) - 1;
