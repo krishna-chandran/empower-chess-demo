@@ -1,6 +1,7 @@
 from django.urls import reverse
 from .models import Permission
 
+
 def sidebar_data(request):
     sidebar_data = {}
 
@@ -14,12 +15,32 @@ def sidebar_data(request):
         
         for permission in permissions:
             feature_name = permission.feature.feature_name
-            if feature_name.lower().startswith("view") or feature_name.lower().startswith("learn"):    
-                url_name = f'{feature_name.lower().replace(" ", "_")}'
-                try:
-                    url = reverse(url_name)
-                    sidebar_data[feature_name] = url
-                except:
-                    pass
+            
+            # Split feature_name by "_" and get the second part if available
+            words = feature_name.split()
+            # print('words',words)
+            # print("lenght",len(words))
+            if len(words) > 1:
+                second_word = words[1]
+                
+                
+                # print("second word", second_word)
+                # Remove last character if it's 's'
+                if second_word.endswith('s'):
+                    second_word = second_word[:-1]
+                    # print("second words", second_word)
+                
+                sidebar_name = second_word.capitalize()  
+                # print('sidebar name:',sidebar_name)
+                
+                
+                # url_name = ('view_'+second_word + 's').replace(' ', '_').lower()
+                # print('url name:',url_name)
+                # url = reverse(url_name)
+                url_name = ('/'+second_word + 's').lower()
+                url = url_name
+                # print('Url:',url)
+                sidebar_data[sidebar_name] = url
+    print(sidebar_data)
 
-    return {'sidebar_data': sidebar_data} 
+    return {'sidebar_data': sidebar_data}
