@@ -20,7 +20,7 @@ from django.http import HttpResponseRedirect,HttpResponseForbidden
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.db.models import Q
-from .models import UserActivity, Settings
+from .models import UserActivity, Settings, ChessPuzzle
 from datetime import datetime
 from datetime import timedelta
 from django.utils import timezone
@@ -1291,6 +1291,72 @@ def delete_setting(request, setting_id):
         log_user_activity(request, f'Deleted setting ID: {setting_id}')
         return redirect('view_settings')
     return render(request, 'settings/delete_setting.html', {'setting': setting})
+
+@login_required
+@permission_required('View ChessPuzzles')
+def view_chesspuzzles(request):
+    puzzles = ChessPuzzle.objects.all()
+    log_user_activity(request, 'Viewed chess puzzles')
+    return render(request, "ChessPuzzles/view_chesspuzzles.html", {'puzzles': puzzles})
+
+@login_required
+@permission_required('View ChessPuzzle')
+def view_chesspuzzle(request, puzzle_id):
+    puzzle = get_object_or_404(ChessPuzzle, pk=puzzle_id)
+    log_user_activity(request, f'Viewed chess puzzle ID: {puzzle_id}')
+    return render(request, 'ChessPuzzles/view_chesspuzzle.html', {'puzzle': puzzle})
+
+@login_required
+@permission_required('Add ChessPuzzle')
+def add_chesspuzzle(request):
+    pages = Page.objects.all()
+    if request.method == 'POST':
+        fen = request.POST.get('fen')
+        solution = request.POST.get('solution')
+        page_id = request.POST.get('page')
+
+        puzzle = ChessPuzzle.objects.create(fen=fen, solution=solution, page_id=page_id)
+        log_user_activity(request, f'Added chess puzzle ID: {puzzle.id}')
+        return redirect(reverse('view_chesspuzzle', kwargs={'puzzle_id': puzzle.id}))
+    return render(request, 'ChessPuzzles/add_chesspuzzle.html', {'pages': pages})
+
+@login_required
+@permission_required('Edit ChessPuzzle')
+def edit_chesspuzzle(request, puzzle_id):
+    puzzle_data = get_object_or_404(ChessPuzzle, id=puzzle_id)
+    pages = Page.objects.all()
+    
+    if request.method == 'POST':
+        fen = request.POST.get('fen')
+        solution = request.POST.get('solution')
+        page_id = request.POST.get('page')
+
+        # Validate that page_id is not None or empty
+        if not page_id:
+            # Return a bad request response with an error message
+            return HttpResponseBadRequest("Page is required.")
+
+        # Update puzzle data
+        puzzle_data.fen = fen
+        puzzle_data.solution = solution
+        puzzle_data.page_id = page_id
+        puzzle_data.save()
+        
+        log_user_activity(request, f'Edited chess puzzle ID: {puzzle_id}')
+        return redirect(reverse('view_chesspuzzle', kwargs={'puzzle_id': puzzle_id}))
+    
+    return render(request, 'ChessPuzzles/edit_chesspuzzle.html', {'puzzle_data': puzzle_data, 'pages': pages})
+
+@login_required
+@permission_required('Delete ChessPuzzle')
+def delete_chesspuzzle(request, puzzle_id):
+    puzzle_data = get_object_or_404(ChessPuzzle, id=puzzle_id)
+    if request.method == 'POST':
+        puzzle_data.delete()
+        log_user_activity(request, f'Deleted chess puzzle ID: {puzzle_id}')
+        return redirect('view_chesspuzzles')
+    
+    return render(request, 'ChessPuzzles/delete_chesspuzzle.html', {'puzzle_data': puzzle_data})
 
 
 def forgot_password(request):

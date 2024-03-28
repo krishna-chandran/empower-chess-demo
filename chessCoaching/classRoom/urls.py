@@ -18,6 +18,7 @@ from .views import get_chapters
 from .views import view_profile, edit_profile
 from .views import view_user_activities, view_user_activity, edit_user_activity, delete_user_activity
 from .views import view_settings, view_setting, add_setting, edit_setting, delete_setting
+from .views import view_chesspuzzles, view_chesspuzzle, add_chesspuzzle, edit_chesspuzzle, delete_chesspuzzle
 from django.contrib.auth import views as auth_views
 from django.conf.urls import handler404
 from .views import error_404_view 
@@ -139,6 +140,12 @@ urlpatterns = [
     path('page/add/', add_page, name='add_page'),
     path('page/<int:page_id>/edit/', edit_page, name='edit_page'),
     path('page/<int:page_id>/delete/', delete_page, name='delete_page'),
+    
+    path('chesspuzzles/', view_chesspuzzles, name='view_chesspuzzles'),
+    path('chesspuzzle/<int:puzzle_id>/', view_chesspuzzle, name='view_chesspuzzle'),
+    path('chesspuzzle/add/', add_chesspuzzle, name='add_chesspuzzle'),
+    path('chesspuzzle/<int:puzzle_id>/edit/', edit_chesspuzzle, name='edit_chesspuzzle'),
+    path('chesspuzzle/<int:puzzle_id>/delete/', delete_chesspuzzle, name='delete_chesspuzzle'),
 
     path('get_chapters/', get_chapters, name='get_chapters'),
     # path('update-user-page-activity/', update_user_page_activity, name='update_user_page_activity'),

@@ -25,7 +25,8 @@ class Command(BaseCommand):
             'View Settings', 'View Setting' , 'Add Setting', 'Edit Setting', 'Delete Setting',
             'View Pages', 'View Page', 'Add Page', 'Edit Page', 'Delete Page',
             'View Chapters', 'View Chapter', 'Add Chapter', 'Edit Chapter', 'Delete Chapter',
-            'Learn Courses','Learn Course', 'Learn Course Page'
+            'Learn Courses','Learn Course', 'Learn Course Page',
+            'View ChessPuzzles', 'View ChessPuzzle','Add ChessPuzzle','Edit ChessPuzzle','Delete ChessPuzzle',
         ]
         
         permission_sql_statements = [
@@ -52,6 +53,8 @@ class Command(BaseCommand):
             ('56', '3'), ('57', '3'), ('58', '3'), ('59', '3'), ('60', '3'),
             ('61', '3'), ('62', '3'), ('63', '3'), ('64', '3'), ('65', '3'),
             ('66', '3'), ('67', '3'), ('68', '3'), ('69', '3'), ('70', '3'),
+            ('71', '3'),('72', '3'),('73', '3'),
+            ('74', '3'), ('75', '3'), ('76', '3'), ('77', '3'), ('78', '3'),
         ]
 
         for role_name in default_roles:

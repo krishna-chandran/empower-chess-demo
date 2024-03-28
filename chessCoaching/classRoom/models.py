@@ -148,3 +148,21 @@ class Settings(models.Model):
     id = models.AutoField(primary_key=True)
     key = models.CharField(max_length=255)
     value = models.CharField(max_length=255)
+    
+class Video(models.Model):
+    id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=100)
+    url = models.URLField()
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.title
+
+class ChessPuzzle(models.Model):
+    id = models.AutoField(primary_key=True)
+    fen = models.CharField(max_length=255)
+    solution = models.CharField(max_length=50)
+    page = models.ForeignKey(Page, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"Puzzle: {self.id}"
