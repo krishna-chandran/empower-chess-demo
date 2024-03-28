@@ -41,6 +41,6 @@ def sidebar_data(request):
                 url = url_name
                 # print('Url:',url)
                 sidebar_data[sidebar_name] = url
-    print(sidebar_data)
+    # print(sidebar_data)
 
     return {'sidebar_data': sidebar_data}

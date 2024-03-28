@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{% static 'css/sb-admin-2.min.css' %}">
 </head>
 
-<body id="page-top">
+<body id="page-top" onload="loadPageAndChapter({{ last_accessed_page.page.id }}, {{ last_accessed_page.page.chapter.id }})">
     <div id="wrapper">
         {% if chapters %}
             <ul class="navbar-nav bg-gradient-secondary sidebar sidebar-dark accordion" id="accordionSidebar">
@@ -263,22 +263,6 @@
             }
             return cookieValue;
         }
-        {% comment %} function loadNextPage() {
-            var nextPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) + 1;
-            if (nextPageIndex < pagesInChapter.length) {
-                currentPageId = pagesInChapter[nextPageIndex].id;
-                loadPageContent(currentPageId);
-            }
-        }
-    
-        function loadPrevPage() {
-            var prevPageIndex = pagesInChapter.findIndex(page => page.id === currentPageId) - 1;
-            if (prevPageIndex >= 0) {
-                currentPageId = pagesInChapter[prevPageIndex].id;
-                loadPageContent(currentPageId);
-            }
-        } {% endcomment %}
-    
         $(document).ready(function() {
             // Function to check if the content is scrollable
             function isContentScrollable() {
@@ -313,10 +297,10 @@
                 loadPrevPage();
             });
     
-            // Load chapter pages when the page loads
-            var chapterId = "{{ chapters.0.id }}"; // Assuming the first chapter is loaded initially
-            var firstPageId = "{{ chapters.0.pages.first.id }}"; // Assuming the first page of the first chapter is loaded initially
-            loadChapterPages(chapterId, firstPageId);
+            
+            //var chapterId = "{{ last_accessed_page.page.chapter.id }}" || "{{ chapters.0.id }}"; // Use the last accessed chapter or the first chapter if not available
+            //var firstPageId = "{{ last_accessed_page.page.id }}" || "{{ chapters.0.pages.first.id }}"; // Use the last accessed page or the first page of the chapter if not available
+            //loadPageAndChapter(firstPageId, chapterId)
     
             // Initial check of the next button status
             updateNextButtonStatus();

@@ -498,12 +498,13 @@ def learn_course(request, course_id):
     
     # Get completed page IDs for the current user
     completed_pages = UserPageActivity.objects.filter(user=request.user.user, percentage_completed=100).values_list('page_id', flat=True)
-    
+    last_accessed_page = UserPageActivity.objects.filter(user=request.user.user, page__chapter__course_id=course_id).order_by('-last_accessed').first()
     context = {
         'course_data': course_data,
         'chapters': chapters,
         'user_page_activity': user_page_activity,
         'completed_pages': completed_pages,
+        'last_accessed_page': last_accessed_page
     }
     
     return render(request, 'learn_courses/learn_course.html', context)
@@ -544,6 +545,10 @@ def update_user_page_activity(request):
         user_page_activity.time_spent_seconds = F('time_spent_seconds') + time_spent
         if update_percentage_completed:
             user_page_activity.percentage_completed = 100
+
+        # Update the last accessed time
+        user_page_activity.last_accessed = timezone.now()
+        
         user_page_activity.save()
 
         return JsonResponse({'success': True})
